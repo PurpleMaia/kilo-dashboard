@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import PatchesWrapper from "../ui/patches/patch";
+import PatchesWrapper from "../ui/patches/buttons";
 import { PatchSkeleton } from "../ui/skeletons";
 
 export default async function Page() {

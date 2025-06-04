@@ -9,6 +9,7 @@
 // }
 
 // TODO make definitions
+
 export function fetchPatches() {
     const numPatches = 3
     const patches = [
@@ -26,5 +27,17 @@ export function fetchPatches() {
     return {
         numPatches,
         patches
+    }
+}
+
+export function fetchDataFromSensorBasedOnTypeAndName(type: string, location: string){
+    return {
+        metrics: [
+            {
+                timestamp: 12,
+                value: 12,
+                type: 'soil'
+            }
+        ]
     }
 }
