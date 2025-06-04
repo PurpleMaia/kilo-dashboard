@@ -1,5 +1,5 @@
-import SideNav from "../ui/sidenav"
-import TopPanel from "../ui/top-panel"
+import SideNav from "../ui/dashboard/sidenav"
+import TopPanel from "../ui/dashboard/top-panel"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
