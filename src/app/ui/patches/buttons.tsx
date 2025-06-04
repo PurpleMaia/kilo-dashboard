@@ -1,6 +1,7 @@
 'use client'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { fetchPatches } from "@/app/lib/data";
+import Link from 'next/link';
 
 export default function PatchesWrapper() {
     const patches = fetchPatches();
@@ -25,20 +26,9 @@ export function Patch({
     name: string;
     num: number;
 }) {
-    const searchParams = useSearchParams()
-    const pathname = usePathname();
-    const { replace } = useRouter();
-    
-    const handleClick = () => {
-        console.log(`Redirecting to... ${name}`)
-        const params = new URLSearchParams(searchParams)
-        params.set('name', name)
-        replace(`${pathname}/patch?${params.toString()}`)
-    }
-
     return (
-        <button                        
-            onClick={handleClick}
+        <Link                        
+            href={`/dashboard/patch/${name}`}
         >
             <div className="hover:bg-sky-100 hover:text-blue-600 rounded-xl bg-gray-50 p-2 shadow-sm">
                 <div className="flex p-4">
@@ -51,6 +41,6 @@ export function Patch({
                     {name}
                 </p>
             </div>
-        </button>
+        </Link>
     )
 }
