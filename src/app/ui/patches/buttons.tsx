@@ -1,11 +1,9 @@
 'use client'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-
 import { fetchPatches } from "@/app/lib/data";
-import Link from "next/link";
 
 export default function PatchesWrapper() {
-    const { patches } = fetchPatches();
+    const patches = fetchPatches();
 
     return (
         <>
@@ -27,15 +25,17 @@ export function Patch({
     name: string;
     num: number;
 }) {
-    const searchParams = useSearchParams() // since client side, useSearchParams() (web hook)
+    const searchParams = useSearchParams()
     const pathname = usePathname();
     const { replace } = useRouter();
+    
     const handleClick = () => {
         console.log(`Redirecting to... ${name}`)
         const params = new URLSearchParams(searchParams)
         params.set('name', name)
         replace(`${pathname}/patch?${params.toString()}`)
     }
+
     return (
         <button                        
             onClick={handleClick}
