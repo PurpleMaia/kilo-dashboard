@@ -1,3 +1,5 @@
+// TODO MAKE THIS INTO USER AUTH SCREEN
+
 import Image from "next/image";
 
 export default function Home() {
