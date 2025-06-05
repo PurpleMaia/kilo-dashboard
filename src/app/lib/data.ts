@@ -1,33 +1,33 @@
-// import postgres from 'postgres'
+import postgres from 'postgres'
+// import { patches, sensors } from "./temp-data"
+import {
+    LatestSensorsList,
+} from "./types"
 
-// const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' })
-
-// export async function fetchPatches() {
-//     try {
-        
-//     }
-// }
-// TODO make definitions
+const sql = postgres(process.env.POSTGRES_URL!)
 
 // temporary fetching
-import { patches, sensors } from "./temp-data"
+// export function fetchPatches() {
+//     return patches
+// }
 
-export function fetchPatches() {
-    return patches
-}
+// export function fetchLatestSensorsData() {
+//     return sensors
+// }
 
-export function fetchSensors() {
-    return sensors
-}
-
-export function fetchDataFromSensorBasedOnTypeAndName(type: string, location: string){
-    return {
-        metrics: [
-            {
-                timestamp: 12,
-                value: 12,
-                type: 'soil'
-            }
-        ]
+export async function fetchLatestSensorsData() {
+    try {
+        const data = await sql<LatestSensorsList[]>`
+            SELECT DISTINCT ON (s.name)
+            s.name,            
+            m.value
+            FROM metric m
+            JOIN sensor s ON m.sensor_id = s.id
+            ORDER BY s.name, m.timestamp DESC;
+        `
+        return data;
+    } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch the latest invoices.');
     }
 }

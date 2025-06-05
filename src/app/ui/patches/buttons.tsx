@@ -1,10 +1,9 @@
 'use client'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import { fetchPatches } from "@/app/lib/data";
+import { patches } from "@/app/lib/temp-data";
 import Link from 'next/link';
 
 export default function PatchesWrapper() {
-    const patches = fetchPatches();
 
     return (
         <>

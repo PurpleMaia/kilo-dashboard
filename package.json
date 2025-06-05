@@ -12,10 +12,15 @@
     "@heroicons/react": "^2.2.0",
     "chart.js": "^4.4.9",
     "clsx": "^2.1.1",
+    "fs": "^0.0.1-security",
     "heroicons": "^2.2.0",
+    "net": "^1.0.2",
     "next": "15.3.3",
+    "perf_hooks": "^0.0.1",
+    "postgres": "^3.4.7",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tls": "^0.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
