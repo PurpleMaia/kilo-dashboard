@@ -17,9 +17,9 @@ const links = [
   {
     name: 'Kilo',
     href: '/dashboard/kilo',
-    icon: DocumentDuplicateIcon,
+    icon: EyeIcon,
   },
-  { name: 'Sensors', href: '/dashboard/sensors', icon: EyeIcon },
+  // { name: 'Sensors', href: '/dashboard/sensors', icon: EyeIcon },
   // { name: 'Soil', href: '/dashboard/soil', icon: UserGroupIcon },
   // { name: 'Water', href: '/dashboard/water', icon: UserGroupIcon },
 ];
