@@ -4,6 +4,7 @@ import {
   UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
+  EyeIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link' // no page refresh, optimizes and prefetches code on navigation
 import { usePathname } from 'next/navigation'; // React web hook (client) to get the current path (need to declare a Client Component)
@@ -18,9 +19,9 @@ const links = [
     href: '/dashboard/kilo',
     icon: DocumentDuplicateIcon,
   },
-  { name: 'Soil', href: '/dashboard/soil', icon: UserGroupIcon },
-  { name: 'Water', href: '/dashboard/water', icon: UserGroupIcon },
-  { name: 'sensor', href: '/dashboard/sensors', icon: UserGroupIcon },
+  { name: 'Sensors', href: '/dashboard/sensors', icon: EyeIcon },
+  // { name: 'Soil', href: '/dashboard/soil', icon: UserGroupIcon },
+  // { name: 'Water', href: '/dashboard/water', icon: UserGroupIcon },
 ];
 
 export default function NavLinks() {

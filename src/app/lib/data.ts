@@ -2,6 +2,7 @@ import postgres from 'postgres'
 // import { patches, sensors } from "./temp-data"
 import {
     LatestSensorsList,
+    SensorData
 } from "./types"
 
 const sql = postgres(process.env.POSTGRES_URL!)
@@ -15,6 +16,7 @@ const sql = postgres(process.env.POSTGRES_URL!)
 //     return sensors
 // }
 
+// grab the latest data from each sensor type
 export async function fetchLatestSensorsData() {
     try {
         const data = await sql<LatestSensorsList[]>`
@@ -26,6 +28,36 @@ export async function fetchLatestSensorsData() {
             ORDER BY s.name, m.timestamp DESC;
         `
         return data;
+    } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch the latest invoices.');
+    }
+}
+
+// grab all data from sensors from the past deployment
+export async function fetchSensorsData() {
+    try {
+        // fetch all sensor data from past 3 days
+        const data = await sql<SensorData[]>`
+            SELECT s.name, value, timestamp from metric m
+            join sensor s on s.id = m.sensor_id
+            where timestamp >= NOW() - interval '3 days'
+            order by s.name, timestamp desc
+        `
+
+        // group by sensor name and return different objects
+        const grouped: Record<string, any[]> = {};
+        for (const row of data) {
+            if (!grouped[row.name]) grouped[row.name] = [];
+            grouped[row.name].push({
+            timestamp: row.timestamp,
+            value: row.value,
+            // name: row.name,
+            });
+        }
+
+        // Convert to array of { name, data }
+        return Object.entries(grouped).map(([name, data]) => ({ name, data }));
     } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch the latest invoices.');
