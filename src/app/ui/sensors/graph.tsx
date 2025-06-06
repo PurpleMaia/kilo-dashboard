@@ -15,7 +15,7 @@ export function SensorGraph({
     return (
         <>
         <h2>{name}</h2>
-        <div className='w-60 h-60'>
+        <div className='w-full h-72'>
             <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                 width={500}

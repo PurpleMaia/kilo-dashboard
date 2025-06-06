@@ -12,6 +12,7 @@ export default async function GraphWrapper() {
                 <h2 className={`mb-4 text-xl md:text-2xl`}>
                     Trends
                 </h2>
+                                                       
                     {sensors.map((sensor, i) => 
                         <div key={i}>
                             <SensorGraph

@@ -41,7 +41,7 @@ export async function fetchSensorsData() {
         const data = await sql<SensorData[]>`
             SELECT s.name, value, timestamp from metric m
             join sensor s on s.id = m.sensor_id
-            where timestamp >= NOW() - interval '3 days'
+            where timestamp >= NOW() - interval '5 days'
             order by s.name, timestamp desc
         `
 
