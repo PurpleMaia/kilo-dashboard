@@ -8,7 +8,7 @@ export default async function GraphWrapper() {
         <>
             <div className="flex w-full flex-col md:col-span-4">
 
-                <h2 className={`mb-4 text-xl md:text-2xl`}>
+                <h2 className={`mb-4 font-black text-xl md:text-2xl`}>
                     Trends
                 </h2>
                                                        
