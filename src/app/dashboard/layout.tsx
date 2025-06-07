@@ -6,7 +6,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <>      
       <div className='flex h-screen'>
         {/* Side Navigation */}
-        <div className="w-64 flex-none">
+        <div className="w-64 flex-none h-full">
             <SideNav />
         </div>
         

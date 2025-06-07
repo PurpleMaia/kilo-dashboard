@@ -1,4 +1,4 @@
-// TODO MAKE THIS INTO USER AUTH SCREEN
+// TODO MAKE THIS INTO USER SIGN IN PAGE
 
 import Image from "next/image";
 
