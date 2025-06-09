@@ -1,13 +1,14 @@
 import postgres from 'postgres'
+import { db } from '../db/kysely/db'
 // import { patches, sensors } from "./temp-data"
 import {
     LatestSensorsList,
     SensorData
 } from "./types"
 
-const sql = postgres(process.env.POSTGRES_URL!)
+const sql = postgres(process.env.DATABASE_URL!)
 
-// temporary fetching
+// temporary fetching with temp-data
 // export function fetchPatches() {
 //     return patches
 // }
@@ -27,6 +28,14 @@ export async function fetchLatestSensorsData() {
             JOIN sensor s ON m.sensor_id = s.id
             ORDER BY s.name, m.timestamp DESC;
         `
+        // const data = await db
+        //     .selectFrom('metric as m')
+        //     .innerJoin('sensor as s', 'm.sensor_id', 's.id')
+        //     .select(['s.name', 'm.value'])
+        //     .distinctOn('s.name')
+        //     .orderBy('s.name')
+        //     .orderBy('m.timestamp', 'desc')
+        //     .execute(); 
         return data;
     } catch (error) {
     console.error('Database Error:', error);
@@ -37,11 +46,11 @@ export async function fetchLatestSensorsData() {
 // grab all data from sensors from the past deployment
 export async function fetchSensorsData() {
     try {
-        // fetch all sensor data from past 3 days
+        // fetch all sensor data from past 5 days (for now commented out for Phase I)
         const data = await sql<SensorData[]>`
             SELECT s.name, value, timestamp from metric m
             join sensor s on s.id = m.sensor_id
-            where timestamp >= NOW() - interval '5 days'
+            -- where timestamp >= NOW() - interval '5 days'
             order by s.name, timestamp desc
         `
 
@@ -55,8 +64,7 @@ export async function fetchSensorsData() {
             // name: row.name,
             });
         }
-
-        // Convert to array of { name, data }
+        
         return Object.entries(grouped).map(([name, data]) => ({ name, data }));
     } catch (error) {
     console.error('Database Error:', error);
