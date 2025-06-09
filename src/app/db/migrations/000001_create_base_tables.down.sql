@@ -1,0 +1,4 @@
+DROP TABLE metric;
+DROP TABLE sensor;
+DROP TABLE mala;
+DROP TABLE aina;
