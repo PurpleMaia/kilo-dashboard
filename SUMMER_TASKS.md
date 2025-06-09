@@ -27,6 +27,7 @@
 - [ ]  Explore existing routes and layout components
 - [ ]  Review `README.md` and any design system in place
 - [ ]  install Node.js into computer & install `pnpm`
+    - https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
     - https://pnpm.io/installation
 
 ### Mobile & Desktop Media Query Challenge
