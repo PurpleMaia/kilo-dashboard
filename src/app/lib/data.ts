@@ -1,41 +1,32 @@
 import postgres from 'postgres'
-import { db } from '../db/kysely/db'
-// import { patches, sensors } from "./temp-data"
+import { db } from '../db/kysely/client'
 import {
     LatestSensorsList,
     SensorData
 } from "./types"
 
-const sql = postgres(process.env.DATABASE_URL!)
-
-// temporary fetching with temp-data
-// export function fetchPatches() {
-//     return patches
-// }
-
-// export function fetchLatestSensorsData() {
-//     return sensors
-// }
+// import { patches, sensors } from "./temp-data"
+// const sql = postgres(process.env.DATABASE_URL!)
 
 // grab the latest data from each sensor type
 export async function fetchLatestSensorsData() {
     try {
-        const data = await sql<LatestSensorsList[]>`
-            SELECT DISTINCT ON (s.name)
-            s.name,            
-            m.value
-            FROM metric m
-            JOIN sensor s ON m.sensor_id = s.id
-            ORDER BY s.name, m.timestamp DESC;
-        `
-        // const data = await db
-        //     .selectFrom('metric as m')
-        //     .innerJoin('sensor as s', 'm.sensor_id', 's.id')
-        //     .select(['s.name', 'm.value'])
-        //     .distinctOn('s.name')
-        //     .orderBy('s.name')
-        //     .orderBy('m.timestamp', 'desc')
-        //     .execute(); 
+        // const data = await sql<LatestSensorsList[]>`
+        //     SELECT DISTINCT ON (s.name)
+        //     s.name,            
+        //     m.value
+        //     FROM metric m
+        //     JOIN sensor s ON m.sensor_id = s.id
+        //     ORDER BY s.name, m.timestamp DESC;
+        // `
+        const data = await db
+            .selectFrom('metric as m')
+            .innerJoin('sensor as s', 'm.sensor_id', 's.id')
+            .select(['s.name', 'm.value'])
+            .distinctOn('s.name')
+            .orderBy('s.name')
+            .orderBy('m.timestamp', 'desc')
+            .execute(); 
         return data;
     } catch (error) {
     console.error('Database Error:', error);
@@ -47,12 +38,20 @@ export async function fetchLatestSensorsData() {
 export async function fetchSensorsData() {
     try {
         // fetch all sensor data from past 5 days (for now commented out for Phase I)
-        const data = await sql<SensorData[]>`
-            SELECT s.name, value, timestamp from metric m
-            join sensor s on s.id = m.sensor_id
-            -- where timestamp >= NOW() - interval '5 days'
-            order by s.name, timestamp desc
-        `
+        // const data = await sql<SensorData[]>`
+        //     SELECT s.name, value, timestamp from metric m
+        //     join sensor s on s.id = m.sensor_id
+        //     -- where timestamp >= NOW() - interval '5 days'
+        //     order by s.name, timestamp desc
+        // `
+        const data = await db
+            .selectFrom('metric as m')
+            .innerJoin('sensor as s', 's.id', 'm.sensor_id')
+            .select(['s.name', 'm.value', 'm.timestamp'])
+            // .where('m.timestamp', '>=', sql`now() - interval '5 days'`)
+            .orderBy('s.name')
+            .orderBy('m.timestamp', 'desc')
+            .execute();
 
         // group by sensor name and return different objects
         const grouped: Record<string, any[]> = {};
