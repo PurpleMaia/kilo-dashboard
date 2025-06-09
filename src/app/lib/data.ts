@@ -1,5 +1,6 @@
 import postgres from 'postgres'
 import { db } from '../db/kysely/client'
+import { fetcher } from '../db/api'
 import {
     LatestSensorsList,
     SensorData
@@ -9,8 +10,9 @@ import {
 // const sql = postgres(process.env.DATABASE_URL!)
 
 // grab the latest data from each sensor type
-export async function fetchLatestSensorsData() {
+export async function fetchLatestSensorsData(): Promise<LatestSensorsList[]> {
     try {
+        return await fetcher<SensorData[]>('/sensors/latest-data')
         // const data = await sql<LatestSensorsList[]>`
         //     SELECT DISTINCT ON (s.name)
         //     s.name,            
@@ -19,18 +21,9 @@ export async function fetchLatestSensorsData() {
         //     JOIN sensor s ON m.sensor_id = s.id
         //     ORDER BY s.name, m.timestamp DESC;
         // `
-        const data = await db
-            .selectFrom('metric as m')
-            .innerJoin('sensor as s', 'm.sensor_id', 's.id')
-            .select(['s.name', 'm.value'])
-            .distinctOn('s.name')
-            .orderBy('s.name')
-            .orderBy('m.timestamp', 'desc')
-            .execute(); 
-        return data;
     } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch the latest invoices.');
+    console.error('API Error:', error);
+    throw new Error('Failed to fetch the latest sensor data.');
     }
 }
 
