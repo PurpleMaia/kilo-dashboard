@@ -1,9 +1,7 @@
 'use client'
 
 import {
-  UserGroupIcon,
   HomeIcon,
-  DocumentDuplicateIcon,
   EyeIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link' // no page refresh, optimizes and prefetches code on navigation

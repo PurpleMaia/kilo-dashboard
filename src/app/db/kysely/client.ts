@@ -1,8 +1,8 @@
 // lib/db.ts
-import { Kysely, type Generated, type ColumnType, PostgresDialect } from 'kysely';
-import { PostgresJSDialect } from 'kysely-postgres-js'
+import { Kysely, PostgresDialect } from 'kysely';
+// import { PostgresJSDialect } from 'kysely-postgres-js'
 import { Pool } from 'pg'
-import postgres from 'postgres'
+// import postgres from 'postgres'
 import { DB } from 'kysely-codegen'
 
 export const db = new Kysely<DB>({

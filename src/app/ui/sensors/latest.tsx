@@ -12,7 +12,6 @@ export default async function SensorsWrapper() {
         Latest Data
       </h2>
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
-        {/* NOTE: Uncomment this code in Chapter 7 */}
 
         <div className="bg-white px-6">
           {sensors.map((sensor, i) => {
@@ -59,12 +58,6 @@ export function Sensor({
     type: string;
     value: number;
 }) {
-    // const handleClick = () => {
-    //     console.log(`Redirecting to... ${name}`)
-    //     const params = new URLSearchParams(searchParams)
-    //     params.set('name', name)
-    //     replace(`${pathname}/patch?${params.toString()}`)
-    // }
 
     return (        
             <div className="hover:bg-sky-100 hover:text-blue-600 rounded-xl bg-gray-50 p-2 shadow-sm">

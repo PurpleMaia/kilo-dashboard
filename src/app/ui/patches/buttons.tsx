@@ -1,5 +1,3 @@
-'use client'
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { patches } from "@/app/lib/temp-data";
 import Link from 'next/link';
 
