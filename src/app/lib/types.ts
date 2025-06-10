@@ -4,8 +4,7 @@ export type LatestSensorsList = {
   value: number    
 };
 
-export type SensorData = {
-    id: number
+export type SensorData = {    
     name: string
     value: number
     timestamp: string

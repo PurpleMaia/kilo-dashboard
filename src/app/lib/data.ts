@@ -12,7 +12,7 @@ import {
 // grab the latest data from each sensor type
 export async function fetchLatestSensorsData(): Promise<LatestSensorsList[]> {
     try {
-        return await fetcher<SensorData[]>('/sensors/latest-data')
+        return await fetcher<SensorData[]>('/sensors/latest')
         // const data = await sql<LatestSensorsList[]>`
         //     SELECT DISTINCT ON (s.name)
         //     s.name,            
@@ -30,6 +30,7 @@ export async function fetchLatestSensorsData(): Promise<LatestSensorsList[]> {
 // grab all data from sensors from the past deployment
 export async function fetchSensorsData() {
     try {
+        const data = await fetcher<SensorData[]>('/sensors/graph')
         // fetch all sensor data from past 5 days (for now commented out for Phase I)
         // const data = await sql<SensorData[]>`
         //     SELECT s.name, value, timestamp from metric m
@@ -37,14 +38,6 @@ export async function fetchSensorsData() {
         //     -- where timestamp >= NOW() - interval '5 days'
         //     order by s.name, timestamp desc
         // `
-        const data = await db
-            .selectFrom('metric as m')
-            .innerJoin('sensor as s', 's.id', 'm.sensor_id')
-            .select(['s.name', 'm.value', 'm.timestamp'])
-            // .where('m.timestamp', '>=', sql`now() - interval '5 days'`)
-            .orderBy('s.name')
-            .orderBy('m.timestamp', 'desc')
-            .execute();
 
         // group by sensor name and return different objects
         const grouped: Record<string, any[]> = {};
