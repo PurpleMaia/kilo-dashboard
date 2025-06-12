@@ -1,3 +1,4 @@
+'use client'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Metric } from '@/app/lib/types';
 
