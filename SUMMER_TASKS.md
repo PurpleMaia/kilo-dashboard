@@ -11,7 +11,7 @@
     - LLM Interaction Page (e.g. “Ask the ʻĀina”)
     - Mobile and offline-resilient UX tweaks
 
-## Setup
+# Setup
 
 - [ ]  install Node.js into computer & install `pnpm`
     - https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
@@ -25,11 +25,13 @@
 ## Architecture
 ![](Architecture-PhaseI.png)
 
-## Challenges
+# Challenges
+## Frontend
 ### Mobile & Desktop Media Query Challenge
 
 - [ ]  Create styling for a mobile and desktop version of the KILO dashboard
 - [ ]  The desktop version should have the upload feature enabled but not on mobile 
+    - [Tailwind CSS Media Query Design](https://tailwindcss.com/docs/responsive-design)
 - NOTE: use chrome dev tools (Inspect or F12)
 
 ### Figma Redesign Challenge
@@ -44,13 +46,18 @@
     -  [Tools](https://medium.com/@xinranma/i-tested-4-ai-tools-to-generate-ui-from-the-same-prompt-0d2113736cce)
     -  [Magic Patterns](https://www.magicpatterns.com/)
 
+---
 
+## Backend (consult w/ Jaden to get set up)
 ### Soil Composition Page
 
 **Goal**: Create a new frontend page using mock data
 
 - [ ]  Create route `/soil`
+- [ ]  Review current DB Schema
 - [ ]  Grab soil composition data from test data (populate the temp-data file with csv)
+- [ ]  Populate database based on schema with database migrations (Insert statements)
+    - [golang-migrate](https://github.com/golang-migrate/migrate)
 - [ ]  Style cards to be mobile-friendly
 - [ ]  Include last updated timestamp and color indicators
 - [ ]  Refer to [Makaliʻi Metrics portal](https://deploy-preview-2--mellow-zuccutto-57d56b.netlify.app/)
