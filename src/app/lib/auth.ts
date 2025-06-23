@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import { randomBytes, createHash, hash } from 'crypto';
+import { randomBytes, pbkdf2Sync, createHash, timingSafeEqual } from 'crypto';
 import { db } from '../../../db/kysely/client';
 
 import * as base64 from 'hi-base64'
@@ -117,4 +117,58 @@ export function generateUserId(): string {
     crypto.getRandomValues(bytes);
 
     return Array.from(bytes, b => alphabet[b % alphabet.length]).join('');
+}
+
+// hash password logic
+const SALT_LENGTH = 16;
+const HASH_ITERATIONS = 100_000;
+const HASH_ALGO = 'sha256';
+const HASH_LENGTH = 32;
+
+export function hashPassword(password: string): string {
+  const salt = randomBytes(SALT_LENGTH);
+  const hash = pbkdf2Sync(password, salt, HASH_ITERATIONS, HASH_LENGTH, HASH_ALGO);
+  return `${salt.toString('hex')}:${hash.toString('hex')}`;
+}
+
+export function verifyPassword(password: string, stored: string): boolean {
+  const [saltHex, hashHex] = stored.split(':');
+  const salt = Buffer.from(saltHex, 'hex');
+  const hash = Buffer.from(hashHex, 'hex');
+  const testHash = pbkdf2Sync(password, salt, HASH_ITERATIONS, HASH_LENGTH, HASH_ALGO);
+  return timingSafeEqual(hash, testHash);
+}
+
+// --- User Registration ---
+
+export async function registerUser(username: string, email: string, password: string) {
+  // Check if user exists
+  const existing = await db.selectFrom('user').selectAll().where('username', '=', username).executeTakeFirst();
+  if (existing) throw new Error('Username already taken');
+
+  const password_hash = hashPassword(password);
+  const id = randomBytes(12).toString('hex');
+  await db.insertInto('user').values({
+    id,
+    username,
+    email,
+    password_hash,
+    email_verified: false,
+  }).execute();
+
+  return { id, username, email };
+}
+
+// --- User Login ---
+
+export async function loginUser(username: string, password: string) {
+  const user = await db.selectFrom('user').selectAll().where('username', '=', username).executeTakeFirst();
+  if (!user || !user.password_hash) throw new Error('Invalid credentials');
+  if (!verifyPassword(password, user.password_hash)) throw new Error('Invalid credentials');
+
+  // Generate session token and store session
+  const token = generateSessionToken();
+  await createSession(token, user.id);
+
+  return { user, token };
 }
