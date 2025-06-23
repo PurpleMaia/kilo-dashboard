@@ -19,11 +19,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {/* Main content, scrollable */}
       <main
         className={`
-          bg-white overflow-auto p-4 
+          bg-white overflow-auto p-4
           h-[calc(100vh-4rem)] 
           md:ml-64 
-          ${/* padding bottom on mobile for bottom nav */ ""} 
-          pb-20 md:pb-4
         `}
       >
         {children}

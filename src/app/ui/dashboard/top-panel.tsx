@@ -140,9 +140,9 @@ export default function TopPanel() {
         </div>
 
         <div className="items-center">
-          <button className="flex gap-1 border drop-shadow-sm px-4 py-3 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+          <button className="flex gap-1 border font-semibold drop-shadow-sm px-4 py-3 rounded-lg text-sm">
             Alerts 
-            <BellAlertIcon className="h-5  w-5 text-gray-700" /> 
+            <BellAlertIcon className="h-5 w-5" /> 
           </button>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import postgres from 'postgres'
-import { db } from '../db/kysely/client'
+import { db } from '../../../db/kysely/client'
 import {
     LatestSensorsList,
     SensorData
