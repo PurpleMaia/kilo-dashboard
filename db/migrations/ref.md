@@ -13,3 +13,6 @@
 `migrate -database "${DATABASE_URL}" -path db/migrations force <version that is good>`
 3. then try again
 `migrate -database "${DATABASE_URL}" -path db/migrations up `
+
+### UPDATE KYSELY-CODEGEN
+`pnpm kysely-codegen`
