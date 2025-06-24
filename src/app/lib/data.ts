@@ -9,7 +9,7 @@ import {
 const sql = postgres(process.env.DATABASE_URL!)
 
 // grab the latest data from each sensor type
-export async function fetchLatestSensorsData() {
+export async function fetchLatestSensorsData(): Promise<LatestSensorsList[]> {
     try {
         // return await fetcher<SensorData[]>('/sensors/latest')
         const data = await sql<LatestSensorsList[]>`
@@ -20,6 +20,7 @@ export async function fetchLatestSensorsData() {
             JOIN sensor s ON m.sensor_id = s.id
             ORDER BY s.name, m.timestamp DESC;
         `
+        return data
     } catch (error) {
     console.error('API Error:', error);
     throw new Error('Failed to fetch the latest sensor data.');
