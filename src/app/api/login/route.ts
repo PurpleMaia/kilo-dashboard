@@ -32,8 +32,10 @@ export async function POST(request: Request) {
     // Set session cookie
     const { origin } = new URL(request.url)
     const response = NextResponse.redirect(`${origin}/dashboard`);
-    setSessionTokenCookie(token);
+
+    setSessionTokenCookie(response, token);
     console.log(user, token)
+
     return response;
 
     } catch (error) {
