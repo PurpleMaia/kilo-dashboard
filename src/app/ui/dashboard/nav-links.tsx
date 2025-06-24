@@ -5,7 +5,8 @@ import {
   DocumentDuplicateIcon,
   ArrowUpTrayIcon,
   UserCircleIcon,
-  EyeIcon
+  EyeIcon,
+  UserGroupIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link' // no page refresh, optimizes and prefetches code on navigation
 import { usePathname } from 'next/navigation'; // React web hook (client) to get the current path (need to declare a Client Component)
