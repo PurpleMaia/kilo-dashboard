@@ -6,6 +6,7 @@ interface CSVFile {
   file: File;
   id: string;
   data: any[];
+  headers: any[];
   landID: string;
   sensorID: string;
 }
@@ -67,11 +68,15 @@ export default function Upload() {
                 });
 
                 // TODO add a checker to see if headers contain "timestamp" equivalent (can be push into more detail)
-
+                //     if (metricParts.length < 3) {
+                //     // TODO check this on client-side
+                //     continue;
+                // }
                 const newFile: CSVFile = {
                     file,
                     id: Math.random().toString(36).substr(2, 9),
                     data: data,
+                    headers: headers,
                     landID: '',
                     sensorID: ''
                 };
@@ -124,7 +129,8 @@ export default function Upload() {
                 fileName: file.file.name,
                 landID: file.landID,
                 sensorID: file.sensorID,
-                data: file.data // This contains the parsed CSV data
+                data: file.data, // This contains the parsed CSV data
+                headers: file.headers
             }));
             const response = await fetch('/api/upload', {
                 method: 'POST',

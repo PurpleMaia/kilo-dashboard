@@ -13,6 +13,7 @@ interface UploadFile {
   landID: string;
   sensorID: string;
   data: CSVRow[];
+  headers: string[];
 }
 
 export async function POST(request: Request) {
@@ -35,42 +36,42 @@ export async function POST(request: Request) {
     if (!files || files.length === 0) {
       return NextResponse.json({ error: 'No files provided' }, { status: 400 });
     }
-
     console.log(`files.length = ${files.length}`)
+    console.log(JSON.stringify(files))
 
+    
     const results = [];
 
     for (const file of files) {
       try {
-        if (!file.data || file.data.length === 0) {
-          results.push({
-            fileName: file.fileName,
-            success: false,
-            error: 'No data found in file'
-          });
-          continue;
-        }
-
-        // Get headers from first row
-        const headers = Object.keys(file.data[0]);
-        
-        // Validate required columns
-        if (!headers.some(h => h.toLowerCase().includes('timestamp'))) {
-          results.push({
-            fileName: file.fileName,
-            success: false,
-            error: 'CSV must contain a timestamp column'
-          });
-          continue;
-        }
-
         // Process each row and insert into database
         let processedRows = 0;
         let errors = 0;
 
+        // Prepare and assign mappings to metric types, units, categories in each header
+        console.log(file.headers)        
+        let mappings
+        for (const header of file.headers) {
+            const metricParts = header.split('_');
+            const category = metricParts[0];
+            const metric = metricParts[1];
+            const unit = metricParts[2];
+            mappings = await getMetricMapping(category, metric)
+        }
+
+        if (!mappings) {
+            results.push({
+                fileName: file.fileName,
+                success: false,
+                error: 'No valid metric headers found (format: category_metric_unit)'
+            });
+            continue;
+        }
+        
+
         for (const row of file.data) {
           try {
-            // Parse timestamp
+            // Get timestamp
             const timestamp = new Date(row.timestamp);
             if (isNaN(timestamp.getTime())) {
               errors++;
@@ -80,17 +81,6 @@ export async function POST(request: Request) {
             // Process each metric column (excluding timestamp)
             for (const [column, value] of Object.entries(row)) {
               if (column.toLowerCase() === 'timestamp') continue;
-              
-              // Parse metric name (format: category_metric_unit)
-              const metricParts = column.split('_');
-              if (metricParts.length < 3) {
-                errors++;
-                continue;
-              }
-
-              const category = metricParts[0];
-              const metric = metricParts[1];
-              const unit = metricParts[2];
 
               // Convert value to number
               const numericValue = parseFloat(value as string);
@@ -105,8 +95,9 @@ export async function POST(request: Request) {
                 .values({
                   value: numericValue,
                   timestamp: timestamp,
-                  metric_type: 1, // You might want to map this to a metric_types table
-                  category: 1,    // You might want to map this to a categories table
+                //   unit: unit,
+                  metric_type: mappings.metrictype_id, // You might want to map this to a metric_types table
+                  category: mappings.category_id,    // You might want to map this to a categories table
                   sensor_id: parseInt(file.sensorID)
                 })
                 .execute();
@@ -153,4 +144,39 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+}
+
+interface Mappings {
+    metrictype_id: number | undefined,
+    category_id: number | undefined,
+}
+
+async function getMetricMapping(categoryFromHeader: string, metricFromHeader: string): Promise<Mappings> {
+    const existingMetricType = await db
+        .selectFrom('metric_type')
+        .select(['id', 'type_name'])
+        .where('type_name', '=', metricFromHeader)
+        .executeTakeFirst();
+
+    const findCategory = await db
+        .selectFrom('category')
+        .select(['id', 'category_name'])
+        .where('category_name', '=', categoryFromHeader)
+        .executeTakeFirst();
+        
+    if (existingMetricType) {
+        return {
+            metrictype_id: existingMetricType.id,
+            category_id: findCategory?.id
+        }
+    } else {
+        const inserted = await db.insertInto('metric_type')
+            .values([metricFromHeader, findCategory?.id])
+            .returning(['id', 'type_name'])
+            .executeTakeFirst()
+        return {
+            metrictype_id: inserted?.id,
+            category_id: findCategory?.id
+        }
+    }
 }
