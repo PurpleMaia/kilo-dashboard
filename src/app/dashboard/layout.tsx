@@ -1,22 +1,29 @@
 import SideNav from "../ui/dashboard/sidenav"
+import BottomNav from "../ui/dashboard/bottomnav"
 import TopPanel from "../ui/dashboard/top-panel"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
     <>      
       <div className="relative h-screen overflow-hidden">
-      {/* Topbar */}
+      {/* Topbar (edit to just show the hawaiian things */}
       <header className="flex items-center z-0 relative">
-        <TopPanel />
+        <TopPanel /> 
       </header>
 
       {/* Sidebar - layered on top */}
-      <aside className="absolute top-0 left-0 w-64 h-full z-10g">
+      <aside className="hidden md:block absolute top-0 left-0 w-64 h-full z-10g">
         <SideNav />
       </aside>
 
       {/* Main content, scrollable */}
-      <main className="ml-64 h-[calc(100vh-4rem)] overflow-auto p-4 bg-white">
+      <main
+        className={`
+          bg-white overflow-auto p-4
+          h-[calc(100vh-4rem)] 
+          md:ml-64 
+        `}
+      >
         {children}
       </main>
     </div>   

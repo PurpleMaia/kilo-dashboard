@@ -23,6 +23,9 @@ importers:
       heroicons:
         specifier: ^2.2.0
         version: 2.2.0
+      hi-base64:
+        specifier: ^0.4.1
+        version: 0.4.1
       kysely:
         specifier: ^0.28.2
         version: 0.28.2
@@ -1312,6 +1315,9 @@ packages:
 
   heroicons@2.2.0:
     resolution: {integrity: sha512-yOwvztmNiBWqR946t+JdgZmyzEmnRMC2nxvHFC90bF1SUttwB6yJKYeme1JeEcBfobdOs827nCyiWBS2z/brog==}
+
+  hi-base64@0.4.1:
+    resolution: {integrity: sha512-jjlQldPb9vKOGxPRk5vT0dAH7Cb5hrYKtro6+FsjgMgZhdPaYEiLDZYtDqi+bfSIKEok+bpTLOF76ZkgxCyaWw==}
 
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
@@ -3559,6 +3565,8 @@ snapshots:
       function-bind: 1.1.2
 
   heroicons@2.2.0: {}
+
+  hi-base64@0.4.1: {}
 
   ignore@5.3.2: {}
 

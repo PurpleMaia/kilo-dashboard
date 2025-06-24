@@ -1,6 +1,5 @@
-// import postgres from 'postgres'
-// import { db } from '../db/kysely/client'
-import { fetcher } from '../db/api'
+import postgres from 'postgres'
+import { db } from '../../../db/kysely/client'
 import {
     LatestSensorsList,
     SensorData
