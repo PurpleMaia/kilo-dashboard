@@ -3,7 +3,7 @@ import { Kysely, PostgresDialect } from 'kysely';
 // import { PostgresJSDialect } from 'kysely-postgres-js'
 import { Pool } from 'pg'
 // import postgres from 'postgres'
-import { DB } from 'kysely-codegen'
+import { DB } from '../generated'
 
 export const db = new Kysely<DB>({
   dialect: new PostgresDialect({
