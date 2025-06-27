@@ -1,5 +1,5 @@
 'use client'
-import { ExclamationTriangleIcon, CheckCircleIcon, TrashIcon, DocumentTextIcon, ArrowUpTrayIcon, XMarkIcon, MapPinIcon, EyeIcon, EyeSlashIcon, CpuChipIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon, TrashIcon, DocumentTextIcon, ArrowUpTrayIcon, XMarkIcon, MapPinIcon, EyeIcon, EyeSlashIcon, CpuChipIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { useState, useRef } from "react";
 
 interface CSVFile {
@@ -9,6 +9,7 @@ interface CSVFile {
   headers: any[];
   landID: string;
   sensorID: string;
+  errors?: string[];
 }
 
 export default function Upload() {
@@ -45,45 +46,65 @@ export default function Upload() {
 
         if (csvFiles.length === 0) return;
         
-        // parsing text for preview, prepare package, check headers
+        // lightweight parsing text for preview, then check headers and prepare file package
         for (const file of csvFiles) {
             try {
                 const text = await file.text();
                 const lines = text.split('\n').filter(line => line.trim());
+                let errors: string[] = []
                 
                 if (lines.length < 2) {
-                    alert(`${file.name}: CSV file must contain at least a header row and one data row`);
+                    errors.push(`CSV file must contain at least a header row and one data row`);
                     continue;
                 }
 
-                const headers = lines[0].split(',').map(h => h.trim());
+                const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
                 
-                const data = lines.slice(1).map((line, index) => {
-                const values = line.split(',').map(v => v.trim());
-                const row: any = { _row: index + 2 };
-                headers.forEach((header, i) => {
-                        row[header] = values[i] || '';
+                // check for required headers
+                if (!headers.some(h => h.includes('time'))) {
+                    errors.push(` Missing 'timestamp' column`);
+                }
+                if (!headers.some(h => h.includes('sensor'))) {
+                    errors.push(`Missing 'Sensor ID' column`);
+                }
+                if (!headers.some(h => h.includes('location'))) {
+                    errors.push(`Missing 'Location Name' column`);
+                }
+                if (!headers.some(h => h.includes('region'))) {
+                    errors.push(`Missing 'Region Name' column`);
+                }
+                // for preview
+                const data = lines.map((line, index) => {
+                    const values = line.split(',').map(v => v.trim());
+                    const row: any = {};
+                    headers.forEach((header, i) => {
+                            row[header] = values[i] || '';
                     });
                     return row;
                 });
 
-                // TODO add a checker to see if headers contain "timestamp" equivalent (can be push into more detail)
-                //     if (metricParts.length < 3) {
-                //     // TODO check this on client-side
-                //     continue;
-                // }
+            
                 const newFile: CSVFile = {
                     file,
                     id: Math.random().toString(36).substr(2, 9),
                     data: data,
                     headers: headers,
                     landID: '',
-                    sensorID: ''
+                    sensorID: '',
+                    errors: errors.length > 0 ? errors : undefined
                 };
 
                 setFiles(prev => [...prev, newFile]);
             } catch (error) {
-                alert(`Error processing ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                setFiles(prev => [...prev, {
+                            file,
+                            id: Math.random().toString(36).substr(2, 9),
+                            data: [],
+                            headers: [],
+                            landID: '',
+                            sensorID: '',
+                            errors: [`Error processing file: ${error instanceof Error ? error.message : 'Unknown error'}`]
+                }]);           
             }
         }
     };
@@ -116,14 +137,7 @@ export default function Upload() {
 
     // prepare package to api route (already parsed the data, just put it to server for more parsing)
     const handleUploadAll = async () => {
-        try {
-            // Validate all files have metadata
-            const invalidFiles = files.filter(f => !f.landID || !f.sensorID);
-            if (invalidFiles.length > 0) {
-                alert('Please select land and sensor for all files before uploading.');
-                return;
-            }
-
+        try {                    
             // Prepare the data to send
             const uploadData = files.map(file => ({
                 fileName: file.file.name,
@@ -145,7 +159,7 @@ export default function Upload() {
                 if (response.ok) {
                 // Show success message
                 alert(`Upload completed!\n${result.summary.successfulFiles} files processed successfully.\n${result.summary.failedFiles} files failed.`);
-                
+                console.log(result.result)
                 // Clear files after successful upload
                 setFiles([]);
                 if (fileInputRef.current) {
@@ -235,59 +249,29 @@ export default function Upload() {
                             >
                             <XMarkIcon className="h-4 w-4" />
                             </button>
-                        </div>
-                        </div>
-
-                        {/* Metadata Configuration */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                            <MapPinIcon className="h-4 w-4 inline mr-1" />
-                            Loʻi / Māla
-                            </label>
-                            <select
-                            value={csvFile.landID}
-                            onChange={(e) => updateFileMetadata(csvFile.id, 'landID', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                            >
-                            <option value="">Select a land plot...</option>
-                            {availableLands.map(land => (
-                                <option key={land.id} value={land.id}>{land.name}</option>
-                            ))}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                            <CpuChipIcon className="h-4 w-4 inline mr-1" />
-                            Target Sensor
-                            </label>
-                            <select
-                            value={csvFile.sensorID}
-                            onChange={(e) => updateFileMetadata(csvFile.id, 'sensorID', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                            >
-                            <option value="">Select a sensor...</option>
-                            {availableSensors.map(sensor => (
-                                <option key={sensor.id} value={sensor.id}>{sensor.id} - {sensor.name}</option>
-                            ))}
-                            </select>
-                        </div>
-                        </div>
+                        </div>                        
+                    </div>                                            
 
                         {/* Validation Status */}
-                        <div className="flex items-center space-x-2 text-sm">
-                        {csvFile.landID && csvFile.sensorID ? (
-                            <div className="flex items-center text-green-600">
-                            <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                            Ready for upload
-                            </div>
-                        ) : (
-                            <div className="flex items-center text-yellow-600">
-                            <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
-                            Missing metadata - please select land and sensor
-                            </div>
-                        )}
+                        <div className="flex items-center space-x-2 text-sm">     
+                            {csvFile.errors && csvFile.errors.length > 0 ? (
+                                <div className="flex flex-col text-red-600">
+                                <div className="flex items-center">
+                                    <ExclamationCircleIcon className="w-5 h-5 text-red-500 mr-2" />
+                                    <span>FILE HAS ERRORS:</span>
+                                </div>
+                                <ul className="ml-4 list-disc">
+                                    {csvFile.errors.map((err, idx) => (
+                                    <li key={idx}>{err}</li>
+                                    ))}
+                                </ul>
+                                </div>
+                            ) : (
+                                <div className="flex items-center text-green-600">
+                                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                Ready for upload
+                                </div>
+                            )}                                                                                    
                         </div>
 
                         {/* Preview Data */}
@@ -349,7 +333,13 @@ export default function Upload() {
                         <li><code>soil_phosphorous_m</code></li>
                     </ul>
                     <br />
-                    <p>Your CSV needs to have a timestamp column</p>
+                    <p>Your CSV needs these columns:</p>
+                    <ul className="mt-1 list-disc list-inside space-y-1">
+                        <li><code>Timestamp</code></li>
+                        <li><code>Sensor ID</code></li>
+                        <li><code>Location Name</code></li>
+                        <li><code>Region Name</code></li>
+                    </ul>
                     </div>
                 </div>
                 </div>
