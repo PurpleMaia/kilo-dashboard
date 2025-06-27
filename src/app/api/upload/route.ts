@@ -51,7 +51,10 @@ export async function POST(request: Request) {
         const mappings = await getMetricMapping(file.headers.slice(1))
         console.log(JSON.stringify(mappings))
 
-        const timeHeader = file.headers[0] // assuming timestamp header is in the first column (TODO need to error-proof)        
+        const timeHeader = file.headers.find(h => h.toLowerCase().includes('time'))
+        if (!timeHeader) {
+          throw new Error('No timestamp column found in headers')
+        }
         const sensorID = await getSensorID(file)
 
         // get latest timestamp from database of this sensor (TODO "of this sensor")
@@ -61,7 +64,7 @@ export async function POST(request: Request) {
             .orderBy('timestamp', 'desc')
             .limit(1)
             .execute()
-        const latestTimestamp = latestTimeRow.timestamp ?? new Date()
+        const latestTimestamp = latestTimeRow.timestamp
         
         for (const row of file.data) {          
 
