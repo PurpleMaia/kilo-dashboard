@@ -90,7 +90,6 @@ export async function POST(request: Request) {
               // unit: unit,
               metric_type: mappings[column].metrictype_id,
               // category: mappings.category_id,    
-              category: 1,    
               sensor_id: sensorID
             })
             .execute();
