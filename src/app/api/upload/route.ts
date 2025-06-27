@@ -5,7 +5,6 @@ import { validateSessionToken } from '@/app/lib/auth';
 
 interface CSVRow {
   [key: string]: string | number;
-  timestamp: string;
 }
 
 interface UploadFile {
@@ -15,6 +14,8 @@ interface UploadFile {
   data: CSVRow[];
   headers: string[];
 }
+
+
 
 export async function POST(request: Request) {
   try {
@@ -37,77 +38,61 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No files provided' }, { status: 400 });
     }
     console.log(`files.length = ${files.length}`)
-    console.log(JSON.stringify(files))
-
     
     const results = [];
 
-    for (const file of files) {
-      try {
+    for (const file of files) {      
         // Process each row and insert into database
         let processedRows = 0;
         let errors = 0;
 
         // Prepare and assign mappings to metric types, units, categories in each header
-        console.log(file.headers)        
-        let mappings
-        for (const header of file.headers) {
-            const metricParts = header.split('_');
-            const category = metricParts[0];
-            const metric = metricParts[1];
-            const unit = metricParts[2];
-            mappings = await getMetricMapping(category, metric)
-        }
+        console.log('headers:', file.headers)    
+        const mappings = await getMetricMapping(file.headers.slice(1))
+        console.log(JSON.stringify(mappings))
 
-        if (!mappings) {
-            results.push({
-                fileName: file.fileName,
-                success: false,
-                error: 'No valid metric headers found (format: category_metric_unit)'
-            });
-            continue;
-        }
+        const timeHeader = file.headers[0] // assuming timestamp header is in the first column (TODO need to error-proof)        
+        const sensorID = await getSensorID(file)
+
+        // get latest timestamp from database of this sensor (TODO "of this sensor")
+        const [latestTimeRow] = await db
+            .selectFrom('metric')
+            .select('timestamp')
+            .orderBy('timestamp', 'desc')
+            .limit(1)
+            .execute()
+        const latestTimestamp = latestTimeRow.timestamp ?? new Date()
         
+        for (const row of file.data) {          
 
-        for (const row of file.data) {
-          try {
-            // Get timestamp
-            const timestamp = new Date(row.timestamp);
-            if (isNaN(timestamp.getTime())) {
-              errors++;
-              continue;
+          // Convert timestamp            
+          const rawTS = row[timeHeader]
+          const timestamp = formatTime(latestTimestamp, String(rawTS))
+          // console.log('latestTimestamp', latestTimestamp)
+          // console.log('This row\'s timestamp', timestamp)
+
+          // Process each metric column (excluding _row & timestamp)
+          for (const [column, value] of Object.entries(row).slice(2)) {
+            const metricValue = parseFloat(value as string)
+            if (isNaN(metricValue)) {
+              errors++
+              continue
             }
-
-            // Process each metric column (excluding timestamp)
-            for (const [column, value] of Object.entries(row)) {
-              if (column.toLowerCase() === 'timestamp') continue;
-
-              // Convert value to number
-              const numericValue = parseFloat(value as string);
-              if (isNaN(numericValue)) {
-                errors++;
-                continue;
-              }
-
-              // Insert into database
-              await db
-                .insertInto('metric')
-                .values({
-                  value: numericValue,
-                  timestamp: timestamp,
-                //   unit: unit,
-                  metric_type: mappings.metrictype_id, // You might want to map this to a metric_types table
-                  category: mappings.category_id,    // You might want to map this to a categories table
-                  sensor_id: parseInt(file.sensorID)
-                })
-                .execute();
-
+            
+            await db
+            .insertInto('metric')
+            .values({
+              value: metricValue,
+              timestamp: timestamp,
+              // unit: unit,
+              metric_type: mappings[column].metrictype_id,
+              // category: mappings.category_id,    
+              category: 1,    
+              sensor_id: sensorID
+            })
+            .execute();
               processedRows++;
             }
-          } catch (rowError) {
-            errors++;
-            console.error(`Error processing row in ${file.fileName}:`, rowError);
-          }
         }
 
         results.push({
@@ -118,18 +103,9 @@ export async function POST(request: Request) {
           message: `Successfully processed ${processedRows} metrics with ${errors} errors`
         });
 
-      } catch (fileError) {
-        results.push({
-          fileName: file.fileName,
-          success: false,
-          error: fileError instanceof Error ? fileError.message : 'Unknown error'
-        });
-      }
-    }
-
+      } 
     return NextResponse.json({
       success: true,
-      results,
       summary: {
         totalFiles: files.length,
         successfulFiles: results.filter(r => r.success).length,
@@ -146,37 +122,83 @@ export async function POST(request: Request) {
   }
 }
 
-interface Mappings {
-    metrictype_id: number | undefined,
-    category_id: number | undefined,
+interface Mapping {
+  metrictype_id: number | undefined
+  // category_id: number | undefined,
 }
+interface Mappings {
+    [header: string]: Mapping,
+}
+// TODO find the existing category to also into the metric_type table
+async function getMetricMapping(headers: string[]): Promise<Mappings> {
+    const mappings: Mappings = {};
+    for (const header of headers) {
+        const [metric, unit] = header.split('_');
+        const existingMetricType = await db
+            .selectFrom('metric_type')
+            .select(['id', 'type_name'])
+            .where('type_name', '=', metric)
+            .executeTakeFirst();
 
-async function getMetricMapping(categoryFromHeader: string, metricFromHeader: string): Promise<Mappings> {
-    const existingMetricType = await db
-        .selectFrom('metric_type')
-        .select(['id', 'type_name'])
-        .where('type_name', '=', metricFromHeader)
-        .executeTakeFirst();
-
-    const findCategory = await db
-        .selectFrom('category')
-        .select(['id', 'category_name'])
-        .where('category_name', '=', categoryFromHeader)
-        .executeTakeFirst();
-        
-    if (existingMetricType) {
-        return {
-            metrictype_id: existingMetricType.id,
-            category_id: findCategory?.id
-        }
-    } else {
-        const inserted = await db.insertInto('metric_type')
-            .values([metricFromHeader, findCategory?.id])
-            .returning(['id', 'type_name'])
-            .executeTakeFirst()
-        return {
-            metrictype_id: inserted?.id,
-            category_id: findCategory?.id
+        if (existingMetricType) {
+            mappings[header] = {
+                metrictype_id: existingMetricType.id,
+            };
+        } else {
+            const inserted = await db.insertInto('metric_type')
+                .values({
+                    type_name: metric,
+                    unit: unit
+                })
+                .returning(['id', 'type_name'])
+                .executeTakeFirst();
+            mappings[header] = {
+                metrictype_id: inserted?.id,
+            };
         }
     }
+    return mappings;
+}
+
+// placeholder function
+async function getSensorID(file: UploadFile): Promise<number> {
+  let sensorID 
+  const existingSensor = await db
+    .selectFrom('sensor')
+    .select('id')
+    .where('serial', '=', file.sensorID)
+    .executeTakeFirst()
+
+  if (existingSensor) {
+    sensorID = existingSensor.id
+  } else {
+    const inserted = await db.insertInto('sensor')
+      .values({
+        name: file.sensorID,
+        serial: file.sensorID,
+        mala_id: 3 // testing for now
+      })
+      .returning('id')
+      .executeTakeFirst()
+      sensorID = inserted?.id
+  }
+
+  if (sensorID === undefined) {
+    throw new Error('Failed to get or create sensor ID')
+  }
+
+  return sensorID
+}
+
+// convert ms units of time given, to a Date object from latest timestamp
+function formatTime(latestTimestamp: Date, elapsedTimeStr: string) {
+  const elapsedTime = Number(elapsedTimeStr);
+  const newTimestamp = new Date(latestTimestamp.getTime() + elapsedTime);
+  return newTimestamp
+}
+
+function normalize(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[()]/g, "") //g is for global search
 }
