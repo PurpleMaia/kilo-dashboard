@@ -11,6 +11,7 @@ interface CsvEditorProps {
 interface ValidationResult {
   isValid: boolean;
   errors: string[];
+  warnings: string[];
 }
 
 export default function CsvEditor({ data: initialData, headers: initialHeaders, onDataChange, onClose }: CsvEditorProps) {
@@ -39,6 +40,7 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
 
   const validateCsv = (): ValidationResult => {
     const errors: string[] = [];
+    const warnings: string[] = [];
 
     // Check if we have data
     if (data.length < 2) {
@@ -61,9 +63,25 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
       errors.push('Missing required column: region name');
     }
 
+    // Check for metric columns format (category_metric_unit)
+    const metricColumns = headers.filter(h => 
+      !h.toLowerCase().includes('time') && 
+      !h.toLowerCase().includes('sensor') && 
+      !h.toLowerCase().includes('location') && 
+      !h.toLowerCase().includes('region')
+    );
+
+    metricColumns.forEach(column => {
+      const parts = column.split('_');
+      if (parts.length < 2) {
+        warnings.push(`Column "${column}" doesn't follow the recommended format: category_metric_unit`);
+      }
+    });
+
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
+      warnings
     };
   };
 
@@ -269,9 +287,14 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
                         <span className="font-medium text-red-600">Errors: {validationResult.errors.length}</span>
                       </div>
                     )}
+                    {validationResult.warnings.length > 0 && (
+                      <div>
+                        <span className="font-medium text-yellow-600">Warnings: {validationResult.warnings.length}</span>
+                      </div>
+                    )}
                     
                     {/* Show Details Button */}
-                    {validationResult.errors.length > 0 && !showValidation && (
+                    {(validationResult.errors.length > 0 || validationResult.warnings.length > 0) && !showValidation && (
                       <div className="mt-2">
                         <button
                           onClick={() => setShowValidation(true)}
@@ -283,16 +306,29 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
                     )}
                     
                     {/* Detailed Results */}
-                    {showValidation && validationResult.errors.length > 0 && (
+                    {showValidation && (validationResult.errors.length > 0 || validationResult.warnings.length > 0) && (
                       <div className="mt-3 pt-3 border-t border-gray-200">
-                        <div className="mb-3">
-                          <h4 className="text-sm font-medium text-red-800 mb-1">Errors:</h4>
-                          <ul className="text-sm text-red-700 list-disc list-inside space-y-1">
-                            {validationResult.errors.map((error, index) => (
-                              <li key={index}>{error}</li>
-                            ))}
-                          </ul>
-                        </div>
+                        {validationResult.errors.length > 0 && (
+                          <div className="mb-3">
+                            <h4 className="text-sm font-medium text-red-800 mb-1">Errors:</h4>
+                            <ul className="text-sm text-red-700 list-disc list-inside space-y-1">
+                              {validationResult.errors.map((error, index) => (
+                                <li key={index}>{error}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
+                        {validationResult.warnings.length > 0 && (
+                          <div className="mb-3">
+                            <h4 className="text-sm font-medium text-yellow-800 mb-1">Warnings:</h4>
+                            <ul className="text-sm text-yellow-700 list-disc list-inside space-y-1">
+                              {validationResult.warnings.map((warning, index) => (
+                                <li key={index}>{warning}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                         
                         <button
                           onClick={() => setShowValidation(false)}
