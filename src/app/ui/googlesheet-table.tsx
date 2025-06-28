@@ -26,6 +26,12 @@ export default function GoogleSheetTable({
   const [error, setError] = useState<string | null>(null);
   const [sortColumn, setSortColumn] = useState<number | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [timestamp, setTimestamp] = useState<string>('');
+
+  // Update timestamp on client side only
+  useEffect(() => {
+    setTimestamp(new Date().toLocaleString());
+  }, []);
 
   useEffect(() => {
     const fetchSheetData = async () => {
@@ -122,7 +128,7 @@ export default function GoogleSheetTable({
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">{title}</h1>
         <p className="text-gray-600">
-          {data?.rows.length || 0} rows of data • Last updated: {new Date().toLocaleString()}
+          {data?.rows.length || 0} rows of data • Last updated: {timestamp}
         </p>
       </div>
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface GoogleSheetProps {
   sheetUrl: string;
@@ -14,6 +14,7 @@ export default function GoogleSheet({
   height = 600 
 }: GoogleSheetProps) {
   const [isLoading, setIsLoading] = useState(true);
+  const [timestamp, setTimestamp] = useState<string>('');
 
   // Convert Google Sheets URL to embed format
   const getEmbedUrl = (url: string) => {
@@ -25,6 +26,11 @@ export default function GoogleSheet({
     }
     return url;
   };
+
+  // Update timestamp on client side only
+  useEffect(() => {
+    setTimestamp(new Date().toLocaleString());
+  }, []);
 
   const embedUrl = getEmbedUrl(sheetUrl);
 
@@ -62,7 +68,7 @@ export default function GoogleSheet({
         {/* Footer */}
         <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
           <p className="text-sm text-gray-500">
-            Data updates automatically • Last updated: {new Date().toLocaleString()}
+            Data updates automatically • Last updated: {timestamp || 'Loading...'}
           </p>
         </div>
       </div>

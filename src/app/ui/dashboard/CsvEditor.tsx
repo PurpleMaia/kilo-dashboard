@@ -23,6 +23,7 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
   const [newRowData, setNewRowData] = useState<string[]>([]);
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
   const [showValidation, setShowValidation] = useState(false);
+  const [showFormatRequirements, setShowFormatRequirements] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Initialize new row data
@@ -245,30 +246,50 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
           <div className="grid grid-cols-2 gap-6">
             {/* CSV Format Requirements - Left Side */}
             <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-              <h3 className="text-sm font-medium text-blue-800 mb-2">CSV Format Requirements</h3>
-              <div className="text-sm text-blue-700 space-y-2">
-                <p>Your CSV file should have columns in this format:</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li><code>(category)_(metric)_(unit)</code></li>
-                </ul>
-                <p>For example:</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li><code>water_pH_m</code></li>
-                  <li><code>soil_phosphorous_m</code></li>
-                </ul>
-                <p>Your CSV needs these columns:</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li><code>Timestamp</code></li>
-                  <li><code>Sensor ID</code></li>
-                  <li><code>Location Name</code></li>
-                  <li><code>Region Name</code></li>
-                </ul>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium text-blue-800">CSV Format Requirements</h3>
+                <button
+                  onClick={() => setShowFormatRequirements(!showFormatRequirements)}
+                  className="text-sm text-blue-600 hover:text-blue-800"
+                >
+                  {showFormatRequirements ? 'Hide details' : 'Show details'}
+                </button>
               </div>
+              {showFormatRequirements && (
+                <div className="text-sm text-blue-700 space-y-2">
+                  <p>Your CSV file should have columns in this format:</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li><code>(category)_(metric)_(unit)</code></li>
+                  </ul>
+                  <p>For example:</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li><code>water_pH_m</code></li>
+                    <li><code>soil_phosphorous_m</code></li>
+                  </ul>
+                  <p>Your CSV needs these columns:</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li><code>Timestamp</code></li>
+                    <li><code>Sensor ID</code></li>
+                    <li><code>Location Name</code></li>
+                    <li><code>Region Name</code></li>
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* CSV Validation Status - Right Side */}
             <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
-              <h3 className="text-sm font-medium text-gray-800 mb-2">CSV Validation Status</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium text-gray-800">CSV Validation Status</h3>
+                {(validationResult?.errors.length > 0 || validationResult?.warnings.length > 0) && (
+                  <button
+                    onClick={() => setShowValidation(!showValidation)}
+                    className="text-sm text-gray-600 hover:text-gray-800"
+                  >
+                    {showValidation ? 'Hide details' : 'Show details'}
+                  </button>
+                )}
+              </div>
               <div className="text-sm text-gray-700">
                 {validationResult ? (
                   <div className="space-y-2">
@@ -290,18 +311,6 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
                     {validationResult.warnings.length > 0 && (
                       <div>
                         <span className="font-medium text-yellow-600">Warnings: {validationResult.warnings.length}</span>
-                      </div>
-                    )}
-                    
-                    {/* Show Details Button */}
-                    {(validationResult.errors.length > 0 || validationResult.warnings.length > 0) && !showValidation && (
-                      <div className="mt-2">
-                        <button
-                          onClick={() => setShowValidation(true)}
-                          className="text-sm text-blue-600 hover:text-blue-800"
-                        >
-                          Show details
-                        </button>
                       </div>
                     )}
                     
@@ -329,13 +338,6 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
                             </ul>
                           </div>
                         )}
-                        
-                        <button
-                          onClick={() => setShowValidation(false)}
-                          className="text-sm text-gray-600 hover:text-gray-800"
-                        >
-                          Hide details
-                        </button>
                       </div>
                     )}
                   </div>
