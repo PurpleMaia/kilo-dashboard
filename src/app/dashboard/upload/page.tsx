@@ -1,6 +1,7 @@
 'use client'
-import { ExclamationTriangleIcon, TrashIcon, DocumentTextIcon, ArrowUpTrayIcon, XMarkIcon, MapPinIcon, EyeIcon, EyeSlashIcon, CpuChipIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon, TrashIcon, DocumentTextIcon, ArrowUpTrayIcon, XMarkIcon, MapPinIcon, EyeIcon, EyeSlashIcon, CpuChipIcon, ExclamationCircleIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { useState, useRef } from "react";
+import CsvEditor from "../../ui/dashboard/CsvEditor";
 
 interface CSVFile {
   file: File;
@@ -15,6 +16,7 @@ interface CSVFile {
 export default function Upload() {
     const [files, setFiles] = useState<CSVFile[]>([])
     const [showPreview, setShowPreview] = useState<string | null>(null);
+    const [editingFile, setEditingFile] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // const availableLands = await fetchLands()
@@ -179,6 +181,42 @@ export default function Upload() {
         setFiles([]);
     };
 
+    const handleDataEdit = (fileId: string, newData: any[], newHeaders: string[]) => {
+        // Re-validate the edited data
+        let errors: string[] = [];
+        
+        if (newData.length < 2) {
+            errors.push('CSV file must contain at least a header row and one data row');
+        }
+
+        const headerNames = newHeaders.map(h => h.toLowerCase());
+        
+        // Check for required headers
+        if (!headerNames.some(h => h.includes('time'))) {
+            errors.push('Missing required column: timestamp (or time)');
+        }
+        if (!headerNames.some(h => h.includes('sensor'))) {
+            errors.push('Missing required column: sensor id');
+        }
+        if (!headerNames.some(h => h.includes('location'))) {
+            errors.push('Missing required column: location name');
+        }
+        if (!headerNames.some(h => h.includes('region'))) {
+            errors.push('Missing required column: region name');
+        }
+
+        setFiles(prev => prev.map(f => 
+            f.id === fileId 
+                ? { 
+                    ...f, 
+                    data: newData, 
+                    headers: newHeaders,
+                    errors: errors.length > 0 ? errors : undefined
+                }
+                : f
+        ));
+    };
+
     return (
         <>
         <div className="space-y-6">
@@ -235,6 +273,13 @@ export default function Upload() {
                         </div>
                         
                         <div className="flex items-center space-x-2">
+                            <button
+                            onClick={() => setEditingFile(csvFile.id)}
+                            className="p-2 text-gray-400 hover:text-blue-600 rounded-md hover:bg-gray-100"
+                            title="Edit CSV data"
+                            >
+                            <PencilIcon className="h-4 w-4" />
+                            </button>
                             <button
                             onClick={() => setShowPreview(showPreview === csvFile.id ? null : csvFile.id)}
                             className="p-2 text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100"
@@ -315,36 +360,6 @@ export default function Upload() {
                 </div>
             )}
 
-            {/* File Format Guidelines */}
-            <div className="bg-lime-50 border border-lime-600 rounded-md p-4">
-                <div className="flex">
-                <ExclamationTriangleIcon className="h-5 w-5 text-lime-900 mt-0.5" />
-                <div className="ml-3">
-                    <h3 className="text-sm font-bold text-lime-900">CSV Format Requirements</h3>
-                    <div className="mt-2 text-sm text-lime-900">
-                    <p>Your CSV file should have columns in this format:</p>
-                    <ul className="mt-1 list-disc list-inside space-y-1">
-                        <li><code>(category)_(metric)_(unit)</code></li>
-                    </ul>
-                    <br />
-                    <p>For example:</p>
-                    <ul className="mt-1 list-disc list-inside space-y-1">
-                        <li><code>water_pH_m</code></li>
-                        <li><code>soil_phosphorous_m</code></li>
-                    </ul>
-                    <br />
-                    <p>Your CSV needs these columns:</p>
-                    <ul className="mt-1 list-disc list-inside space-y-1">
-                        <li><code>Timestamp</code></li>
-                        <li><code>Sensor ID</code></li>
-                        <li><code>Location Name</code></li>
-                        <li><code>Region Name</code></li>
-                    </ul>
-                    </div>
-                </div>
-                </div>
-            </div>
-
             {/* Upload Button */}
             {files.length > 0 && (
                 <div className="flex justify-end space-x-3">
@@ -364,6 +379,21 @@ export default function Upload() {
                 </button>
                 </div>
             )}
+
+            {/* CSV Editor Modal */}
+            {editingFile && (() => {
+                const file = files.find(f => f.id === editingFile);
+                if (!file) return null;
+                
+                return (
+                    <CsvEditor
+                        data={file.data}
+                        headers={file.headers}
+                        onDataChange={(newData, newHeaders) => handleDataEdit(editingFile, newData, newHeaders)}
+                        onClose={() => setEditingFile(null)}
+                    />
+                );
+            })()}
         </div>
         </>
     )
