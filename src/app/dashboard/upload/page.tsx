@@ -74,12 +74,19 @@ export default function Upload() {
                     if (sensorIdIdx !== -1) sensorInfo.sensorID = firstData[sensorIdIdx] || '';
                 }
 
-                // For preview: exclude region, location, sensor id columns
-                const previewHeaders = headers.filter(h => h !== 'region name' && h !== 'location name' && h !== 'sensor id');
-                const data = lines.slice(1, 6).map((line, index) => {
+                // exclude region, location, and any 'id' headers from final data obj
+                const dataHeaders = headers.filter(h => {
+                    const normalized = h.replace(/\s+/g, '').toLowerCase();
+                    if (normalized.includes('id')) return false;
+                    if (normalized.includes('location')) return false;
+                    if (normalized.includes('region')) return false;
+                    return true;
+                });
+                // only grab data within the dataHeaders
+                const data = lines.map((line, index) => {
                     const values = line.split(',').map(v => v.trim());
                     const row: any = {};
-                    previewHeaders.forEach((header) => {
+                    dataHeaders.forEach((header) => {
                         const idx = headers.indexOf(header);
                         row[header] = values[idx] || '';
                     });
@@ -90,7 +97,7 @@ export default function Upload() {
                     file,
                     id: Math.random().toString(36).substr(2, 9),
                     data: data,
-                    headers: headers,
+                    headers: dataHeaders,
                     errors: errors.length > 0 ? errors : undefined,
                     sensorInfo: sensorInfo
                 };
@@ -107,12 +114,6 @@ export default function Upload() {
                 }]);           
             }
         }
-    };
-
-    const updateFileMetadata = (fileId: string, field: 'landID' | 'sensorID', value: string) => {
-        setFiles(prev => prev.map(f => 
-        f.id === fileId ? { ...f, [field]: value } : f
-        ));
     };
 
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,7 +143,8 @@ export default function Upload() {
             const uploadData = files.map(file => ({
                 fileName: file.file.name,                
                 data: file.data, // This contains the parsed CSV data
-                headers: file.headers
+                headers: file.headers,
+                sensorInfo: file.sensorInfo
             }));
             const response = await fetch('/api/upload', {
                 method: 'POST',
