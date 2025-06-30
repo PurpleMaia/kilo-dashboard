@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Sidebar - layered on top */}
-      <aside className="hidden md:block absolute top-0 left-0 w-64 h-full z-10g">
+      <aside className="hidden md:block absolute top-0 left-0 w-64 h-full z-10">
         <SideNav />
       </aside>
 
@@ -20,7 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <main
         className={`
           bg-white overflow-auto p-4
-          h-[calc(100vh-4rem)] 
+          h-[calc(100vh-7rem)] 
           md:ml-64 
         `}
       >

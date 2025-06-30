@@ -1,4 +1,3 @@
-
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,6 +6,21 @@ import { redirect } from "next/navigation";
 import { validateSessionToken } from "./lib/auth";
 
 export default async function Home() {
+  // Check if user is already logged in
+  const sessionCookie = cookies().get('auth_session');
+  
+  if (sessionCookie) {
+    try {
+      const isValid = await validateSessionToken(sessionCookie.value);
+      if (isValid) {
+        redirect('/dashboard');
+      }
+    } catch (error) {
+      // Invalid session, continue to login form
+      console.log('Invalid session, showing login form');
+    }
+  }
+
   // Simple login/signup form (client component)
   // For demo, just show the form UI
   return (
@@ -43,7 +57,7 @@ export default async function Home() {
           </form>
         </div>
         {/* <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
-          Add Hero Images Here, good practice to set w & h to be the aspect ration identical to source img
+          Add Hero Images Here, good practice to set w & h to be the aspect ratio identical to source img
           <Image
             src="/hero-desktop.png"
             width={1000}
