@@ -29,7 +29,7 @@ const links = [
   { name: 'Soil Quality', href: '/dashboard/soil', icon: UserGroupIcon },
   { name: 'Sensors', href: '/dashboard/sensors', icon: UserGroupIcon },
   {
-    name: 'Upload',
+    name: 'Upload Data',
     href: '/dashboard/upload',
     icon: ArrowUpTrayIcon,
   },

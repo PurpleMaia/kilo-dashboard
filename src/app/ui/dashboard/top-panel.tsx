@@ -11,7 +11,8 @@ import {
   DocumentDuplicateIcon,
   ArrowUpTrayIcon,
   UserCircleIcon,
-  EyeIcon
+  EyeIcon,
+  PowerIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link'
 import clsx from 'clsx';
@@ -59,16 +60,73 @@ export default function TopPanel() {
   const currentTitle = pageTitles[pathname];
 
   const [isOpen, setIsOpen] = useState(false);
-  
-    // // Time Section
-    // const [currentTime, setCurrentTime] = useState(new Date());
-    // useEffect(() => {
-    //     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    //     return () => clearInterval(timer);
-    // }, []);
+  const [temp, setTemp] = useState<number>(75);
 
-    return (
-    <header className="w-full bg-white border-b border-gray-200 px-6 py-4">
+  useEffect(() => {
+    // Simple weather simulation - replace with real API later
+    const getWeather = async () => {
+      try {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            // For now, just show a simulated temperature
+            setTemp(Math.floor(Math.random() * 30) + 60); // 60-90°F
+          }, () => {
+            setTemp(75); // Fallback
+          });
+        } else {
+          setTemp(75); // Fallback
+        }
+      } catch (error) {
+        setTemp(75); // Fallback
+      }
+    };
+
+    getWeather();
+  }, []);
+
+  return (
+    <div className="w-full bg-white border-b border-gray-200">
+      {/* First Line - Alerts and Login/Logout */}
+      <div className="px-6 py-3 border-b border-gray-100">
+        <div className="flex items-center justify-end gap-4">
+          <button className="flex gap-2 border font-semibold drop-shadow-sm px-4 py-2 rounded-lg text-sm hover:bg-gray-50">
+            Alerts 
+            <BellAlertIcon className="h-4 w-4" /> 
+          </button>
+          
+          <form action="/api/signout" method="POST">
+            <button
+              type="submit"
+              className="flex gap-2 border font-semibold drop-shadow-sm px-4 py-2 rounded-lg text-sm hover:bg-gray-50"
+            >
+              <PowerIcon className="h-4 w-4" />
+              Sign Out
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* Second Line - Moon and Solstice Info */}
+      <div className="px-6 py-3">
+        <div className="flex items-center gap-6 justify-end">
+          <div className="items-center text-right">
+            <div className="text-xs text-gray-600">MOON</div>
+            <div className="text-md font-semibold">Hoku</div>
+          </div>
+
+          <div className="items-center text-right">
+            <div className="text-xs text-gray-600">SOLSTICE</div>
+            <div className="text-md font-semibold">Summer</div>
+          </div>
+
+          <div className="items-center text-right">
+            <div className="text-xs text-gray-600">WEATHER</div>
+            <div className="text-md font-semibold">{temp}°F</div>
+          </div>
+        </div>
+      </div>
+
       {/* Mobile Hamburger Button */}
       <div className="lg:hidden fixed top-4 left-4 z-50 flex gap-4">
         <button
@@ -124,28 +182,6 @@ export default function TopPanel() {
           </div>
         </div>
       )}
-
-      {/* Page Title */}
-
-      {/* Main TopBar Content */}
-      <div className="flex items-center gap-6 justify-end">
-        <div className="items-center text-right">
-          <div className="text-xs text-gray-600">MOON PHASE</div>
-          <div className="text-md font-semibold">Hoku</div>
-        </div>
-
-        <div className="items-center text-right">
-          <div className="text-xs text-gray-600">SOLSTICE</div>
-          <div className="text-md font-semibold">Summer</div>
-        </div>
-
-        <div className="items-center">
-          <button className="flex gap-1 border font-semibold drop-shadow-sm px-4 py-3 rounded-lg text-sm">
-            Alerts 
-            <BellAlertIcon className="h-5 w-5" /> 
-          </button>
-        </div>
-      </div>
-    </header>
+    </div>
   );
 }
