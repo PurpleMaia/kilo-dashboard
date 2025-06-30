@@ -70,7 +70,17 @@ export async function POST(request: Request) {
 
           // Convert timestamp            
           const rawTS = row[timeHeader]
-          const timestamp = formatTime(latestTimestamp, String(rawTS))
+          let timestamp: Date;
+          if (typeof rawTS === 'number' || (typeof rawTS === 'string' && !isNaN(Number(rawTS)))) {
+            // Numeric: treat as elapsed time
+            timestamp = formatTime(latestTimestamp ?? new Date(), String(rawTS));
+          } else if (typeof rawTS === 'string' && !isNaN(Date.parse(rawTS))) {
+            // Valid date string
+            timestamp = new Date(rawTS);
+          } else {
+            errors++;
+            continue;
+          }
           // console.log('latestTimestamp', latestTimestamp)
           // console.log('This row\'s timestamp', timestamp)
 
