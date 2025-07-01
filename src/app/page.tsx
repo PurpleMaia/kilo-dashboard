@@ -6,19 +6,23 @@ import { redirect } from "next/navigation";
 import { validateSessionToken } from "./lib/auth";
 
 export default async function Home() {
-  // Check if user is already logged in
-  const sessionCookie = cookies().get('auth_session');
-  
+  // Check if user is already logged in (Server Component)
+  const sessionCookie = (await cookies()).get('auth_session');
+  let canRedirect = false
   if (sessionCookie) {
     try {
-      const isValid = await validateSessionToken(sessionCookie.value);
-      if (isValid) {
-        redirect('/dashboard');
+      const sessionValidation = await validateSessionToken(sessionCookie.value);
+      if (sessionValidation.user) {
+        canRedirect = true
       }
     } catch (error) {
       // Invalid session, continue to login form
       console.log('Invalid session, showing login form');
     }
+  }
+
+  if (canRedirect) {
+    redirect('/dashboard')
   }
 
   // Simple login/signup form (client component)
@@ -33,6 +37,7 @@ export default async function Home() {
           <p className={`text-xl text-gray-800 md:text-3xl md:leading-normal antialiased`}>
             <strong>Welcome to KILO Dashboard.</strong>
           </p>
+          <p>${sessionCookie?.value}</p>
           <form className="flex flex-col gap-4" action="/api/login" method="POST">
             <input
               type="text"
