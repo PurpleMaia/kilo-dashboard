@@ -9,29 +9,29 @@ import { z } from 'zod';
 const formSchema = z.object({
   name: z.string().min(1, 'Please enter your name'),
   // Soil
-  soil_texture: z.array(z.string()).min(1, 'Please select soil texture'),
-  soil_moisture: z.array(z.string()).min(1, 'Please select soil moisture'),
-  soil_life: z.array(z.string()).min(1, 'Please select soil life'),
+  soil_texture: z.array(z.string()).min(1, 'Please choose one or more options'),
+  soil_moisture: z.array(z.string()).min(1, 'Please choose one or more options'),
+  soil_life: z.array(z.string()).min(1, 'Please choose one or more options'),
   
   // Weather
-  sky_condition: z.array(z.string()).min(1, 'Please select sky conditions'),
-  rain_today: z.array(z.string()).min(1, 'Please select rain conditions'),
-  wind_condition: z.array(z.string()).min(1, 'Please select wind conditions'),
+  sky_condition: z.array(z.string()).min(1, 'Please choose one or more options'),
+  rain_today: z.array(z.string()).min(1, 'Please choose one or more options'),
+  wind_condition: z.array(z.string()).min(1, 'Please choose one or more options'),
   
   // Plant Health
-  leaf_condition: z.array(z.string()).min(1, 'Please select leaf conditions'),
-  growth_rate: z.array(z.string()).min(1, 'Please select growth rate'),
-  pest_disease: z.array(z.string()).min(1, 'Please select pests/disease'),
+  leaf_condition: z.array(z.string()).min(1, 'Please choose one or more options'),
+  growth_rate: z.array(z.string()).min(1, 'Please choose one or more options'),
+  pest_disease: z.array(z.string()).min(1, 'Please choose one or more options'),
   
   // Other Lifeforms
-  beneficial_insects: z.array(z.string()).min(1, 'Please select beneficial insects'),
-  pest_insects: z.array(z.string()).min(1, 'Please select pest insects'),
-  larger_animals: z.array(z.string()).min(1, 'Please select larger animals'),
+  beneficial_insects: z.array(z.string()).min(1, 'Please choose one or more options'),
+  pest_insects: z.array(z.string()).min(1, 'Please choose one or more options'),
+  larger_animals: z.array(z.string()).min(1, 'Please choose one or more options'),
   
   // Seasonal
-  seasonal_markers: z.array(z.string()).min(1, 'Please select seasonal markers'),
-  moon_phase: z.array(z.string()).min(1, 'Please select moon phases'),
-  planting_action: z.array(z.string()).min(1, 'Please select planting actions')
+  seasonal_markers: z.array(z.string()).min(1, 'Please choose one or more options'),
+  moon_phase: z.array(z.string()).min(1, 'Please choose one or more options'),
+  planting_action: z.array(z.string()).min(1, 'Please choose one or more options')
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -251,10 +251,10 @@ export default function KiloForm() {
             {renderCheckboxGroup('planting_action', 'What planting actions did you take?', seasonalOptions.action)}
           </div>
 
-          <div className="flex gap-4">
+          <div className="space-y-4">
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+              className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
             >
               Submit
             </button>
@@ -264,7 +264,7 @@ export default function KiloForm() {
                   reset();
                   setSubmittedData(null);
                 }}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
               >
                 Submit Another Kilo Form
               </button>

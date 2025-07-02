@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import SideNav from "../ui/dashboard/sidenav"
 import BottomNav from "../ui/dashboard/bottomnav"
 import TopPanel from "../ui/dashboard/top-panel"
