@@ -1,51 +1,49 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 // Define the form schema
 const formSchema = z.object({
+  name: z.string().min(1, 'Please enter your name'),
   // Soil
-  soil_texture: z.array(z.string()).min(1, 'Please select at least one option'),
-  soil_moisture: z.array(z.string()).min(1, 'Please select at least one option'),
-  soil_life: z.array(z.string()).min(1, 'Please select at least one option'),
+  soil_texture: z.array(z.string()).min(1, 'Please select soil texture'),
+  soil_moisture: z.array(z.string()).min(1, 'Please select soil moisture'),
+  soil_life: z.array(z.string()).min(1, 'Please select soil life'),
   
   // Weather
-  sky_condition: z.array(z.string()).min(1, 'Please select at least one option'),
-  rain_today: z.array(z.string()).min(1, 'Please select at least one option'),
-  wind_condition: z.array(z.string()).min(1, 'Please select at least one option'),
+  sky_condition: z.array(z.string()).min(1, 'Please select sky conditions'),
+  rain_today: z.array(z.string()).min(1, 'Please select rain conditions'),
+  wind_condition: z.array(z.string()).min(1, 'Please select wind conditions'),
   
   // Plant Health
-  leaf_condition: z.array(z.string()).min(1, 'Please select at least one option'),
-  growth_rate: z.array(z.string()).min(1, 'Please select at least one option'),
-  pest_disease: z.array(z.string()).min(1, 'Please select at least one option'),
+  leaf_condition: z.array(z.string()).min(1, 'Please select leaf conditions'),
+  growth_rate: z.array(z.string()).min(1, 'Please select growth rate'),
+  pest_disease: z.array(z.string()).min(1, 'Please select pests/disease'),
   
   // Other Lifeforms
-  beneficial_insects: z.array(z.string()).min(1, 'Please select at least one option'),
-  pest_insects: z.array(z.string()).min(1, 'Please select at least one option'),
-  larger_animals: z.array(z.string()).min(1, 'Please select at least one option'),
+  beneficial_insects: z.array(z.string()).min(1, 'Please select beneficial insects'),
+  pest_insects: z.array(z.string()).min(1, 'Please select pest insects'),
+  larger_animals: z.array(z.string()).min(1, 'Please select larger animals'),
   
   // Seasonal
-  seasonal_markers: z.array(z.string()).min(1, 'Please select at least one option'),
-  moon_phase: z.array(z.string()).min(1, 'Please select at least one option'),
-  planting_action: z.array(z.string()).min(1, 'Please select at least one option')
+  seasonal_markers: z.array(z.string()).min(1, 'Please select seasonal markers'),
+  moon_phase: z.array(z.string()).min(1, 'Please select moon phases'),
+  planting_action: z.array(z.string()).min(1, 'Please select planting actions')
 });
 
 type FormData = z.infer<typeof formSchema>;
 
 export default function KiloForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const [submittedData, setSubmittedData] = useState<FormData | null>(null);
+  const { register, handleSubmit, formState: { errors }, watch, reset } = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
 
   const onSubmit = async (data: FormData) => {
-    try {
-      // We'll implement the API call once you provide the questions
-      console.log('Form submitted:', data);
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    }
+    setSubmittedData(data);
   };
 
   const soilOptions = {
@@ -78,79 +76,202 @@ export default function KiloForm() {
     action: ['Seeded', 'Transplanted', 'Harvested', 'Pruned', 'Observed only']
   };
 
-  const renderCheckboxGroup = (name: keyof FormData, label: string, options: string[]) => (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
+  const renderCheckboxGroup = (name: keyof FormData, label: string, options: string[]) => {
+    const isChecked = (option: string) => {
+      const field = watch(name);
+      return Array.isArray(field) ? field.includes(option) : false;
+    };
+
+    return (
       <div className="space-y-2">
-        {options.map((option) => (
-          <div key={option} className="flex items-center space-x-3">
-            <input
-              type="checkbox"
-              id={`${name}-${option.toLowerCase().replace(/[^a-z0-9]/g, '')}`}
-              value={option}
-              {...register(name as keyof FormData, { required: true })}
-              className="h-4 w-4 text-purple-600 focus:ring-purple-500"
-            />
-            <label htmlFor={`${name}-${option.toLowerCase().replace(/[^a-z0-9]/g, '')}`} className="text-sm text-gray-700">
-              {option}
-            </label>
-          </div>
-        ))}
-        {errors[name as keyof typeof errors]?.message && (
-          <p className="text-sm text-red-600">{errors[name as keyof typeof errors]?.message}</p>
-        )}
+        <label className="block text-sm font-medium text-gray-700">{label}</label>
+        <div className="space-y-2">
+          {options.map((option) => (
+            <div key={option} className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                id={`${name}-${option.toLowerCase().replace(/[^a-z0-9]/g, '')}`}
+                value={option}
+                checked={isChecked(option)}
+                {...register(name as keyof FormData, {
+                  validate: (value) => value.length > 0 || 'Please select at least one option'
+                })}
+                className="h-4 w-4 text-purple-600 focus:ring-purple-500"
+              />
+              <label htmlFor={`${name}-${option.toLowerCase().replace(/[^a-z0-9]/g, '')}`} className="text-sm text-gray-700">
+                {option}
+              </label>
+            </div>
+          ))}
+          {errors[name as keyof typeof errors]?.message && (
+            <p className="text-sm text-red-600">{errors[name as keyof typeof errors]?.message}</p>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      {/* Soil Section */}
-      <div className="space-y-6">
-        <h2 className="text-lg font-semibold text-gray-900">Soil</h2>
-        {renderCheckboxGroup('soil_texture', 'What is the soil texture?', soilOptions.texture)}
-        {renderCheckboxGroup('soil_moisture', 'What is the soil moisture like?', soilOptions.moisture)}
-        {renderCheckboxGroup('soil_life', 'What signs of soil life do you see?', soilOptions.life)}
-      </div>
+    <div className="space-y-8">
+      {submittedData ? (
+        <div className="bg-white p-6 rounded-lg shadow">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Submitted Kilo Data</h2>
+            <p className="text-sm text-gray-500">{currentDate}</p>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-medium text-gray-700">Name</h3>
+              <p>{submittedData.name}</p>
+            </div>
+            {/* Soil */}
+            <div>
+              <h3 className="font-medium text-gray-700">Soil</h3>
+              <div className="space-y-2">
+                <p>Texture: {submittedData.soil_texture.join(', ')}</p>
+                <p>Moisture: {submittedData.soil_moisture.join(', ')}</p>
+                <p>Life: {submittedData.soil_life.join(', ')}</p>
+              </div>
+            </div>
 
-      {/* Weather Section */}
-      <div className="space-y-6">
-        <h2 className="text-lg font-semibold text-gray-900">Weather</h2>
-        {renderCheckboxGroup('sky_condition', 'What is the sky like?', weatherOptions.sky)}
-        {renderCheckboxGroup('rain_today', 'Has there been rain today?', weatherOptions.rain)}
-        {renderCheckboxGroup('wind_condition', 'What is the wind doing?', weatherOptions.wind)}
-      </div>
+            {/* Weather */}
+            <div>
+              <h3 className="font-medium text-gray-700">Weather</h3>
+              <div className="space-y-2">
+                <p>Sky: {submittedData.sky_condition.join(', ')}</p>
+                <p>Rain: {submittedData.rain_today.join(', ')}</p>
+                <p>Wind: {submittedData.wind_condition.join(', ')}</p>
+              </div>
+            </div>
 
-      {/* Plant Health Section */}
-      <div className="space-y-6">
-        <h2 className="text-lg font-semibold text-gray-900">Plant Health</h2>
-        {renderCheckboxGroup('leaf_condition', 'What leaf conditions do you notice?', plantOptions.leaf)}
-        {renderCheckboxGroup('growth_rate', 'Are plants growing as expected?', plantOptions.growth)}
-        {renderCheckboxGroup('pest_disease', 'Any pests or disease visible?', plantOptions.pests)}
-      </div>
+            {/* Plant Health */}
+            <div>
+              <h3 className="font-medium text-gray-700">Plant Health</h3>
+              <div className="space-y-2">
+                <p>Leaf Condition: {submittedData.leaf_condition.join(', ')}</p>
+                <p>Growth Rate: {submittedData.growth_rate.join(', ')}</p>
+                <p>Pest/Disease: {submittedData.pest_disease.join(', ')}</p>
+              </div>
+            </div>
 
-      {/* Other Lifeforms Section */}
-      <div className="space-y-6">
-        <h2 className="text-lg font-semibold text-gray-900">Other Lifeforms</h2>
-        {renderCheckboxGroup('beneficial_insects', 'What beneficial insects are present?', lifeOptions.beneficial)}
-        {renderCheckboxGroup('pest_insects', 'What pest insects are present?', lifeOptions.pest)}
-        {renderCheckboxGroup('larger_animals', 'What larger animals did you see?', lifeOptions.animals)}
-      </div>
+            {/* Other Lifeforms */}
+            <div>
+              <h3 className="font-medium text-gray-700">Other Lifeforms</h3>
+              <div className="space-y-2">
+                <p>Beneficial Insects: {submittedData.beneficial_insects.join(', ')}</p>
+                <p>Pest Insects: {submittedData.pest_insects.join(', ')}</p>
+                <p>Larger Animals: {submittedData.larger_animals.join(', ')}</p>
+              </div>
+            </div>
 
-      {/* Seasonal Section */}
-      <div className="space-y-6">
-        <h2 className="text-lg font-semibold text-gray-900">Seasonal</h2>
-        {renderCheckboxGroup('seasonal_markers', 'What seasonal markers are visible?', seasonalOptions.markers)}
-        {renderCheckboxGroup('moon_phase', 'What moon phase is it?', seasonalOptions.moon)}
-        {renderCheckboxGroup('planting_action', 'What planting actions did you take?', seasonalOptions.action)}
-      </div>
+            {/* Seasonal */}
+            <div>
+              <h3 className="font-medium text-gray-700">Seasonal</h3>
+              <div className="space-y-2">
+                <p>Seasonal Markers: {submittedData.seasonal_markers.join(', ')}</p>
+                <p>Moon Phase: {submittedData.moon_phase.join(', ')}</p>
+                <p>Planting Actions: {submittedData.planting_action.join(', ')}</p>
+              </div>
+            </div>
+          </div>
+          <div className="mt-6">
+            <button
+              onClick={() => {
+                reset();
+                setSubmittedData(null);
+              }}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+            >
+              Submit Another Form
+            </button>
+          </div>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          {/* Name */}
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              Your Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              {...register('name')}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            {errors.name && (
+              <p className="text-sm text-red-600">{errors.name.message}</p>
+            )}
+          </div>
 
-      <button
-        type="submit"
-        className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-      >
-        Submit
-      </button>
-    </form>
+          {/* Soil Section */}
+          {/* Soil Section */}
+          <div className="space-y-6">
+            <h2 className="text-lg font-semibold text-gray-900">Soil</h2>
+            {renderCheckboxGroup('soil_texture', 'What is the soil texture?', soilOptions.texture)}
+            {renderCheckboxGroup('soil_moisture', 'What is the soil moisture like?', soilOptions.moisture)}
+            {renderCheckboxGroup('soil_life', 'What signs of soil life do you see?', soilOptions.life)}
+          </div>
+
+          {/* Weather Section */}
+          <div className="space-y-6">
+            <h2 className="text-lg font-semibold text-gray-900">Weather</h2>
+            {renderCheckboxGroup('sky_condition', 'What is the sky like?', weatherOptions.sky)}
+            {renderCheckboxGroup('rain_today', 'Has there been rain today?', weatherOptions.rain)}
+            {renderCheckboxGroup('wind_condition', 'What is the wind doing?', weatherOptions.wind)}
+          </div>
+
+          {/* Plant Health Section */}
+          <div className="space-y-6">
+            <h2 className="text-lg font-semibold text-gray-900">Plant Health</h2>
+            {renderCheckboxGroup('leaf_condition', 'What leaf conditions do you notice?', plantOptions.leaf)}
+            {renderCheckboxGroup('growth_rate', 'Are plants growing as expected?', plantOptions.growth)}
+            {renderCheckboxGroup('pest_disease', 'Any pests or disease visible?', plantOptions.pests)}
+          </div>
+
+          {/* Other Lifeforms Section */}
+          <div className="space-y-6">
+            <h2 className="text-lg font-semibold text-gray-900">Other Lifeforms</h2>
+            {renderCheckboxGroup('beneficial_insects', 'What beneficial insects are present?', lifeOptions.beneficial)}
+            {renderCheckboxGroup('pest_insects', 'What pest insects are present?', lifeOptions.pest)}
+            {renderCheckboxGroup('larger_animals', 'What larger animals did you see?', lifeOptions.animals)}
+          </div>
+
+          {/* Seasonal Section */}
+          <div className="space-y-6">
+            <h2 className="text-lg font-semibold text-gray-900">Seasonal</h2>
+            {renderCheckboxGroup('seasonal_markers', 'What seasonal markers are visible?', seasonalOptions.markers)}
+            {renderCheckboxGroup('moon_phase', 'What moon phase is it?', seasonalOptions.moon)}
+            {renderCheckboxGroup('planting_action', 'What planting actions did you take?', seasonalOptions.action)}
+          </div>
+
+          <div className="flex gap-4">
+            <button
+              type="submit"
+              className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+            >
+              Submit
+            </button>
+            {submittedData && (
+              <button
+                onClick={() => {
+                  reset();
+                  setSubmittedData(null);
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+              >
+                Submit Another Kilo Form
+              </button>
+            )}
+          </div>
+        </form>
+      )}
+    </div>
   );
 }
