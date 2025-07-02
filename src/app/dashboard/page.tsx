@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { InvoiceSkeleton, RevenueChartSkeleton } from "../ui/skeletons";
-import SensorsWrapper from "../ui/sensors/latest";
-import GraphWrapper from "../ui/sensors/graph-serve";
+import SensorsWrapper from "../components/sensors/latest";
+import GraphWrapper from "../components/sensors/graph-serve";
 import { cookies } from "next/headers";
 
 

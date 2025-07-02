@@ -1,7 +1,7 @@
 'use client'
 import { ExclamationTriangleIcon, TrashIcon, DocumentTextIcon, ArrowUpTrayIcon, XMarkIcon, MapPinIcon, EyeIcon, EyeSlashIcon, CpuChipIcon, ExclamationCircleIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { useState, useRef } from "react";
-import CsvEditor from "../../ui/dashboard/CsvEditor";
+import CsvEditor from "../../components/upload/CsvEditor";
 
 interface SensorInfo {
   region?: string;

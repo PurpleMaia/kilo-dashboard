@@ -25,8 +25,11 @@ const links = [
     href: '/dashboard/kilo',
     icon: EyeIcon,
   },
-  { name: 'Water Quality', href: '/dashboard/water', icon: UserGroupIcon },
-  { name: 'Soil Quality', href: '/dashboard/soil', icon: UserGroupIcon },
+  {
+    name: 'Ag Testing',
+    href: '/dashboard/ag-testing',
+    icon: UserGroupIcon,
+  },
   { name: 'Sensors', href: '/dashboard/sensors', icon: UserGroupIcon },
   {
     name: 'Upload Data',
