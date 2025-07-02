@@ -2,8 +2,10 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { validateSessionToken } from "../lib/auth";
 import RegistrationForm from "./components/RegistrationForm";
+import { db } from "../../../db/kysely/client";
 
 export default async function RegisterPage() {
+// COMMENTED OUT FOR TESTNG    
 //   // Check if user is already logged in
 //   const sessionCookie = (await cookies()).get('auth_session');
 //   let canRedirect = false;
@@ -23,6 +25,9 @@ export default async function RegisterPage() {
 //     redirect('/dashboard');
 //   }
 
+  // Fetch aina list from the database
+  const ainaList = await db.selectFrom('aina').select(['id', 'name']).execute();
+
   return (
     <main className="flex min-h-screen flex-col p-6">
       <div className="flex h-20 shrink-0 items-end rounded-lg bg-lime-800 p-4 md:h-52">
@@ -34,7 +39,7 @@ export default async function RegisterPage() {
           </p>
           <p className="text-gray-600">Join KILO Dashboard to start monitoring your sensors.</p>
           
-          <RegistrationForm />
+          <RegistrationForm ainaList={ainaList} />
           
           <div className="text-center">
             <p className="text-sm text-gray-600">

@@ -1,138 +1,150 @@
 'use client';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
-export default function RegistrationForm() {
+interface Aina {
+  id: number;
+  name: string | null;
+}
+
+interface RegistrationFormProps {
+  ainaList: Aina[];
+}
+
+export default function RegistrationForm({ ainaList }: RegistrationFormProps) {
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    aina: '',
+    customAina: '',
   });
-  const [errors, setErrors] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors([]);
-    setIsLoading(true);
-
-    // Basic validation
-    const newErrors: string[] = [];
-    
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.push('Passwords do not match');
-    }
-    
-    if (formData.password.length < 6) {
-      newErrors.push('Password must be at least 6 characters long');
-    }
-    
-    if (!formData.email.includes('@')) {
-      newErrors.push('Please enter a valid email address');
-    }
-
-    if (newErrors.length > 0) {
-      setErrors(newErrors);
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        // Registration successful, redirect to login
-        router.push('/?message=Registration successful! Please log in.');
-      } else {
-        setErrors([result.error || 'Registration failed']);
-      }
-    } catch (error) {
-      setErrors(['An error occurred during registration']);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      {errors.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-3">
-          <ul className="text-red-600 text-sm list-disc list-inside">
-            {errors.map((error, index) => (
-              <li key={index}>{error}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+  const handleNext = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStep(2);
+  };
 
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        value={formData.username}
-        onChange={handleChange}
-        className="rounded border px-3 py-2"
-        required
-      />
-      
-      <input
-        type="email"
-        name="email"
-        placeholder="Email Address"
-        value={formData.email}
-        onChange={handleChange}
-        className="rounded border px-3 py-2"
-        required
-      />
-      
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-        className="rounded border px-3 py-2"
-        required
-      />
-      
-      <input
-        type="password"
-        name="confirmPassword"
-        placeholder="Confirm Password"
-        value={formData.confirmPassword}
-        onChange={handleChange}
-        className="rounded border px-3 py-2"
-        required
-      />
-      
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="rounded-lg bg-lime-800 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-lime-700 md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isLoading ? 'Creating Account...' : 'Create Account'}
-      </button>
-    </form>
+  const handleBack = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStep(1);
+  };
+
+  // Determine if "Other" is selected
+  const isOtherAina = formData.aina === '__other__';
+
+  return (
+    <>
+      {step === 1 && (
+        <form onSubmit={handleNext} className="flex flex-col gap-4">
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            className="rounded border px-3 py-2"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            className="rounded border px-3 py-2"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="rounded border px-3 py-2"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            className="rounded border px-3 py-2"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+          <button
+            type="submit"
+            className="rounded-lg bg-lime-800 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-lime-700 md:text-base"
+          >
+            Next
+          </button>
+        </form>
+      )}
+      {step === 2 && (
+        <form action="/api/register" method="POST" className="flex flex-col gap-4">
+          {/* Hidden fields to pass previous step data */}
+          <input type="hidden" name="username" value={formData.username} />
+          <input type="hidden" name="email" value={formData.email} />
+          <input type="hidden" name="password" value={formData.password} />
+          <input type="hidden" name="confirmPassword" value={formData.confirmPassword} />
+
+          <label htmlFor="aina" className="text-sm font-medium text-gray-700">Select ʻĀina</label>
+          <select
+            name="aina"
+            id="aina"
+            className="rounded border px-3 py-2"
+            value={formData.aina}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Choose an ʻāina to ?</option>
+            {ainaList.map((a) => (
+              <option key={a.id} value={a.id}>{a.name}</option>
+            ))}
+            <option value="__other__">Other (not listed)</option>
+          </select>
+
+          {isOtherAina && (
+            <input
+              type="text"
+              name="customAina"
+              placeholder="Enter your ʻāina name"
+              className="rounded border px-3 py-2"
+              value={formData.customAina}
+              onChange={handleChange}
+              required
+            />
+          )}
+
+          {/* On submit, if customAina is filled, submit that as the aina field */}
+          <input type="hidden" name="finalAina" value={isOtherAina ? formData.customAina : formData.aina} />
+
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="rounded-lg bg-gray-300 px-6 py-3 text-sm font-medium text-gray-700 hover:bg-gray-400 md:text-base"
+            >
+              Back
+            </button>
+            <button
+              type="submit"
+              className="rounded-lg bg-lime-800 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-lime-700 md:text-base"
+            >
+              Create Account
+            </button>
+          </div>
+        </form>
+      )}
+    </>
   );
 } 
