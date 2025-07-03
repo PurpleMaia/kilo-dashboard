@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { registerUser } from '@/app/lib/auth';
+import { sessionCookieName } from '@/app/lib/session';
 
 export async function POST(request: Request) {
   try {
@@ -20,13 +21,26 @@ export async function POST(request: Request) {
       );
     }
 
-    // Register the user
-    await registerUser(username, email, password);
+    // Register the user and get the session token
+    const { token } = await registerUser(username, email, password);
 
-    return NextResponse.json(
+    // Create response
+    const response = NextResponse.json(
       { success: true, message: 'User registered successfully' },
       { status: 201 }
     );
+
+    // Set the session cookie
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+    response.cookies.set(sessionCookieName, token, {
+      httpOnly: true,
+      sameSite: "lax",
+      expires: expiresAt,
+      path: "/"
+    });
+
+    console.log('Session cookie set during registration:', token);
+    return response;
 
   } catch (error) {
     console.error('Registration Error:', error);

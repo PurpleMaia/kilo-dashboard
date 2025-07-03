@@ -5,7 +5,7 @@
 
 import type { ColumnType } from "kysely";
 
-export type Category = "air" | "soil" | "stream" | "water";
+export type Category = "air" | "sensor" | "soil" | "stream" | "water";
 
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
@@ -41,6 +41,12 @@ export interface MetricType {
   id: Generated<number>;
   type_name: string | null;
   unit: string | null;
+}
+
+export interface Profile {
+  aina_id: number | null;
+  role: string | null;
+  user_id: string | null;
 }
 
 export interface SchemaMigrations {
@@ -92,6 +98,7 @@ export interface DB {
   mala: Mala;
   metric: Metric;
   metric_type: MetricType;
+  profile: Profile;
   schema_migrations: SchemaMigrations;
   sensor: Sensor;
   user: User;
