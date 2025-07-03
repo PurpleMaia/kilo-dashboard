@@ -36,7 +36,11 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function KiloForm() {
+interface KiloFormProps {
+  onSaved?: (data: FormData) => void;
+}
+
+export default function KiloForm({ onSaved }: KiloFormProps) {
   const [submittedData, setSubmittedData] = useState<FormData | null>(null);
   const { register, handleSubmit, formState: { errors }, watch, reset } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -44,7 +48,9 @@ export default function KiloForm() {
 
   const onSubmit = async (data: FormData) => {
     setSubmittedData(data);
+    if (onSaved) onSaved(data);
   };
+
 
   const soilOptions = {
     texture: ['Sandy', 'Silty', 'Clay', 'Loamy', 'Compacted'],
