@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import { randomBytes, pbkdf2Sync, createHash, timingSafeEqual, hash } from 'crypto';
+import { randomBytes, pbkdf2Sync, createHash, timingSafeEqual } from 'crypto';
 import { db } from '../../../db/kysely/client';
 
 import * as base64 from 'hi-base64'
@@ -156,7 +156,10 @@ export async function registerUser(username: string, email: string, password: st
     email_verified: false,
   }).execute();
 
-  return { id, username, email };
+  const token = generateSessionToken();
+  await createSession(token, id);
+
+  return { id, username, email, token };
 }
 
 // --- User Login ---
