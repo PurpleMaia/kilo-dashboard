@@ -16,17 +16,7 @@ export default async function Page() {
             </Suspense>
             </div> */}
             <p>{sessionCookie?.name}</p>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <Suspense fallback={<InvoiceSkeleton />}>
-                    <SensorsWrapper />
-                </Suspense>            
-            </div>
-            <br />            
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <Suspense fallback={<RevenueChartSkeleton />}>
-                    <GraphWrapper />
-                </Suspense>
-            </div>            
+                     
         </main>
     );
 }
