@@ -26,9 +26,52 @@ export default function AgTestCard({ type, title, fields }: AgTestCardProps) {
     setFormData(newFormData);
   };
 
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing);
+  // Helper: Convert formData to CSV string
+  const toCSV = (fields: typeof formData) => {
+    const headers = fields.map(f => f.label).join(',');
+    const values = fields.map(f => `"${f.value}"`).join(',');
+    return `${headers}\n${values}`;
   };
+
+  // Helper: Download CSV file
+  const downloadCSV = (csv: string, filename: string) => {
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Save test to localStorage and download CSV
+  const handleSave = () => {
+    // Assign unique ID and date
+    const id = Date.now();
+    const date = new Date().toLocaleString();
+    const test = { id, date, type, title, fields: formData };
+
+    // Save to localStorage
+    const prev = localStorage.getItem('ag_tests');
+    const tests = prev ? JSON.parse(prev) : [];
+    tests.push(test);
+    localStorage.setItem('ag_tests', JSON.stringify(tests));
+
+    // Download CSV
+    const csv = toCSV(formData);
+    downloadCSV(csv, `${title.replace(/\s+/g, '_')}_test_${id}.csv`);
+
+    setIsEditing(false);
+  };
+
+  const handleEditToggle = () => {
+    if (isEditing) {
+      handleSave();
+    } else {
+      setIsEditing(true);
+    }
+  };
+
 
   const getBackgroundColor = (isHigh: boolean | undefined, isLow: boolean | undefined) => {
     if (isHigh) return 'bg-red-50';

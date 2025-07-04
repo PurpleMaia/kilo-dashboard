@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AgTestCard from './components/AgTestCard';
+import PreviousAgTests from './components/PreviousAgTests';
 
 export default function AgTesting() {
   const soilFields = [
@@ -52,6 +53,9 @@ export default function AgTesting() {
           fields={ecoliFields}
         />
       </div>
+
+      {/* Previous Ag Tests section */}
+      <PreviousAgTests />
     </div>
   );
 }

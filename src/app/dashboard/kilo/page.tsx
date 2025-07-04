@@ -11,6 +11,25 @@ type Entry = {
   [key: string]: any;
 };
 
+const fieldLabels: { [key: string]: string } = {
+  name: "Name",
+  soil_texture: "Soil Texture",
+  soil_moisture: "Soil Moisture",
+  soil_life: "Soil Life",
+  sky_condition: "Sky Condition",
+  rain_today: "Rain Today",
+  wind_condition: "Wind Condition",
+  leaf_condition: "Leaf Condition",
+  growth_rate: "Growth Rate",
+  pest_disease: "Pest/Disease",
+  beneficial_insects: "Beneficial Insects",
+  pest_insects: "Pest Insects",
+  larger_animals: "Larger Animals",
+  seasonal_markers: "Seasonal Markers",
+  moon_phase: "Moon Phase",
+  planting_action: "Planting Action",
+};
+
 const LOCAL_STORAGE_KEY = "kilo_entries";
 
 export default function Page() {
@@ -21,6 +40,7 @@ export default function Page() {
     }
     return [];
   });
+  const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
 
   // Save entries to localStorage whenever they change
   useEffect(() => {
@@ -60,12 +80,45 @@ export default function Page() {
                 <td className="p-2 border-b">{entry.name}</td>
                 <td className="p-2 border-b">{entry.date}</td>
                 <td className="p-2 border-b">
-                  <Link href={`/dashboard/kilo/entry/${entry.id}`} className="text-purple-600 underline">View</Link>
+                  <button
+                    className="text-purple-600 underline"
+                    onClick={() => setSelectedEntry(entry)}
+                  >
+                    View
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {selectedEntry && (
+          <div className="bg-white rounded shadow p-4 mb-4">
+            <h4 className="font-semibold mb-2">Kilo Entry #{selectedEntry.id}</h4>
+            <div className="mb-2 text-sm text-gray-500">Saved: {selectedEntry.date}</div>
+            <table className="min-w-full text-xs mb-4">
+              <tbody>
+                {Object.keys(fieldLabels).map((key) =>
+                  selectedEntry[key] !== undefined && (
+                    <tr key={key}>
+                      <th className="text-left font-medium p-1 w-1/3">{fieldLabels[key]}</th>
+                      <td className="p-1">
+                        {Array.isArray(selectedEntry[key])
+                          ? selectedEntry[key].join(", ")
+                          : selectedEntry[key]}
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+            <button
+              className="mt-4 text-purple-600 underline text-xs"
+              onClick={() => setSelectedEntry(null)}
+            >
+              Close
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
