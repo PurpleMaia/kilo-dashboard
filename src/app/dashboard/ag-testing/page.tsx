@@ -21,7 +21,7 @@ export default function AgTesting() {
 
   useEffect(() => {
     fetchFiles();
-  });
+  }, []);
 
   const fetchFiles = async () => {
     try {
