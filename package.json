@@ -13,6 +13,7 @@
     "@hookform/resolvers": "^5.1.1",
     "axios": "^1.10.0",
     "chartjs": "^0.3.24",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "fs": "^0.0.1-security",
     "heroicons": "^2.2.0",

@@ -15,6 +15,18 @@ export type Int8 = ColumnType<string, bigint | number | string, bigint | number 
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
+export interface AgTestFiles {
+  aina_id: number;
+  file_content: Buffer;
+  file_name: string;
+  file_size: number;
+  id: Generated<number>;
+  mime_type: string;
+  test_type: string;
+  uploaded_at: Generated<Timestamp>;
+  user_id: string;
+}
+
 export interface Aina {
   created_at: Timestamp | null;
   id: Generated<number>;
@@ -94,6 +106,7 @@ export interface Usersession {
 }
 
 export interface DB {
+  ag_test_files: AgTestFiles;
   aina: Aina;
   mala: Mala;
   metric: Metric;
