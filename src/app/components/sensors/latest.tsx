@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card";
 import { ArrowPathIcon, CircleStackIcon } from '@heroicons/react/24/outline';
 import { db } from "../../../../db/kysely/client";
-import { getAinaID, getUserID } from "@/app/lib/utils";
+import { getAinaID, getUserID } from "@/app/lib/server-utils";
 
 export default async function LatestFetch() {
     const userID = await getUserID()
