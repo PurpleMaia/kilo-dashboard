@@ -1,45 +1,51 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BookmarkSquareIcon, PencilIcon, UserIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-export default function Profile() {
-    // const { user } = fetchUserData();
-    // const { numSensors } = fetchTotalSensors();
-    // const { totalMala, sensorsPerMala, ainaInfo  } = fetchAinaInfo();    
-    const [editingProfile, setEditingProfile] = useState(false);
-    const [profileData, setProfileData] = useState({
-        fullName: "Jaden Kapali",
-        email: "jkapali@example.com",
-        site: "Nation of Hawaii",
-        role: "Admin",
-        startDate: "June 30, 2025"
-    });
+interface UserData {
+    username: string,
+    email: string,
+    created_at: Date,
+    role: string,
+    name: string
+}
 
-    // const siteInfo = fetchSiteBasedOnUser()
-    // const siteInfo = {
-    //     lastUpdate: new Date(new Date().toISOString()).toLocaleDateString('en-US', {
-    //         year: 'numeric',
-    //         month: 'long',
-    //         day: 'numeric'
-    //     }),
-    //     mala: [
-    //         {
-    //             name: 'Poʻowai',
-    //             category: 'soil'
-    //         },
-    //     ]
-    // }
+export default function Profile() {
+    
+    const [editingProfile, setEditingProfile] = useState(false);
+    const [userData, setUserData] = useState<UserData | null>(null);
+
+    const fetchUserData = async () => {
+        try {
+            const response = await fetch('/api/profile')
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch sheet data');  
+            }
+
+            const userData = await response.json();
+            console.log(userData)
+            setUserData(userData)        
+        } catch (error) {
+            console.log(`Failed to load data: ${error}`);
+        }
+    }
 
     const handleSaveProfile = () => {
         setEditingProfile(false);
         // In a real app, this would save to the backend
-        console.log('Saving profile:', profileData);
+        console.log('Saving profile:', userData);
       };
     
       const handleCancelEdit = () => {
         setEditingProfile(false);
         // Reset to original data
       };
+
+
+      useEffect(() => {
+        fetchUserData();
+      }, []);
 
     return (
         <>
@@ -52,9 +58,9 @@ export default function Profile() {
                     <UserIcon className="h-8 w-8 text-green-600" />
                     </div>
                     <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{profileData.fullName}</h1>
-                    <p className="text-gray-600 capitalize">{profileData.role}</p>
-                    <p className="text-sm text-gray-500">Member since {profileData.startDate}</p>
+                    <h1 className="text-2xl font-bold text-gray-900">{userData?.username}</h1>
+                    <p className="text-gray-600 capitalize">{userData?.role}</p>
+                    {/* <p className="text-sm text-gray-500">Member since {userData?.created_at}</p> */}
                     </div>
                 </div>
                 <button
@@ -72,8 +78,8 @@ export default function Profile() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                     <input
                         type="text"
-                        value={profileData.fullName}
-                        onChange={(e) => setProfileData({...profileData, fullName: e.target.value})}
+                        value={userData?.username}
+                        // onChange={(e) => setProfileData({...userData, fullName: e.target.value})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                     </div>
@@ -81,26 +87,17 @@ export default function Profile() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <input
                         type="email"
-                        value={profileData.email}
-                        onChange={(e) => setProfileData({...profileData, email: e.target.value})}
+                        value={userData?.email}
+                        // onChange={(e) => setProfileData({...userData, email: e.target.value})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
-                    </div>
-                    {/* <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                    <input
-                        type="tel"
-                        value={profileData.phone}
-                        onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                    </div> */}
+                    </div>                    
                     <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
                     <input
                         type="text"
-                        value={profileData.site}
-                        onChange={(e) => setProfileData({...profileData, site: e.target.value})}
+                        value={userData?.name}
+                        // onChange={(e) => setProfileData({...userData, site: e.target.value})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                     </div>
@@ -125,12 +122,12 @@ export default function Profile() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                     <h3 className="text-sm font-medium text-gray-500 mb-1">Contact Information</h3>
-                    <p className="text-gray-900">{profileData.email}</p>
-                    {/* <p className="text-gray-900">{profileData.phone}</p> */}
+                    <p className="text-gray-900">{userData?.email}</p>
+                    {/* <p className="text-gray-900">{userData.phone}</p> */}
                     </div>
                     <div>
                     <h3 className="text-sm font-medium text-gray-500 mb-1">Location</h3>
-                    <p className="text-gray-900">{profileData.site}</p>
+                    <p className="text-gray-900">{userData?.name}</p>
                     </div>
                 </div>
                 )}
