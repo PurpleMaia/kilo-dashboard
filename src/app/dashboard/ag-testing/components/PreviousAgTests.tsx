@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-interface AgTest {
+export interface AgTest {
   id: number;
   date: string;
   type: string;
@@ -11,16 +11,8 @@ interface AgTest {
   fields: { label: string; value: string | number; unit?: string }[];
 }
 
-export default function PreviousAgTests() {
-  const [tests, setTests] = useState<AgTest[]>([]);
+export default function PreviousAgTests({ tests }: { tests: AgTest[] }) {
   const [selected, setSelected] = useState<AgTest | null>(null);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("ag_tests");
-    if (stored) {
-      setTests(JSON.parse(stored));
-    }
-  }, []);
 
   return (
     <div className="mt-8">

@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { WaterDropIcon, SoilIcon, BacteriaIcon } from '@/app/ui/icons';
 
-interface AgTestCardProps {
+import { AgTest } from './PreviousAgTests';
+
+export interface AgTestCardProps {
   type: 'water' | 'soil' | 'ecoli';
   title: string;
   fields: {
@@ -14,9 +16,10 @@ interface AgTestCardProps {
     isHigh?: boolean;
     isLow?: boolean;
   }[];
+  onSaved?: (test: AgTest) => void;
 }
 
-export default function AgTestCard({ type, title, fields }: AgTestCardProps) {
+export default function AgTestCard({ type, title, fields, onSaved }: AgTestCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(fields);
 
@@ -61,6 +64,9 @@ export default function AgTestCard({ type, title, fields }: AgTestCardProps) {
     const csv = toCSV(formData);
     downloadCSV(csv, `${title.replace(/\s+/g, '_')}_test_${id}.csv`);
 
+    if (typeof onSaved === 'function') {
+      onSaved(test);
+    }
     setIsEditing(false);
   };
 
