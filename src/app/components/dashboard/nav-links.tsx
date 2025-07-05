@@ -20,9 +20,9 @@ export default function NavLinks() {
             href={link.href}
             // if the pathname matches the link.href, then highlight blue
             className={clsx(
-              "flex h-[48px] grow items-center justify-begin gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium",
+              "pl-2 flex grow items-center justify-begin gap-2 rounded-md text-sm text-white font-medium",
               {
-                'bg-sky-100 text-blue-600' : pathname === link.href
+                'text-blue-600' : pathname === link.href
               }
             )}
             

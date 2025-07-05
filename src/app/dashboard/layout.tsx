@@ -13,16 +13,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Sidebar - layered on top */}
-      <aside className="hidden md:block absolute top-0 left-0 w-64 h-full z-10">
+      <aside className="hidden md:block absolute top-0 left-0 w-44 h-full z-10">
         <SideNav />
       </aside>
 
       {/* Main content, scrollable */}
       <main
         className={`
-          bg-white overflow-auto p-4
+          overflow-auto p-4
           h-[calc(100vh-7rem)] 
-          md:ml-64 
+          md:ml-44
         `}
       >
         {children}
