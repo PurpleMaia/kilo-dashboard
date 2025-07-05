@@ -2,47 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import {
-  Bars3Icon,
-  XMarkIcon,
-  BellAlertIcon,
-  UserGroupIcon,
-  HomeIcon,
-  DocumentDuplicateIcon,
-  ArrowUpTrayIcon,
-  UserCircleIcon,
-  EyeIcon,
-  PowerIcon
-} from '@heroicons/react/24/outline';
+import { links } from "@/app/lib/links";
 import Link from 'next/link'
 import clsx from 'clsx';
-
-const links = [
-  {
-    name: 'Home',
-    href: '/dashboard',
-    icon: HomeIcon,
-  },
-  {
-    name: 'Kilo',
-    href: '/dashboard/kilo',
-    icon: EyeIcon,
-  },
-  { name: 'Water Quality', href: '/dashboard/water', icon: UserGroupIcon },
-  { name: 'Soil Quality', href: '/dashboard/soil', icon: UserGroupIcon },
-  { name: 'Sensors', href: '/dashboard/sensors', icon: UserGroupIcon },
-  {
-    name: 'Upload',
-    href: '/dashboard/upload',
-    icon: ArrowUpTrayIcon,
-  },
-  {
-    name: 'Profile',
-    href: '/dashboard/profile',
-    icon: UserCircleIcon,
-  },
-  // { name: 'Sensors', href: '/dashboard/sensors', icon: EyeIcon },
-];
+import { Bars3Icon, BellAlertIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/app/ui/dropdown-menu";
+import { User } from "lucide-react";
+import { Button } from "@/app/ui/button";
 
 // Define a mapping of route paths to page titles
 const pageTitles: Record<string, string> = {
@@ -95,15 +61,26 @@ export default function TopPanel() {
             <BellAlertIcon className="h-4 w-4" /> 
           </button>
           
-          <form action="/api/signout" method="POST">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="rounded-full">
+                Profile <User className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-white">
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>Sign out</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {/* <form action="/api/signout" method="POST">
             <button
               type="submit"
               className="flex gap-2 border font-semibold drop-shadow-sm px-4 py-2 rounded-lg text-sm hover:bg-gray-50"
-            >
-              <PowerIcon className="h-4 w-4" />
+            >              
               Sign Out
             </button>
-          </form>
+          </form> */}
         </div>
       </div>
 
