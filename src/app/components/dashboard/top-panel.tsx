@@ -107,8 +107,8 @@ export default function TopPanel() {
         </div>
       </div>
 
-      {/* Second Line - Moon and Solstice Info */}
-      <div className="px-6 py-3">
+      {/* Second Line - Moon and Solstice Info (tookout for now to see full view) */}
+      {/* <div className="px-6 py-3">
         <div className="flex items-center gap-6 justify-end">
           <div className="items-center text-right">
             <div className="text-xs text-gray-600">MOON</div>
@@ -125,7 +125,7 @@ export default function TopPanel() {
             <div className="text-md font-semibold">{temp}°F</div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Mobile Hamburger Button */}
       <div className="lg:hidden fixed top-4 left-4 z-50 flex gap-4">
