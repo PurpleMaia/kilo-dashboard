@@ -1,28 +1,34 @@
 import { NextResponse } from 'next/server';
-import { loginUser, registerUser, invalidateSession } from '@/app/lib/auth';
+import { invalidateSession } from '@/app/lib/auth';
 import { deleteSessionTokenCookie } from '@/app/lib/session';
 import { cookies } from 'next/headers';
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
-      const sessionCookie = (await cookies()).get('auth_session')
+    const sessionCookie = (await cookies()).get('auth_session');
     
-      // invalidate the session in the DB
-      if (sessionCookie && sessionCookie.value) {
-        await invalidateSession(sessionCookie.value);
-      }
-      
-      // delete cookie from session
-      deleteSessionTokenCookie()
+    // invalidate the session in the DB
+    if (sessionCookie && sessionCookie.value) {
+      await invalidateSession(sessionCookie.value);
+    }
     
-      console.log('successfully cleared cookies')
-      const { origin } = new URL(request.url)
-      return NextResponse.redirect(`${origin}/`)
+    // Clear the session cookie using the utility function
+    await deleteSessionTokenCookie();
+    
+    console.log('Successfully signed out user');
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Successfully signed out' 
+    });;
+    
   } catch (error) {
     console.error('Signout Error:', error);
     return NextResponse.json(
-      { error: 'Sign out failed.' },
-      { status: 400 }
+      { 
+        success: false,
+        error: 'Sign out failed. Please try again.' 
+      },
+      { status: 500 }
     );
   } 
 }

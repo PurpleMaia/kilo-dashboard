@@ -28,6 +28,29 @@ export default function TopPanel() {
   const [isOpen, setIsOpen] = useState(false);
   const [temp, setTemp] = useState<number>(75);
 
+  const handleSignout = async () => {
+    try {
+      const response = await fetch('/api/signout', {
+        method: 'POST',
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        console.log(data.message);
+        // Redirect to home page after successful signout
+        window.location.href = '/';
+      } else {
+        console.error('Signout failed:', data.error || 'Unknown error');
+        // Optionally show user-friendly error message
+        alert('Sign out failed. Please try again.');
+      }
+    } catch (e) {
+      console.error("Error signing out:", e);
+      alert('Sign out failed. Please try again.');
+    }
+  }
+
   useEffect(() => {
     // Simple weather simulation - replace with real API later
     const getWeather = async () => {
@@ -56,10 +79,10 @@ export default function TopPanel() {
       {/* First Line - Alerts and Login/Logout */}
       <div className="px-6 py-3 border-b border-gray-100">
         <div className="flex items-center justify-end gap-4">
-          <button className="flex gap-2 border font-semibold drop-shadow-sm px-4 py-2 rounded-lg text-sm hover:bg-gray-50">
+          <Button variant="ghost" size="sm" className="rounded-full">
             Alerts 
             <BellAlertIcon className="h-4 w-4" /> 
-          </button>
+          </Button>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -68,19 +91,16 @@ export default function TopPanel() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-white">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Sign out</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href={"/dashboard/profile"}>                
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSignout}>
+                Sign Out
+              </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
-          {/* <form action="/api/signout" method="POST">
-            <button
-              type="submit"
-              className="flex gap-2 border font-semibold drop-shadow-sm px-4 py-2 rounded-lg text-sm hover:bg-gray-50"
-            >              
-              Sign Out
-            </button>
-          </form> */}
+          </DropdownMenu>          
         </div>
       </div>
 
