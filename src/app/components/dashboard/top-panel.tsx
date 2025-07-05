@@ -9,17 +9,10 @@ import { Bars3Icon, BellAlertIcon, XMarkIcon } from "@heroicons/react/24/outline
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/app/ui/dropdown-menu";
 import { User } from "lucide-react";
 import { Button } from "@/app/ui/button";
+import { pageTitles } from "@/app/lib/links";
 
 // Define a mapping of route paths to page titles
-const pageTitles: Record<string, string> = {
-  '/dashboard': 'Kilo Dashboard',
-  '/dashboard/sensors': 'Sensor Overview',
-  '/dashboard/kilo': 'Kilo Form',
-  '/dashboard/water': 'Water Quality',
-  '/dashboard/soil': 'Soil Quality',
-  '/dashboard/upload': 'Upload Center',
-  '/dashboard/profile': 'Profile Settings',
-};
+
 
 export default function TopPanel() {
   const pathname = usePathname();
@@ -78,29 +71,31 @@ export default function TopPanel() {
     <div className="w-full bg-white border-b border-gray-200">
       {/* First Line - Alerts and Login/Logout */}
       <div className="px-6 py-3 border-b border-gray-100">
-        <div className="flex items-center justify-end gap-4">
-          <Button variant="ghost" size="sm" className="rounded-full">
-            Alerts 
-            <BellAlertIcon className="h-4 w-4" /> 
-          </Button>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="rounded-full">
-                Profile <User className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-white">
-              <DropdownMenuItem>
-                <Link href={"/dashboard/profile"}>                
-                  Profile
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleSignout}>
-                Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>          
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-slate-900 ml-44">{currentTitle}</h1>          
+          <div className="flex justify-end gap-4">
+            <Button variant="ghost" size="sm" className="rounded-full">            
+              <BellAlertIcon className="h-10 w-10" /> 
+            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="rounded-full">
+                  <User className="h-10 w-10" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-white">
+                <DropdownMenuItem>
+                  <Link href={"/dashboard/profile"}>                
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSignout}>
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>          
+          </div>
         </div>
       </div>
 
@@ -136,7 +131,7 @@ export default function TopPanel() {
             <Bars3Icon className="h-6 w-6 text-gray-700" />
           )}
         </button>
-        <div className="text-xl font-black text-gray-800 py-2">{currentTitle}</div>
+        
 
       </div>
 

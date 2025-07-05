@@ -36,3 +36,12 @@ export const links = [
   },
   // { name: 'Sensors', href: '/dashboard/sensors', icon: EyeIcon },
 ];
+
+export const pageTitles: Record<string, string> = {
+  '/dashboard': 'Dashboard',
+  '/dashboard/sensors': 'Sensor Overview',
+  '/dashboard/kilo': 'Kilo Form',
+  '/dashboard/ag-testing': 'Agriculture Testing Center',
+  '/dashboard/upload': 'Upload Center',
+  '/dashboard/profile': 'Profile Settings',
+};
