@@ -7,9 +7,9 @@ import LatestFetch from "@/app/components/sensors/latest";
 
 export default function Sensors() {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       
-      <div className="p-6 space-y-6">
+      <div className="space-y-6">
         {/* Recent Data Fetch Status */}
         <Suspense fallback={<InvoiceSkeleton />}>
             <LatestFetch />

@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card";
 import { ArrowPathIcon, CircleStackIcon } from '@heroicons/react/24/outline';
 import { db } from "../../../../db/kysely/client";
 import { getAinaID, getUserID } from "@/app/lib/server-utils";
+import { Button } from "@/app/ui/button";
 
 export default async function LatestFetch() {
     const userID = await getUserID()
@@ -18,20 +19,20 @@ export default async function LatestFetch() {
         <>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Current Status */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 bg-white border-gray-200 shadow-md p-4">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <CircleStackIcon className="h-5 w-5 text-blue-600" />
                 Data Sync Status
               </CardTitle>
-              <button 
+              <Button 
                 // onClick={handleRefresh}
                 className="flex items-center gap-2"
               >
                 <ArrowPathIcon className="h-4 w-4" />
                 Refresh
-              </button>
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
