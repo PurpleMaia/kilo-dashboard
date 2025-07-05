@@ -20,6 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {/* Main content, scrollable */}
       <main
         className={`
+          bg-gray-50
           overflow-auto p-4
           h-[calc(100vh-7rem)] 
           md:ml-44
