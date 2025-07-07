@@ -2,58 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import {
-  Bars3Icon,
-  XMarkIcon,
-  BellAlertIcon,
-  UserGroupIcon,
-  HomeIcon,
-  DocumentDuplicateIcon,
-  ArrowUpTrayIcon,
-  UserCircleIcon,
-  EyeIcon,
-  PowerIcon
-} from '@heroicons/react/24/outline';
+import { links } from "@/app/lib/links";
 import Link from 'next/link'
 import clsx from 'clsx';
-
-const links = [
-  {
-    name: 'Home',
-    href: '/dashboard',
-    icon: HomeIcon,
-  },
-  {
-    name: 'Kilo',
-    href: '/dashboard/kilo',
-    icon: EyeIcon,
-  },
-  { name: 'Water Quality', href: '/dashboard/water', icon: UserGroupIcon },
-  { name: 'Soil Quality', href: '/dashboard/soil', icon: UserGroupIcon },
-  { name: 'Sensors', href: '/dashboard/sensors', icon: UserGroupIcon },
-  {
-    name: 'Upload',
-    href: '/dashboard/upload',
-    icon: ArrowUpTrayIcon,
-  },
-  {
-    name: 'Profile',
-    href: '/dashboard/profile',
-    icon: UserCircleIcon,
-  },
-  // { name: 'Sensors', href: '/dashboard/sensors', icon: EyeIcon },
-];
+import { Bars3Icon, BellAlertIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/app/ui/dropdown-menu";
+import { User } from "lucide-react";
+import { Button } from "@/app/ui/button";
+import { pageTitles } from "@/app/lib/links";
 
 // Define a mapping of route paths to page titles
-const pageTitles: Record<string, string> = {
-  '/dashboard': 'Kilo Dashboard',
-  '/dashboard/sensors': 'Sensor Overview',
-  '/dashboard/kilo': 'Kilo Form',
-  '/dashboard/water': 'Water Quality',
-  '/dashboard/soil': 'Soil Quality',
-  '/dashboard/upload': 'Upload Center',
-  '/dashboard/profile': 'Profile Settings',
-};
+
 
 export default function TopPanel() {
   const pathname = usePathname();
@@ -61,6 +20,29 @@ export default function TopPanel() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [temp, setTemp] = useState<number>(75);
+
+  const handleSignout = async () => {
+    try {
+      const response = await fetch('/api/signout', {
+        method: 'POST',
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        console.log(data.message);
+        // Redirect to home page after successful signout
+        window.location.href = '/';
+      } else {
+        console.error('Signout failed:', data.error || 'Unknown error');
+        // Optionally show user-friendly error message
+        alert('Sign out failed. Please try again.');
+      }
+    } catch (e) {
+      console.error("Error signing out:", e);
+      alert('Sign out failed. Please try again.');
+    }
+  }
 
   useEffect(() => {
     // Simple weather simulation - replace with real API later
@@ -89,26 +71,36 @@ export default function TopPanel() {
     <div className="w-full bg-white border-b border-gray-200">
       {/* First Line - Alerts and Login/Logout */}
       <div className="px-6 py-3 border-b border-gray-100">
-        <div className="flex items-center justify-end gap-4">
-          <button className="flex gap-2 border font-semibold drop-shadow-sm px-4 py-2 rounded-lg text-sm hover:bg-gray-50">
-            Alerts 
-            <BellAlertIcon className="h-4 w-4" /> 
-          </button>
-          
-          <form action="/api/signout" method="POST">
-            <button
-              type="submit"
-              className="flex gap-2 border font-semibold drop-shadow-sm px-4 py-2 rounded-lg text-sm hover:bg-gray-50"
-            >
-              <PowerIcon className="h-4 w-4" />
-              Sign Out
-            </button>
-          </form>
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-slate-900 ml-44">{currentTitle}</h1>          
+          <div className="flex justify-end gap-4">
+            <Button variant="ghost" size="sm" className="rounded-full">            
+              <BellAlertIcon className="h-10 w-10" /> 
+            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="rounded-full">
+                  <User className="h-10 w-10" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-white">
+                <DropdownMenuItem>
+                  <Link href={"/dashboard/profile"}>                
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSignout}>
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>          
+          </div>
         </div>
       </div>
 
-      {/* Second Line - Moon and Solstice Info */}
-      <div className="px-6 py-3">
+      {/* Second Line - Moon and Solstice Info (tookout for now to see full view) */}
+      {/* <div className="px-6 py-3">
         <div className="flex items-center gap-6 justify-end">
           <div className="items-center text-right">
             <div className="text-xs text-gray-600">MOON</div>
@@ -125,7 +117,7 @@ export default function TopPanel() {
             <div className="text-md font-semibold">{temp}°F</div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Mobile Hamburger Button */}
       <div className="lg:hidden fixed top-4 left-4 z-50 flex gap-4">
@@ -139,7 +131,7 @@ export default function TopPanel() {
             <Bars3Icon className="h-6 w-6 text-gray-700" />
           )}
         </button>
-        <div className="text-xl font-black text-gray-800 py-2">{currentTitle}</div>
+        
 
       </div>
 

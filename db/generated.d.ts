@@ -5,7 +5,7 @@
 
 import type { ColumnType } from "kysely";
 
-export type Category = "air" | "soil" | "stream" | "water";
+export type Category = "air" | "sensor" | "soil" | "stream" | "water";
 
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
@@ -14,6 +14,18 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>;
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
+
+export interface AgTestFiles {
+  aina_id: number;
+  file_content: Buffer;
+  file_name: string;
+  file_size: number;
+  id: Generated<number>;
+  mime_type: string;
+  test_type: string;
+  uploaded_at: Generated<Timestamp>;
+  user_id: string;
+}
 
 export interface Aina {
   created_at: Timestamp | null;
@@ -41,6 +53,12 @@ export interface MetricType {
   id: Generated<number>;
   type_name: string | null;
   unit: string | null;
+}
+
+export interface Profile {
+  aina_id: number | null;
+  role: string | null;
+  user_id: string | null;
 }
 
 export interface SchemaMigrations {
@@ -88,10 +106,12 @@ export interface Usersession {
 }
 
 export interface DB {
+  ag_test_files: AgTestFiles;
   aina: Aina;
   mala: Mala;
   metric: Metric;
   metric_type: MetricType;
+  profile: Profile;
   schema_migrations: SchemaMigrations;
   sensor: Sensor;
   user: User;

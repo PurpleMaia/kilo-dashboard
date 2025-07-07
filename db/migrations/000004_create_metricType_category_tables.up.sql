@@ -1,7 +1,7 @@
 ALTER TABLE metric
 DROP COLUMN category;
 
-CREATE TYPE category as ENUM ('soil', 'water', 'stream', 'air');
+CREATE TYPE category as ENUM ('soil', 'water', 'stream', 'air', 'sensor');
 
 CREATE TABLE metric_type (
     id SERIAL PRIMARY KEY,

@@ -3,14 +3,19 @@ import { ExclamationTriangleIcon, TrashIcon, DocumentTextIcon, ArrowUpTrayIcon, 
 import { useState, useRef } from "react";
 import CsvEditor from "../../components/upload/CsvEditor";
 
+interface SensorInfo {
+  region?: string;
+  location?: string;
+  sensorID?: string;
+}
+
 interface CSVFile {
   file: File;
   id: string;
   data: any[];
   headers: any[];
-  landID: string;
-  sensorID: string;
   errors?: string[];
+  sensorInfo?: SensorInfo;
 }
 
 export default function Upload() {
@@ -18,24 +23,6 @@ export default function Upload() {
     const [showPreview, setShowPreview] = useState<string | null>(null);
     const [editingFile, setEditingFile] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-
-    // const availableLands = await fetchLands()
-    const availableLands = [
-        { id: '1', name: 'North Farm' },
-        { id: '2', name: 'South Pasture' },
-        { id: '3', name: 'Greenhouse Complex' } 
-    ]
-    // const availableSensors = await fetchSensors()
-    const availableSensors = [
-        { id: 'KILO-001', name: 'Sensor A1-01' },
-        { id: 'KILO-002', name: 'Sensor A1-02' },
-        { id: 'KILO-003', name: 'Sensor A2-01' },
-        { id: 'KILO-004', name: 'Sensor B1-01' },
-        { id: 'KILO-005', name: 'Sensor GH1-01' },
-        { id: 'KILO-006', name: 'Sensor GH2-01' },
-        { id: 'KILO-007', name: 'Sensor A1-03' },
-        { id: 'KILO-008', name: 'Sensor A2-02' }
-    ];
 
     const handleFiles = async (selectedFiles: File[]) => {
         const csvFiles = selectedFiles.filter(file => 
@@ -57,14 +44,13 @@ export default function Upload() {
                 
                 if (lines.length < 2) {
                     errors.push(`CSV file must contain at least a header row and one data row`);
-                    continue;
                 }
 
-                const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                const headers = lines.length > 0 ? lines[0].split(',').map(h => h.trim().toLowerCase()) : [];
                 
                 // check for required headers
                 if (!headers.some(h => h.includes('time'))) {
-                    errors.push(` Missing 'timestamp' column`);
+                    errors.push(`Missing 'timestamp' column`);
                 }
                 if (!headers.some(h => h.includes('sensor'))) {
                     errors.push(`Missing 'Sensor ID' column`);
@@ -75,25 +61,47 @@ export default function Upload() {
                 if (!headers.some(h => h.includes('region'))) {
                     errors.push(`Missing 'Region Name' column`);
                 }
-                // for preview
+
+                // Find the indices for region, location, sensor id
+                const regionIdx = headers.findIndex(h => h.includes('region'));
+                const locationIdx = headers.findIndex(h => h.includes('location'));
+                const sensorIdIdx = headers.findIndex(h => h.includes('sensor'));
+
+                // Extract sensor info from the first data row (if available)
+                let sensorInfo: SensorInfo = {};
+                if (lines.length > 1) {
+                    const firstData = lines[1].split(',').map(v => v.trim());
+                    if (regionIdx !== -1) sensorInfo.region = firstData[regionIdx] || '';
+                    if (locationIdx !== -1) sensorInfo.location = firstData[locationIdx] || '';
+                    if (sensorIdIdx !== -1) sensorInfo.sensorID = firstData[sensorIdIdx] || '';
+                }
+
+                // exclude region, location, and any 'id' headers from final data obj
+                const dataHeaders = headers.filter(h => {
+                    const normalized = h.replace(/\s+/g, '').toLowerCase();
+                    if (normalized.includes('id')) return false;
+                    if (normalized.includes('location')) return false;
+                    if (normalized.includes('region')) return false;
+                    return true;
+                });
+                // only grab data within the dataHeaders
                 const data = lines.map((line, index) => {
                     const values = line.split(',').map(v => v.trim());
                     const row: any = {};
-                    headers.forEach((header, i) => {
-                            row[header] = values[i] || '';
+                    dataHeaders.forEach((header) => {
+                        const idx = headers.indexOf(header);
+                        row[header] = values[idx] || '';
                     });
                     return row;
                 });
 
-            
                 const newFile: CSVFile = {
                     file,
                     id: Math.random().toString(36).substr(2, 9),
                     data: data,
-                    headers: headers,
-                    landID: '',
-                    sensorID: '',
-                    errors: errors.length > 0 ? errors : undefined
+                    headers: dataHeaders,
+                    errors: errors.length > 0 ? errors : undefined,
+                    sensorInfo: sensorInfo
                 };
 
                 setFiles(prev => [...prev, newFile]);
@@ -103,18 +111,11 @@ export default function Upload() {
                             id: Math.random().toString(36).substr(2, 9),
                             data: [],
                             headers: [],
-                            landID: '',
-                            sensorID: '',
-                            errors: [`Error processing file: ${error instanceof Error ? error.message : 'Unknown error'}`]
+                            errors: [`Error processing file: ${error instanceof Error ? error.message : 'Unknown error'}`],
+                            sensorInfo: {}
                 }]);           
             }
         }
-    };
-
-    const updateFileMetadata = (fileId: string, field: 'landID' | 'sensorID', value: string) => {
-        setFiles(prev => prev.map(f => 
-        f.id === fileId ? { ...f, [field]: value } : f
-        ));
     };
 
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,11 +143,10 @@ export default function Upload() {
         try {                    
             // Prepare the data to send
             const uploadData = files.map(file => ({
-                fileName: file.file.name,
-                landID: file.landID,
-                sensorID: file.sensorID,
+                fileName: file.file.name,                
                 data: file.data, // This contains the parsed CSV data
-                headers: file.headers
+                headers: file.headers,
+                sensorInfo: file.sensorInfo
             }));
             const response = await fetch('/api/upload', {
                 method: 'POST',

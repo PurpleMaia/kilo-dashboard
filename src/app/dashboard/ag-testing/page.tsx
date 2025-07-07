@@ -39,10 +39,10 @@ export default function AgTesting() {
 
   const ecoliFields = [
     { label: 'CFU', value: 95, unit: 'count/100ml', isHigh: false, isLow: false },
-    { label: 'Temperature', value: 78, unit: '\u00b0F', isHigh: false, isLow: false },
+    { label: 'Temperature', value: 78, unit: '°F', isHigh: false, isLow: false },
     { label: 'pH', value: 7.2, unit: '', isHigh: false, isLow: false },
     { label: 'Turbidity', value: 0.5, unit: 'NTU', isHigh: false, isLow: false },
-    { label: 'Conductivity', value: 350, unit: '\u00b5S/cm', isHigh: false, isLow: false }
+    { label: 'Conductivity', value: 350, unit: 'µS/cm', isHigh: false, isLow: false }
   ];
 
   return (
@@ -54,21 +54,18 @@ export default function AgTesting() {
           type="soil"
           title="Soil Test"
           fields={soilFields}
-          onSaved={handleTestSaved}
         />
 
         <AgTestCard
           type="water"
           title="Water Quality"
           fields={waterFields}
-          onSaved={handleTestSaved}
         />
 
         <AgTestCard
           type="ecoli"
           title="E. coli Test"
           fields={ecoliFields}
-          onSaved={handleTestSaved}
         />
       </div>
 

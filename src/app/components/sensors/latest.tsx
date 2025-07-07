@@ -1,75 +1,90 @@
-import { fetchLatestSensorsData } from "@/app/lib/data";
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
-import clsx from "clsx";
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card";
+import { ArrowPathIcon, CircleStackIcon } from '@heroicons/react/24/outline';
+import { db } from "../../../../db/kysely/client";
+import { getAinaID, getUserID } from "@/app/lib/server-utils";
+import { Button } from "@/app/ui/button";
 
-export default async function SensorsWrapper() {
-    const sensors = await fetchLatestSensorsData();
+export default async function LatestFetch() {
+    const userID = await getUserID()
+    const ainaID = await getAinaID(userID)
+    const sensorCount = await db
+      .selectFrom('sensor')
+      .innerJoin('mala as m', 'sensor.mala_id', 'm.id')
+      .innerJoin('aina as a', 'm.aina_id', 'a.id')
+      .select(db.fn.count<number>('sensor.id').as('total'))
+      .where('a.id', '=', ainaID)
+      .executeTakeFirstOrThrow()
 
     return (
         <>
-            <div className="flex w-full flex-col md:col-span-4">
-      <h2 className={`mb-4 font-black text-xl md:text-2xl`}>
-        Latest Data
-      </h2>
-      <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
-
-        <div className="bg-white px-6">
-          {sensors.map((sensor, i) => {
-            return (
-              <div
-                key={i}
-                className={clsx(
-                  'flex flex-row items-center justify-between py-4',
-                  {
-                    'border-t': i !== 0,
-                  },
-                )}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Current Status */}
+        <Card className="lg:col-span-2 bg-white border-gray-200 shadow-md p-4">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <CircleStackIcon className="h-5 w-5 text-blue-600" />
+                Data Sync Status
+              </CardTitle>
+              <Button 
+                // onClick={handleRefresh}
+                className="flex items-center gap-2"
               >
-                <div className="flex items-center">                  
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold md:text-base">
-                      {sensor.name}
-                    </p>                    
+                <ArrowPathIcon className="h-4 w-4" />
+                Refresh
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">{sensorCount.total}</div>
+                <div className="text-sm text-slate-600">Active Sensors</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">{24}</div>
+                <div className="text-sm text-slate-600">Records Updated</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-slate-900">2 minutes ago</div>
+                <div className="text-sm text-slate-600">Last Fetch</div>
+              </div>
+              {/* <div className="text-center">
+                <div className="text-2xl font-bold text-slate-900">{fetchStatus.nextFetch}</div>
+                <div className="text-sm text-slate-600">Next Fetch</div>
+              </div> */}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Activity */}
+        {/* <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-blue-600" />
+              Recent Fetches
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {recentFetches.map((fetch, index) => (
+                <div key={index} className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(fetch.status)}
+                    <span className="font-mono">{fetch.time}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-600">{fetch.records} records</span>
+                    <Badge variant="outline" className="text-xs">
+                      {fetch.duration}
+                    </Badge>
                   </div>
                 </div>
-                <p
-                  className={`truncate text-sm font-medium md:text-base`}
-                >
-                  {sensor.value}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-        <div className="flex items-center pb-2 pt-6">
-          <ArrowPathIcon className="h-5 w-5 text-gray-500" />
-          <h3 className="ml-2 text-sm text-gray-500 ">Updated just now</h3>
-        </div>
-      </div>
-    </div>
-        </>
-    )
-}
-
-export function Sensor({
-    type,
-    value,
-}: {
-    type: string;
-    value: number;
-}) {
-
-    return (        
-            <div className="hover:bg-sky-100 hover:text-blue-600 rounded-xl bg-gray-50 p-2 shadow-sm">
-                <div className="flex p-4">
-                    <h3 className="ml-2 text-sm font-medium">{type}</h3>
-                </div>
-                <p
-                    className={`
-                    truncate rounded-xl bg-white px-4 py-8 text-center text-2xl`}
-                >
-                    {value}
-                </p>
+              ))}
             </div>
+          </CardContent>
+        </Card> */}
+      </div>
+        </>
     )
 }

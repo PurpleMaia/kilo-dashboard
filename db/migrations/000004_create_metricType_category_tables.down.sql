@@ -7,8 +7,3 @@ DROP TABLE IF EXISTS metric_type;
 
 -- 3) Drop the enum type
 DROP TYPE IF EXISTS category;
-
--- 4) Re-add the old category column to metric
---    (adjust the data type or nullability to match your pre-migration schema)
-ALTER TABLE metric
-  ADD COLUMN category text;
