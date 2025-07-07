@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 
+
+
 interface Sensor {
   id: string;
   type: string;
@@ -9,6 +11,8 @@ interface Sensor {
   deployed: boolean;
   site: string;
   location: string;
+  latitude: number;
+  longitude: number;
 }
 
 const SITES = [
@@ -32,9 +36,9 @@ const SENSOR_TYPES = [
 const SENSOR_STORAGE_KEY = "sensors";
 
 const defaultSensors: Sensor[] = [
-  { id: "ID1", type: "Rainfall", name: "Tipping Bucket Rainfall Sensor", deployed: true, site: "Nation of Hawaii", location: "Loiʻi 1" },
-  { id: "ID2", type: "Liquid Level", name: "Non-contact Digital Liquid Level Sensor", deployed: false, site: "Nation of Hawaii", location: "Loʻi 2" },
-  { id: "ID3", type: "Turbidity", name: "Analog Turbidity Sensor", deployed: true, site: "Nation of Hawaii", location: "Loʻi 3" },
+  { id: "ID1", type: "Rainfall", name: "Tipping Bucket Rainfall Sensor", deployed: true, site: "Nation of Hawaii", location: "Loiʻi 1", latitude: 21.387, longitude: -157.933 },
+  { id: "ID2", type: "Liquid Level", name: "Non-contact Digital Liquid Level Sensor", deployed: false, site: "Nation of Hawaii", location: "Loʻi 2", latitude: 21.388, longitude: -157.934 },
+  { id: "ID3", type: "Turbidity", name: "Analog Turbidity Sensor", deployed: true, site: "Nation of Hawaii", location: "Loʻi 3", latitude: 21.389, longitude: -157.935 },
 ];
 
 function getInitialSensors(): Sensor[] {
@@ -94,6 +98,8 @@ export default function SensorPage() {
       deployed: false,
       site: defaultSite,
       location: defaultLocation,
+      latitude: 0,
+      longitude: 0,
     });
     setModalOpen(true);
   };
@@ -124,6 +130,7 @@ export default function SensorPage() {
       </div>
       <div>Name: {sensor.name}</div>
       <div>Location: {sensor.location}</div>
+      <div className="text-xs text-gray-500">Lat/Lng: {sensor.latitude}, {sensor.longitude}</div>
       <div className="flex items-center gap-2 mt-2">
         <span className="text-xs text-gray-500">Deployed</span>
         <button
@@ -139,6 +146,7 @@ export default function SensorPage() {
       </div>
     </div>
   );
+
 
   return (
     <div className="p-8">
@@ -190,6 +198,7 @@ export default function SensorPage() {
                   </button>
                 </td>
                 <td className="p-2 border-b">{sensor.location}</td>
+                <td className="p-2 border-b text-xs">{sensor.latitude} {sensor.longitude}</td>
                 <td className="p-2 border-b">
                   <button onClick={() => handleEdit(sensor)} className="text-xs text-purple-600 underline mr-2">Edit</button>
                   <button onClick={() => handleDelete(sensor.id)} className="text-xs text-red-600 underline">Delete</button>
@@ -207,13 +216,18 @@ export default function SensorPage() {
       )}
       {/* Modal for Add/Edit */}
       {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+          {/* Blurred overlay, only over main content, not side nav */}
+          <div className="absolute inset-0 left-[min(16rem,25vw)] bg-white/30 backdrop-blur-sm pointer-events-auto" aria-hidden="true"></div>
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-6 w-full max-w-md mx-auto pointer-events-auto">
             <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={() => { setModalOpen(false); setEditing(null); }}
+              className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+              onClick={() => setModalOpen(false)}
+              aria-label="Close"
             >
-              ×
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
             <h2 className="text-lg font-semibold mb-4">{editing ? "Edit Sensor" : "Add Sensor"}</h2>
             <div className="flex flex-col gap-3">
@@ -265,6 +279,7 @@ export default function SensorPage() {
                   ))}
                 </select>
               </label>
+
               <label className="flex flex-col text-sm">
                 Location
                 <select
@@ -288,7 +303,7 @@ export default function SensorPage() {
               <button
                 className="mt-4 px-4 py-2 rounded bg-purple-600 text-white hover:bg-purple-700 disabled:bg-gray-300"
                 onClick={handleSave}
-                disabled={!form.type || !form.name || !form.site || !form.location}
+                disabled={!form.type || !form.name || !form.site || !form.location || typeof form.latitude !== 'number' || typeof form.longitude !== 'number' || isNaN(form.latitude) || isNaN(form.longitude)}
               >
                 Save
               </button>
