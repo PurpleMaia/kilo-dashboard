@@ -33,17 +33,16 @@ export async function fetchSensorsData() {
         // const data = await fetcher<SensorData[]>('/sensors/graph')
         // fetch all sensor data from past 5 days (for now commented out for Phase I)
         const data = await sql<SensorData[]>`
-            SELECT s.name, value, timestamp from metric m
-            join sensor s on s.id = m.sensor_id
-            -- where timestamp >= NOW() - interval '5 days'
-            order by s.name, timestamp desc
+            select m.value, m."timestamp", mt.type_name from metric m 
+            join metric_type mt on mt.id = m.metric_type 
+            where not mt.type_name = 'unknown'
         `
 
-        // group by sensor name and return different objects
+        // group by metric type and return different groups
         const grouped: Record<string, any[]> = {};
         for (const row of data) {
-            if (!grouped[row.name]) grouped[row.name] = [];
-            grouped[row.name].push({
+            if (!grouped[row.type_name]) grouped[row.type_name] = [];
+            grouped[row.type_name].push({
             timestamp: row.timestamp,
             value: row.value,
             // name: row.name,

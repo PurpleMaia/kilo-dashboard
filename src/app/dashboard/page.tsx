@@ -1,6 +1,6 @@
 import WeatherWidget from "../components/home/WeatherWidget";
 import MahinaWidget from "../components/home/MahinaWidget";
-import SensorWidget from "../components/home/SensorWidget";
+import RecentUploadWidget from "../components/home/RecentUploadWidget";
 import SolsticeWidget from "../components/home/SolsticeWidget";
 import { Suspense } from "react";
 import { InvoiceSkeleton } from "../ui/skeletons";
@@ -8,7 +8,8 @@ import SensorReadings from "../components/home/SensorReadings";
 import { fetchSensorsData } from "../lib/data";
 
 export default async function Page() {
-    const sensors = await fetchSensorsData()
+    const sensors = await fetchSensorsData() // since its a sensor component
+  
     return (
         <div className="h-full flex bg-gray-50">
         <div className="flex-1 flex flex-col">
@@ -21,8 +22,7 @@ export default async function Page() {
               <WeatherWidget />
               <SolsticeWidget />
               <MahinaWidget />
-              <SensorWidget />
-              
+              <RecentUploadWidget />              
             </div>
             
             {/* Main Content - Side by Side Layout */}
