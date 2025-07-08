@@ -1,7 +1,5 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { validateSessionToken } from "../lib/auth";
 import RegistrationForm from "./components/RegistrationStep1";
+import Link from "next/link";
 
 export default async function RegisterPage() {
 // COMMENTED OUT FOR TESTNG    
@@ -26,7 +24,17 @@ export default async function RegisterPage() {
 
   // Fetch aina list from the database
 
-  return (              
+  return (      
+    <>
       <RegistrationForm />    
+      <div className="text-center">
+          <p className="text-sm text-gray-600">
+          Already have an account?{' '}
+          <Link href="/" className="text-lime-800 hover:text-lime-700 font-medium">
+              Sign in here
+          </Link>
+          </p>
+      </div>
+    </>        
   );
 } 

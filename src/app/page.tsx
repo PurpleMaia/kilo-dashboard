@@ -1,5 +1,3 @@
-import { ArrowRightIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -14,8 +12,9 @@ export default async function Home() {
       const sessionValidation = await validateSessionToken(sessionCookie.value);
       if (sessionValidation.user) {
         canRedirect = true
+        console.log('Valid session, redirecting to dashboard home')
       }
-    } catch (error) {
+    } catch {
       // Invalid session, continue to login form
       console.log('Invalid session, showing login form');
     }

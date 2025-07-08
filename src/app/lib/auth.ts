@@ -1,10 +1,7 @@
-import postgres from 'postgres';
 import { randomBytes, pbkdf2Sync, createHash, timingSafeEqual } from 'crypto';
 import { db } from '../../../db/kysely/client';
 
 import * as base64 from 'hi-base64'
-
-const sql = postgres(process.env.DATABASE_URL!)
 
 export interface Session {
   id: string;
@@ -33,7 +30,15 @@ export function hashToken(token: string): string {
 export async function createSession(token: string, user_id: string): Promise<Session> {
     const sessionId = hashToken(token);
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
-    await sql`INSERT INTO public.usersession (id, user_id, expires_at) VALUES (${sessionId}, ${user_id}, ${expiresAt})`;
+    
+    await db.insertInto('usersession')
+        .values({
+            id: sessionId,
+            user_id: user_id,
+            expires_at: expiresAt
+        })
+        .execute();
+        
     return { id: sessionId, user_id, expiresAt };
 }
 

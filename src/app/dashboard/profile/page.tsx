@@ -1,17 +1,20 @@
 'use client'
 import { useEffect, useState } from "react";
 import { BookmarkSquareIcon, PencilIcon, UserIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Button } from "@/app/ui/button";
+import { useRouter } from "next/navigation";
 
 interface UserData {
     username: string,
     email: string,
     created_at: Date,
     role: string,
-    name: string
+    aina_name: string,
+    needsAinaSetup: boolean
 }
 
 export default function Profile() {
-    
+    const router = useRouter()
     const [editingProfile, setEditingProfile] = useState(false);
     const [userData, setUserData] = useState<UserData | null>(null);
 
@@ -24,7 +27,7 @@ export default function Profile() {
             }
 
             const userData = await response.json();
-            console.log(userData)
+            console.log(userData)            
             setUserData(userData)        
         } catch (error) {
             console.log(`Failed to load data: ${error}`);
@@ -96,7 +99,7 @@ export default function Profile() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
                     <input
                         type="text"
-                        value={userData?.name}
+                        value={userData?.aina_name}
                         // onChange={(e) => setProfileData({...userData, site: e.target.value})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
@@ -126,8 +129,16 @@ export default function Profile() {
                     {/* <p className="text-gray-900">{userData.phone}</p> */}
                     </div>
                     <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-1">Location</h3>
-                    <p className="text-gray-900">{userData?.name}</p>
+                        <h3 className="text-sm font-medium text-gray-500 mb-1">Location</h3>
+                        { userData?.needsAinaSetup ? (
+                            <Button variant="outline" onClick={() => router.push('/register/aina') }>
+                                Continue Set Up
+                            </Button>
+                        ) : (
+                            <p className="text-gray-900">{userData?.aina_name}</p>
+                        )
+                        }
+
                     </div>
                 </div>
                 )}

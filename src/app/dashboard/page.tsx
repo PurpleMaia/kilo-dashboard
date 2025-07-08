@@ -1,22 +1,60 @@
+import WeatherWidget from "../components/home/WeatherWidget";
+import MahinaWidget from "../components/home/MahinaWidget";
+import RecentUploadWidget from "../components/home/RecentUploadWidget";
+import SolsticeWidget from "../components/home/SolsticeWidget";
 import { Suspense } from "react";
-import { InvoiceSkeleton, RevenueChartSkeleton } from "../ui/skeletons";
-import SensorsWrapper from "../components/sensors/latest";
-import GraphWrapper from "../components/sensors/graph-serve";
-import { cookies } from "next/headers";
-
+import { InvoiceSkeleton } from "../ui/skeletons";
+import SensorReadings from "../components/home/SensorReadings";
+import { fetchSensorsData } from "../lib/data";
+import KiloNotes from "../components/home/KiloNotesWidget";
 
 export default async function Page() {
-    const sessionCookie = (await cookies()).get('auth_session');
+    const sensors = await fetchSensorsData() // since its a sensor component
+  
     return (
-        <main>
-            {/* Patches
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <Suspense fallback={<PatchSkeleton />}>
-                <PatchesWrapper />
-            </Suspense>
-            </div> */}
-            <p>{sessionCookie?.name}</p>
-                     
+        <div className="h-full flex bg-gray-50">
+        <div className="flex-1 flex flex-col">
+
+        
+        <main className="flex-1 p-3 md:p-6 md:overflow-hidden overflow-auto">
+          <div className="max-w-full space-y-6">
+            {/* Top Widgets Row */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+              <WeatherWidget />
+              <SolsticeWidget />
+              <MahinaWidget />
+              <RecentUploadWidget />              
+            </div>
+            
+            {/* Main Content - Side by Side Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+              {/* Left Column - Sensor Readings */}
+              <div className="space-y-4">
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900">Sensor Readings</h2>
+                <div className="h-96">
+                  <Suspense fallback={<InvoiceSkeleton />}>
+                      <SensorReadings sensors={sensors}/>
+                  </Suspense>
+                </div>
+              </div>
+              
+              {/* Right Column - Diary Entries */}
+              <div className="space-y-4">
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900">Field Diary</h2>
+                <div className="h-96">
+                  <KiloNotes />
+                </div>
+              </div>
+            </div>
+
+            {/* Placeholder for future component */}
+            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center h-full">
+              <p className="text-gray-500">Data Insights w/ KILO LLM will go here</p>
+            </div>
+
+          </div>
         </main>
+      </div>
+    </div>
     );
 }
