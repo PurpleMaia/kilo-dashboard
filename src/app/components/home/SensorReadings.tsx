@@ -29,9 +29,9 @@ export default function SensorReadings({ sensors }: SensorReadingsProps) {
 
     return (
         <>
-            <div className="w-full">
-                <div className="bg-white rounded-lg p-4 shadow-sm border">
-                    <div className="flex items-center justify-between mb-4">
+            <div className="w-full h-full">
+                <div className="bg-white rounded-lg p-4 shadow-sm border h-full flex flex-col">
+                    <div className="flex items-center justify-between mb-4 flex-shrink-0">
                         <h3 className="text-lg font-semibold text-gray-900">
                             {currentSensor.name}
                         </h3>
@@ -57,9 +57,11 @@ export default function SensorReadings({ sensors }: SensorReadingsProps) {
                             </button>
                         </div>
                     </div>
-                    <SensorGraph
-                        data={currentSensor.data}
-                    />
+                    <div className="flex-1 min-h-0">
+                        <SensorGraph
+                            data={currentSensor.data}
+                        />
+                    </div>
                 </div>
             </div>
         </>
