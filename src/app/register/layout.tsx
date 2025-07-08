@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export default function RegisterLayout({
     children,
   }: Readonly<{
@@ -18,15 +16,8 @@ export default function RegisterLayout({
             
             {children}
             
-            <div className="text-center">
-                <p className="text-sm text-gray-600">
-                Already have an account?{' '}
-                <Link href="/" className="text-lime-800 hover:text-lime-700 font-medium">
-                    Sign in here
-                </Link>
-                </p>
-            </div>
-            </div>
+            
+          </div>
         </div>
       </main>
     );

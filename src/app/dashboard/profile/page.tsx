@@ -1,6 +1,8 @@
 'use client'
 import { useEffect, useState } from "react";
 import { BookmarkSquareIcon, PencilIcon, UserIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Button } from "@/app/ui/button";
+import { useRouter } from "next/navigation";
 
 interface UserData {
     username: string,
@@ -12,7 +14,7 @@ interface UserData {
 }
 
 export default function Profile() {
-    
+    const router = useRouter()
     const [editingProfile, setEditingProfile] = useState(false);
     const [userData, setUserData] = useState<UserData | null>(null);
 
@@ -129,7 +131,9 @@ export default function Profile() {
                     <div>
                         <h3 className="text-sm font-medium text-gray-500 mb-1">Location</h3>
                         { userData?.needsAinaSetup ? (
-                            <div> continue set up </div>
+                            <Button variant="outline" onClick={() => router.push('/register/aina') }>
+                                Continue Set Up
+                            </Button>
                         ) : (
                             <p className="text-gray-900">{userData?.aina_name}</p>
                         )

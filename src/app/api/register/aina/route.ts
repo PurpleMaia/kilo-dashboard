@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '../../../../../db/kysely/client';
-import { getUserID } from '@/app/lib/utils';
+import { getUserID } from '@/app/lib/server-utils';
 
 export async function POST(request: Request) {
     try {

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '../../../../db/kysely/client';
 import { getUserID } from '@/app/lib/server-utils';
 
-export async function GET(request: Request) {
+export async function GET() {
     const userID = await getUserID()
     try {
         const result = await db
