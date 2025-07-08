@@ -65,6 +65,8 @@ export async function POST(request: Request) {
             .limit(1)
             .execute()
         const latestTimestamp = latestTimeRow.timestamp
+
+        console.log(file.sensorInfo)
         
         for (const row of file.data) {          
 
