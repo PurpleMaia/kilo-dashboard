@@ -4,16 +4,13 @@ import { Metric } from '@/app/lib/types';
 
 
 export function SensorGraph({
-    name,
-    data,
+    data
 }: {
-    name: string;
     data: Metric[];
 }) {
 
     return (
         <>
-        <h2 className='mb-4 text-xl'>{name}</h2>
         <div className='w-full h-72'>
             <ResponsiveContainer width="100%" height="100%">
                 <AreaChart

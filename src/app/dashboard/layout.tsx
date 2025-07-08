@@ -19,8 +19,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <main
         className={`
           bg-gray-50
-          md:overflow-hidden md:h-[calc(100vh-7rem)]
-          overflow-auto h-[calc(100vh-7rem)]
+          md:overflow-hidden md:h-[calc(100vh-4rem)]
+          overflow-auto h-[calc(100vh-4rem)]
           p-4
           md:ml-44
         `}

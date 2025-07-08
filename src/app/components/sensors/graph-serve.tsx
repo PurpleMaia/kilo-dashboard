@@ -6,14 +6,10 @@ export default async function GraphWrapper() {
 
     return (
         <>
-            <div className="flex w-full flex-col md:col-span-4">
-
-                <h2 className={`mb-4 font-black text-xl md:text-2xl`}>
-                    Trends
-                </h2>
-                                                       
+            <div className="flex w-full flex-col md:col-span-4 h-full">
+                <div className="overflow-y-auto h-full pr-2 space-y-6">
                     {sensors.map((sensor, i) => 
-                        <div key={i}>
+                        <div key={i} className="bg-white rounded-lg p-4 shadow-sm border">
                             <SensorGraph
                                 name={sensor.name}
                                 data={sensor.data}
@@ -21,6 +17,7 @@ export default async function GraphWrapper() {
                             </SensorGraph>
                         </div>
                     )}
+                </div>
             </div>
         </>
     )
