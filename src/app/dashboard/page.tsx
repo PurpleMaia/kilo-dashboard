@@ -9,7 +9,7 @@ import { fetchSensorsData } from "../lib/data";
 import KiloNotes from "../components/home/KiloNotesWidget";
 
 export default async function Page() {
-    // const sensors = await fetchSensorsData() // since its a sensor component
+    const sensors = await fetchSensorsData() // since its a sensor component
   
     return (
         <div className="h-full flex bg-gray-50">
@@ -32,9 +32,9 @@ export default async function Page() {
               <div className="space-y-4">
                 <h2 className="text-lg md:text-xl font-semibold text-gray-900">Sensor Readings</h2>
                 <div className="h-96">
-                  {/* <Suspense fallback={<InvoiceSkeleton />}>
+                  <Suspense fallback={<InvoiceSkeleton />}>
                       <SensorReadings sensors={sensors}/>
-                  </Suspense> */}
+                  </Suspense>
                 </div>
               </div>
               
