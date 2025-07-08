@@ -5,7 +5,7 @@ export type LatestSensorsList = {
 };
 
 export type SensorData = {    
-    name: string
+    type_name: string
     value: number
     timestamp: string
 }

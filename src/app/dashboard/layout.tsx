@@ -1,6 +1,4 @@
-import Link from 'next/link'
 import SideNav from "../components/dashboard/sidenav"
-import BottomNav from "../components/dashboard/bottomnav"
 import TopPanel from "../components/dashboard/top-panel"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -13,16 +11,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Sidebar - layered on top */}
-      <aside className="hidden md:block absolute top-0 left-0 w-64 h-full z-10">
+      <aside className="hidden md:block absolute top-0 left-0 w-44 h-full z-10">
         <SideNav />
       </aside>
 
-      {/* Main content, scrollable */}
+      {/* Main content - responsive scrolling */}
       <main
         className={`
-          bg-white overflow-auto p-4
-          h-[calc(100vh-7rem)] 
-          md:ml-64 
+          bg-gray-50
+          md:overflow-hidden md:h-[calc(100vh-4rem)]
+          overflow-auto h-[calc(100vh-4rem)]
+          p-4
+          md:ml-44
         `}
       >
         {children}
