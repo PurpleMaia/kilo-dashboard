@@ -57,16 +57,16 @@ export async function POST(request: Request) {
         }
         const sensorID = await getSensorID(file, file.sensorInfo || {})     
         const latestTimestamp = await getLatestTimestamp(file.data[0][timeHeader], file.data[1][timeHeader].valueOf(), sensorID)   
+        const time_unit = file.data[0][timeHeader].toString().split('_')[2]
         console.log('latestTimestamp', latestTimestamp)
 
         console.log(file.sensorInfo)
         
         for (const row of file.data.slice(1)) {          // adding slice to get rid of redundant header declaration
-          console.log(row)
           // Convert timestamp            
           const rawTS = row[timeHeader]
           
-          const timestamp = formatTime(latestTimestamp || null, String(rawTS));          
+          const timestamp = formatTime(latestTimestamp || null, String(rawTS), time_unit);          
           console.log('This row\'s timestamp', timestamp)
 
           // Process each metric column (excluding _row & timestamp)
@@ -220,13 +220,27 @@ async function getSensorID(file: UploadFile, sensorInfo: { sensorID?: string, lo
 }
 
 // convert ms units of time given, to a Date object from latest timestamp
-function formatTime(latestTimestamp: Date | null, elapsedTimeStr: string) {
+function formatTime(latestTimestamp: Date | null, elapsedTimeStr: string, time_unit: string) {
   const elapsedTime = Number(elapsedTimeStr)
   if (!latestTimestamp) {
     return new Date(elapsedTime) // or handle null case as needed
   }
-  const newTimestamp = new Date(latestTimestamp.getTime() + elapsedTime)
-  return newTimestamp
+
+  if (time_unit === "date") // convert the string from the csv to a Date object
+  { 
+    const [month, day] = elapsedTimeStr.split('/').map(Number)
+    const thisYear = (latestTimestamp || new Date()).getFullYear();
+    const csvDate = new Date(thisYear, month - 1, day)s
+    const diff = csvDate.getTime() - latestTimestamp.getTime()
+
+    return new Date(latestTimestamp.getTime() + diff)
+  } else if (time_unit === "s") 
+  {
+    return new Date(latestTimestamp.getTime() + elapsedTime * 1000);
+  } else if (time_unit === "ms") 
+  {
+    return new Date(latestTimestamp.getTime() + elapsedTime)
+  }
 }
 
 
@@ -260,10 +274,10 @@ async function getLatestTimestamp(header: string | number, topRowTimestamp: stri
       const thisYear = (latestTimestamp || new Date()).getFullYear();
       const csvDate = new Date(thisYear, month - 1, day)
       return csvDate
-    } else if (time_unit === "ms") 
+    } else if (time_unit === "s") 
     {
       return new Date(Number(topRowTimestamp) * 1000);
-    } else if (time_unit === "s") 
+    } else if (time_unit === "ms") 
     {
       return new Date(Number(topRowTimestamp))
     }
