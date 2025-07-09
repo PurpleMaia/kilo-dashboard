@@ -1,5 +1,5 @@
 'use client'
-import { Line, LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import useScreenSize from '@/app/lib/hooks';
 import { useEffect, useState } from 'react';
 
@@ -90,7 +90,7 @@ export function MalaGraph({ data }: MalaGraphProps) {
         {selectedMetricType && chartData.length > 0 && (
             <div className="w-full h-64">
                 <ResponsiveContainer width="100%" height={300}>
-                    <LineChart
+                    <AreaChart
                         data={chartData}
                         margin={margins}
                     >
@@ -111,18 +111,23 @@ export function MalaGraph({ data }: MalaGraphProps) {
                             ]}
                             tickCount={6}
                         />
-                        <Tooltip 
-                            labelFormatter={(value) => new Date(value).toLocaleString()}
-                        />
-                        <Line 
+                        {!isMobile ? (
+                            <Tooltip 
+                                labelFormatter={(value) => new Date(value).toLocaleString()}
+                            />
+                        ) : (
+                            <p></p>
+                        )}
+                        <Area 
                             type="monotone" 
                             dataKey="value" 
                             stroke={colors[metricTypes.indexOf(selectedMetricType) % colors.length]} 
-                            strokeWidth={2}
-                            dot={false}
-                            activeDot={{ r: 4 }}
+                            fillOpacity={1}
+                            fill={colors[metricTypes.indexOf(selectedMetricType) % colors.length]}                            
+                            dot={!isMobile}
+                            activeDot={!isMobile ? { r: 4 } : false}
                         />
-                    </LineChart>
+                    </AreaChart>
                 </ResponsiveContainer>
             </div>
         )}
