@@ -59,24 +59,52 @@ export async function POST(request: Request) {
           throw new Error('No location column found in headers')
         }       
 
-        
         console.log(file.sensorInfo)
+        const sensorID = await getSensorID(file, file.sensorInfo || {})     
         const latestTimestamp = await getLatestTimestamp(file.data[0][timeHeader], file.data[1][timeHeader].valueOf(), sensorID)   
         const time_unit = file.data[0][timeHeader].toString().split('_')[2]
         console.log('latestTimestamp', latestTimestamp)
+
+        // Create a mapping for junction table insertion based on unique locations
+        const uniqueLocations = [...new Set(file.data.slice(1).map(row => String(row[locationHeader])))]
+
+        // Create lookup map 
+        const locationToMalaMap = new Map<string, number>()
+        for (const location of uniqueLocations) {
+            const malaId = await getOrCreateMalaId(location)
+            locationToMalaMap.set(location, malaId)
+        }
+
+        // Create all sensor-mala relationships upfront (one batch operation)
+        const sensorMalaValues = uniqueLocations.map(location => ({
+            sensor_id: sensorID,
+            mala_id: locationToMalaMap.get(location)!
+        }))
+
+        // Insert all relationships in one batch
+        if (sensorMalaValues.length > 0) {
+          await db.insertInto('sensor_mala')
+              .values(sensorMalaValues)
+              .onConflict((oc) => oc.doNothing()) // Prevent duplicates
+              .execute();
+          
+          console.log(`Created ${sensorMalaValues.length} sensor-mala relationships for sensor ${sensorID}`)
+        } 
         
         for (const row of file.data.slice(1)) {          // adding slice to get rid of redundant header declaration
           // Convert timestamp            
           const rawTS = row[timeHeader]
           const location = row[locationHeader]
-          const timestamp = formatTime(latestTimestamp || null, String(rawTS), time_unit);          
-          const sensorID = await getSensorID(file, file.sensorInfo || {}, String(location))     
+          const timestamp = formatTime(latestTimestamp || null, String(rawTS), time_unit);   
           
           console.log('This row\'s location:  ', location)
           console.log('This row\'s timestamp: ', timestamp)
 
+          const metricColumns = Object.entries(row).filter(([column]) => 
+            column !== timeHeader && column !== locationHeader
+          );
           // Process each metric column (excluding _row & timestamp)
-          for (const [column, value] of Object.entries(row).slice(1)) {
+          for (const [column, value] of metricColumns) {
             const metricValue = parseFloat(value as string)
             console.log(column, value)
             if (isNaN(metricValue)) {
@@ -84,17 +112,17 @@ export async function POST(request: Request) {
               continue
             }
             console.log(`mappings found for ${column}: ${mappings[column].metrictype_id}`)
-            // await db
-            // .insertInto('metric')
-            // .values({
-            //   value: metricValue,
-            //   timestamp: timestamp,
-            //   // unit: unit,
-            //   metric_type: mappings[column].metrictype_id,
-            //   // category: mappings.category_id,    
-            //   sensor_id: sensorID
-            // })
-            // .execute();
+            await db
+            .insertInto('metric')
+            .values({
+              value: metricValue,
+              timestamp: timestamp,
+              // unit: unit,
+              metric_type: mappings[column].metrictype_id,
+              // category: mappings.category_id,    
+              sensor_id: sensorID
+            })
+            .execute();
               processedRows++;
             }
         }
@@ -169,38 +197,9 @@ async function getMetricMapping(headers: string[]): Promise<Mappings> {
     return mappings;
 }
 
-async function getSensorID(file: UploadFile, sensorInfo: { sensorID?: string, region?: string }, location: string): Promise<number> {
+async function getSensorID(file: UploadFile, sensorInfo: { sensorID?: string, region?: string }): Promise<number> {
   if (!sensorInfo.sensorID) {
     throw new Error('Sensor ID missing in sensorInfo');
-  }
-
-  // Try to find mala_id by location (case-insensitive)
-  let malaId: number | null = null;
-  if (location) {
-    const mala = await db
-      .selectFrom('mala')
-      .select('id')
-      .where('name', '=', location)
-      .executeTakeFirst();
-    if (mala) {
-      console.log(`found existing mala: ${mala.id}`)
-      malaId = mala.id;
-    } else {
-      // Insert new mala (sensor can belong to multiple mala ie handhelds)
-      console.log('could not find this region, inserting into db...')
-      const insertedMala = await db.insertInto('mala')
-        .values({
-          name: location,
-          created_at: new Date(),
-          aina_id: 1 // test for now
-        })
-        .returning('id')
-        .executeTakeFirst();
-      if (!insertedMala?.id) {
-        throw new Error('Failed to insert new mala');
-      }
-      malaId = insertedMala.id;
-    }
   }
 
   // Try to find existing sensor by serial
@@ -208,7 +207,6 @@ async function getSensorID(file: UploadFile, sensorInfo: { sensorID?: string, re
     .selectFrom('sensor')
     .select('id')
     .where('name', '=', sensorInfo.sensorID)
-    .where('mala_id', '=', malaId)
     .executeTakeFirst();
 
   if (existingSensor) {
@@ -222,7 +220,6 @@ async function getSensorID(file: UploadFile, sensorInfo: { sensorID?: string, re
     .values({
       name: sensorInfo.sensorID,
       serial: sensorInfo.sensorID,
-      mala_id: malaId
     })
     .returning('id')
     .executeTakeFirst();
@@ -231,6 +228,36 @@ async function getSensorID(file: UploadFile, sensorInfo: { sensorID?: string, re
     throw new Error('Failed to insert new sensor');
   }
   return inserted.id;
+}
+
+async function getOrCreateMalaId(location: string): Promise<number> {
+  // Try to find existing mala
+  const existingMala = await db
+    .selectFrom('mala')
+    .select('id')
+    .where('name', '=', location)
+    .executeTakeFirst();
+
+  if (existingMala) {
+    console.log(`Found existing mala: ${existingMala.id} for location: ${location}`)
+    return existingMala.id;
+  }
+
+  // Insert new mala
+  console.log(`Creating new mala for location: ${location}`)
+  const insertedMala = await db.insertInto('mala')
+    .values({
+      name: location,
+      created_at: new Date(),
+      aina_id: 1 // test for now
+    })
+    .returning('id')
+    .executeTakeFirst();
+
+  if (!insertedMala?.id) {
+    throw new Error(`Failed to insert new mala for location: ${location}`);
+  }
+  return insertedMala.id;
 }
 
 // convert ms units of time given, to a Date object from latest timestamp
