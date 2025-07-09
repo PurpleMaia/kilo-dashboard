@@ -9,9 +9,8 @@ const pool = new Pool({
   // Connection pool configuration to prevent exhaustion
   max: 10, // Maximum number of connections in the pool
   min: 2,  // Minimum number of connections in the pool
-  idleTimeoutMillis: 10000, // How long a connection can be idle before being closed (10 seconds)
-  connectionTimeoutMillis: 30000, // Maximum time to acquire a connection (30 seconds)
-  maxUses: 7500, // Maximum number of times a connection can be used before being destroyed
+  connectionTimeoutMillis: 5000,
+  idleTimeoutMillis: 10000,
 });
 
 // Handle pool errors
