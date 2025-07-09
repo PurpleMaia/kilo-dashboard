@@ -16,7 +16,7 @@ interface Observation {
 export default function KiloNotes() {
   const [expandedObservations, setExpandedObservations] = useState<Set<number>>(new Set());
 
-  // Mock qualitative observations
+    // Mock qualitative observations
   const observations: Observation[] = [
     {
       id: 1,
@@ -62,16 +62,16 @@ export default function KiloNotes() {
     return text.substring(0, maxLength) + '...';
   };
 
-  return (
+    return (
     <Card className="h-full">
       <CardContent className="h-full py-4">
         <div className="space-y-4 h-full overflow-y-auto">
-          {observations.map((obs) => (
-            <div key={obs.id} className="border-l-4 border-purple-200 pl-4 py-2">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                </div>
-              </div>
+                {observations.map((obs) => (
+                    <div key={obs.id} className="border-l-4 border-purple-200 pl-4 py-2">
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                        </div>
+                    </div>
               <div className="mb-2">
                 <p className="text-sm text-gray-700">
                   {expandedObservations.has(obs.id) 
@@ -98,14 +98,14 @@ export default function KiloNotes() {
                   </button>
                 )}
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-500">
-                <MessageCircle className="h-3 w-3" />
-                <span>{obs.observer} • {obs.time}</span>
-              </div>
-            </div>
-          ))} 
-        </div>
-      </CardContent>
-    </Card>
-  )
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <MessageCircle className="h-3 w-3" />
+                        <span>{obs.observer} • {obs.time}</span>
+                    </div>
+                    </div>
+                ))} 
+                </div>
+            </CardContent>
+        </Card>
+    )
 }

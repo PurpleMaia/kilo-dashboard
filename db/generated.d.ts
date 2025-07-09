@@ -68,9 +68,15 @@ export interface SchemaMigrations {
 
 export interface Sensor {
   id: Generated<number>;
-  mala_id: number | null;
   name: string | null;
   serial: string | null;
+}
+
+export interface SensorMala {
+  created_at: Generated<Timestamp | null>;
+  id: Generated<number>;
+  mala_id: number | null;
+  sensor_id: number | null;
 }
 
 export interface User {
@@ -114,6 +120,7 @@ export interface DB {
   profile: Profile;
   schema_migrations: SchemaMigrations;
   sensor: Sensor;
+  sensor_mala: SensorMala;
   user: User;
   user_oauth: UserOauth;
   useraccesstoken: Useraccesstoken;
