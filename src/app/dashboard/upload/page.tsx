@@ -1,5 +1,5 @@
 'use client'
-import { ExclamationTriangleIcon, TrashIcon, DocumentTextIcon, ArrowUpTrayIcon, XMarkIcon, MapPinIcon, EyeIcon, EyeSlashIcon, CpuChipIcon, ExclamationCircleIcon, PencilIcon } from "@heroicons/react/24/outline";
+import { DocumentTextIcon, ArrowUpTrayIcon, XMarkIcon, EyeIcon, EyeSlashIcon, ExclamationCircleIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { useState, useRef } from "react";
 import CsvEditor from "../../components/upload/CsvEditor";
 
@@ -23,6 +23,7 @@ export default function Upload() {
     const [showPreview, setShowPreview] = useState<string | null>(null);
     const [editingFile, setEditingFile] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [loading, setLoading] = useState<boolean>(false)
 
     const handleFiles = async (selectedFiles: File[]) => {
         const csvFiles = selectedFiles.filter(file => 
@@ -47,6 +48,8 @@ export default function Upload() {
                 }
 
                 const headers = lines.length > 0 ? lines[0].split(',').map(h => h.trim().toLowerCase()) : [];
+
+                
                 
                 // check for required headers
                 if (!headers.some(h => h.includes('time'))) {
@@ -64,23 +67,23 @@ export default function Upload() {
 
                 // Find the indices for region, location, sensor id
                 const regionIdx = headers.findIndex(h => h.includes('region'));
-                const locationIdx = headers.findIndex(h => h.includes('location'));
+                // const locationIdx = headers.findIndex(h => h.includes('location'));
                 const sensorIdIdx = headers.findIndex(h => h.includes('sensor'));
 
                 // Extract sensor info from the first data row (if available)
-                let sensorInfo: SensorInfo = {};
+                const sensorInfo: SensorInfo = {};
                 if (lines.length > 1) {
                     const firstData = lines[1].split(',').map(v => v.trim());
                     if (regionIdx !== -1) sensorInfo.region = firstData[regionIdx] || '';
-                    if (locationIdx !== -1) sensorInfo.location = firstData[locationIdx] || '';
+                    // if (locationIdx !== -1) sensorInfo.location = firstData[locationIdx] || '';
                     if (sensorIdIdx !== -1) sensorInfo.sensorID = firstData[sensorIdIdx] || '';
                 }
 
                 // exclude region, location, and any 'id' headers from final data obj
                 const dataHeaders = headers.filter(h => {
                     const normalized = h.replace(/\s+/g, '').toLowerCase();
-                    if (normalized.includes('id')) return false;
-                    if (normalized.includes('location')) return false;
+                    if (normalized.endsWith('id')) return false;
+                    // if (normalized.includes('location')) return false;
                     if (normalized.includes('region')) return false;
                     return true;
                 });
@@ -94,6 +97,8 @@ export default function Upload() {
                     });
                     return row;
                 });
+                console.log('all headers', headers)
+                console.log('exported headers',dataHeaders)
 
                 const newFile: CSVFile = {
                     file,
@@ -140,6 +145,7 @@ export default function Upload() {
 
     // prepare package to api route (already parsed the data, just put it to server for more parsing)
     const handleUploadAll = async () => {
+        setLoading(true)
         try {                    
             // Prepare the data to send
             const uploadData = files.map(file => ({
@@ -172,10 +178,12 @@ export default function Upload() {
                 alert(`Upload failed: ${result.error}`);
                 }
 
-            } catch (error) {
-                console.error('Upload error:', error);
-                alert('Upload failed. Please try again.');
-            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('Upload failed. Please try again.');
+        } finally {
+            setLoading(false)
+        }
         
         // Clear files after successful upload
         setFiles([]);
@@ -369,14 +377,23 @@ export default function Upload() {
                 >
                     Cancel
                 </button>
-                <button
-                    onClick={handleUploadAll}
-                    type="submit"
-                    className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-                >
-                    <ArrowUpTrayIcon className="h-4 w-4 mr-2" />
-                    Process Files
-                </button>
+                {loading ? (
+                    <button
+                        className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md"
+                    >
+                        Loading...
+                    </button>
+                ) : (
+
+                    <button
+                        onClick={handleUploadAll}
+                        type="submit"
+                        className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    >
+                        <ArrowUpTrayIcon className="h-4 w-4 mr-2" />
+                        Process Files
+                    </button>
+                )}
                 </div>
             )}
 

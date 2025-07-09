@@ -3,7 +3,6 @@ import { db } from '../../../../db/kysely/client';
 import { cookies } from 'next/headers';
 import { validateSessionToken } from '@/app/lib/auth';
 import { Category } from '../../../../db/generated';
-import { timeStamp } from 'console';
 
 interface CSVRow {
   [key: string]: string | number;
@@ -52,32 +51,39 @@ export async function POST(request: Request) {
         const mappings = await getMetricMapping(file.headers.slice(1))
 
         const timeHeader = file.headers.find(h => h.toLowerCase().includes('time'))
+        const locationHeader = file.headers.find(h => h.toLowerCase().includes('location'))
         if (!timeHeader) {
           throw new Error('No timestamp column found in headers')
         }
-        const sensorID = await getSensorID(file, file.sensorInfo || {})     
+        if (!locationHeader) {
+          throw new Error('No location column found in headers')
+        }       
+
+        
+        console.log(file.sensorInfo)
         const latestTimestamp = await getLatestTimestamp(file.data[0][timeHeader], file.data[1][timeHeader].valueOf(), sensorID)   
         const time_unit = file.data[0][timeHeader].toString().split('_')[2]
         console.log('latestTimestamp', latestTimestamp)
-
-        console.log(file.sensorInfo)
         
         for (const row of file.data.slice(1)) {          // adding slice to get rid of redundant header declaration
           // Convert timestamp            
           const rawTS = row[timeHeader]
-          
+          const location = row[locationHeader]
           const timestamp = formatTime(latestTimestamp || null, String(rawTS), time_unit);          
-          console.log('This row\'s timestamp', timestamp)
+          const sensorID = await getSensorID(file, file.sensorInfo || {}, String(location))     
+          
+          console.log('This row\'s location:  ', location)
+          console.log('This row\'s timestamp: ', timestamp)
 
           // Process each metric column (excluding _row & timestamp)
           for (const [column, value] of Object.entries(row).slice(1)) {
             const metricValue = parseFloat(value as string)
-            // console.log(column, value)
+            console.log(column, value)
             if (isNaN(metricValue)) {
               errors++
               continue
             }
-            // console.log(`mappings found for ${column}: ${mappings[column].metrictype_id}`)
+            console.log(`mappings found for ${column}: ${mappings[column].metrictype_id}`)
             // await db
             // .insertInto('metric')
             // .values({
@@ -141,82 +147,90 @@ async function getMetricMapping(headers: string[]): Promise<Mappings> {
       const category: Category = categoryHeader as Category
 
         if (existingMetricType) {
+            console.log('found existing metric type', existingMetricType.type_name)
             mappings[header] = {
                 metrictype_id: existingMetricType.id,
             };
         } else {
-            // const inserted = await db.insertInto('metric_type')
-            //     .values({
-            //         type_name: metric,
-            //         unit: unit,
-            //         category: category
-            //     })
-            //     .returning(['id', 'type_name'])
-            //     .executeTakeFirst();
-            // mappings[header] = {
-            //     metrictype_id: inserted?.id,
-            // };
+            console.log('could not find existing metric type, inserting into db...')
+            const inserted = await db.insertInto('metric_type')
+                .values({
+                    type_name: metric,
+                    unit: unit,
+                    category: category
+                })
+                .returning(['id', 'type_name'])
+                .executeTakeFirst();
+            mappings[header] = {
+                metrictype_id: inserted?.id,
+            };
         }
     }
     return mappings;
 }
 
-async function getSensorID(file: UploadFile, sensorInfo: { sensorID?: string, location?: string, region?: string }): Promise<number> {
+async function getSensorID(file: UploadFile, sensorInfo: { sensorID?: string, region?: string }, location: string): Promise<number> {
   if (!sensorInfo.sensorID) {
     throw new Error('Sensor ID missing in sensorInfo');
   }
+
+  // Try to find mala_id by location (case-insensitive)
+  let malaId: number | null = null;
+  if (location) {
+    const mala = await db
+      .selectFrom('mala')
+      .select('id')
+      .where('name', '=', location)
+      .executeTakeFirst();
+    if (mala) {
+      console.log(`found existing mala: ${mala.id}`)
+      malaId = mala.id;
+    } else {
+      // Insert new mala (sensor can belong to multiple mala ie handhelds)
+      console.log('could not find this region, inserting into db...')
+      const insertedMala = await db.insertInto('mala')
+        .values({
+          name: location,
+          created_at: new Date(),
+          aina_id: 1 // test for now
+        })
+        .returning('id')
+        .executeTakeFirst();
+      if (!insertedMala?.id) {
+        throw new Error('Failed to insert new mala');
+      }
+      malaId = insertedMala.id;
+    }
+  }
+
   // Try to find existing sensor by serial
   const existingSensor = await db
     .selectFrom('sensor')
     .select('id')
-    .where('serial', '=', sensorInfo.sensorID)
+    .where('name', '=', sensorInfo.sensorID)
+    .where('mala_id', '=', malaId)
     .executeTakeFirst();
 
   if (existingSensor) {
+    console.log(`found existing sensor: ${existingSensor.id}`)
     return existingSensor.id;
   }
 
-  // Try to find mala_id by location (case-insensitive)
-  // let malaId: number | null = null;
-  // if (sensorInfo.location) {
-  //   const mala = await db
-  //     .selectFrom('mala')
-  //     .select('id')
-  //     .where('name', '=', sensorInfo.location)
-  //     .executeTakeFirst();
-  //   if (mala) {
-  //     malaId = mala.id;
-  //   } else {
-  //     // Insert new mala
-  //     const insertedMala = await db.insertInto('mala')
-  //       .values({
-  //         name: sensorInfo.location,
-  //         created_at: new Date(),
-  //         aina_id: 1 // test for now
-  //       })
-  //       .returning('id')
-  //       .executeTakeFirst();
-  //     if (!insertedMala?.id) {
-  //       throw new Error('Failed to insert new mala');
-  //     }
-  //     malaId = insertedMala.id;
-  //   }
-  // }
-
+  console.log('could not find existing sensor, inserting into db...')
   // Insert new sensor
-  // const inserted = await db.insertInto('sensor')
-  //   .values({
-  //     name: sensorInfo.sensorID,
-  //     serial: sensorInfo.sensorID,
-  //     mala_id: malaId
-  //   })
-  //   .returning('id')
-  //   .executeTakeFirst();
+  const inserted = await db.insertInto('sensor')
+    .values({
+      name: sensorInfo.sensorID,
+      serial: sensorInfo.sensorID,
+      mala_id: malaId
+    })
+    .returning('id')
+    .executeTakeFirst();
 
-  // if (!inserted?.id) {
-  //   throw new Error('Failed to insert new sensor');
-  // }
-  // return inserted.id;
+  if (!inserted?.id) {
+    throw new Error('Failed to insert new sensor');
+  }
+  return inserted.id;
 }
 
 // convert ms units of time given, to a Date object from latest timestamp
@@ -230,10 +244,12 @@ function formatTime(latestTimestamp: Date | null, elapsedTimeStr: string, time_u
   { 
     const [month, day] = elapsedTimeStr.split('/').map(Number)
     const thisYear = (latestTimestamp || new Date()).getFullYear();
-    const csvDate = new Date(thisYear, month - 1, day)s
+    const csvDate = new Date(thisYear, month - 1, day)
     const diff = csvDate.getTime() - latestTimestamp.getTime()
 
     return new Date(latestTimestamp.getTime() + diff)
+  } else if (time_unit === "h") {
+    return new Date(latestTimestamp.getTime() + elapsedTime * 1000 * 60 * 60)
   } else if (time_unit === "s") 
   {
     return new Date(latestTimestamp.getTime() + elapsedTime * 1000);
@@ -274,6 +290,8 @@ async function getLatestTimestamp(header: string | number, topRowTimestamp: stri
       const thisYear = (latestTimestamp || new Date()).getFullYear();
       const csvDate = new Date(thisYear, month - 1, day)
       return csvDate
+    } else if (time_unit === "h") {
+      return new Date(Number(topRowTimestamp) * 1000 * 60 * 60)
     } else if (time_unit === "s") 
     {
       return new Date(Number(topRowTimestamp) * 1000);
