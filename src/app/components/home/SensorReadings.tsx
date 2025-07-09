@@ -3,9 +3,13 @@ import { useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { SensorGraph } from '../sensors/graph';
 
+interface MalaData {
+    [malaName: string]: Array<{ timestamp: string; value: number }>;
+}
+
 interface Sensor {
     name: string;
-    data: Array<{ timestamp: string; value: number }>;
+    data: MalaData;
 }
 
 interface SensorReadingsProps {
@@ -56,7 +60,8 @@ export default function SensorReadings({ sensors }: SensorReadingsProps) {
                                 <ChevronRightIcon className="h-4 w-4" />
                             </button>
                         </div>
-                    </div>
+                    </div>                                                    
+                    
                     <div className="flex-1 min-h-0">
                         <SensorGraph
                             data={currentSensor.data}

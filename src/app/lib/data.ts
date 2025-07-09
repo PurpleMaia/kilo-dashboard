@@ -26,17 +26,23 @@ export async function fetchSensorsData() {
     try {
         const data = await db
             .selectFrom('metric as m')
+            .innerJoin('sensor_mala as sm', 'sm.sensor_id', 'm.sensor_id')
+            .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
             .innerJoin('metric_type as mt', 'mt.id', 'm.metric_type')
-            .select(['m.value', 'm.timestamp', 'mt.type_name'])
-            .where('mt.type_name', '!=', 'unknown')
+            .select(['m.value', 'm.timestamp', 'mt.type_name', 'ma.name as mala_name'])
+            .orderBy('m.timestamp asc')
             .execute();
 
-        // group by metric type and return different groups
-        const grouped: Record<string, Array<{ timestamp: string; value: number }>> = {};
+        // Group by metric type, then by mala name
+        const grouped: Record<string, Record<string, Array<{ timestamp: string; value: number }>>> = {};
         for (const row of data) {
             const typeName = row.type_name || 'unknown';
-            if (!grouped[typeName]) grouped[typeName] = [];
-            grouped[typeName].push({
+            const malaName = row.mala_name || 'unknown';
+            
+            if (!grouped[typeName]) grouped[typeName] = {};
+            if (!grouped[typeName][malaName]) grouped[typeName][malaName] = [];
+            
+            grouped[typeName][malaName].push({
                 timestamp: row.timestamp?.toISOString() || new Date().toISOString(),
                 value: row.value || 0,
             });
