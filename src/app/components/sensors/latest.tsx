@@ -3,17 +3,33 @@ import { ArrowPathIcon, CircleStackIcon } from '@heroicons/react/24/outline';
 import { db } from "../../../../db/kysely/client";
 import { getAinaID, getUserID } from "@/app/lib/server-utils";
 import { Button } from "@/app/ui/button";
+import { sql } from 'kysely';
 
 export default async function LatestFetch() {
     const userID = await getUserID()
     const ainaID = await getAinaID(userID)
+
     const sensorCount = await db
-      .selectFrom('sensor')
-      .innerJoin('mala as m', 'sensor.mala_id', 'm.id')
-      .innerJoin('aina as a', 'm.aina_id', 'a.id')
-      .select(db.fn.count<number>('sensor.id').as('total'))
-      .where('a.id', '=', ainaID)
-      .executeTakeFirstOrThrow()
+    .selectFrom('sensor as s')
+    .innerJoin('sensor_mala as sm', 's.id', 'sm.sensor_id')
+    .innerJoin('mala as m', 'm.id', 'sm.mala_id')
+    .innerJoin('aina as a', 'a.id', 'm.aina_id')
+    .select(sql<number>`COUNT(DISTINCT s.name)`.as('count'))
+    .where('a.id', '=', ainaID)
+    .executeTakeFirstOrThrow();
+
+    const latestFetch = await db
+    .selectFrom('metric as m')
+    .select('m.timestamp')
+    .innerJoin('sensor_mala as sm', 'sm.sensor_id', 'm.sensor_id')
+    .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
+    .innerJoin('aina as a', 'a.id', 'ma.aina_id')
+    .where('a.id', '=', ainaID)
+    .orderBy('m.timestamp desc')
+    .limit(1)
+    .executeTakeFirstOrThrow()
+
+
 
     return (
         <>
@@ -39,21 +55,13 @@ export default async function LatestFetch() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{sensorCount.total}</div>
+                <div className="text-2xl font-bold text-green-600">{sensorCount.count}</div>
                 <div className="text-sm text-slate-600">Active Sensors</div>
-              </div>
+              </div>              
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">{24}</div>
-                <div className="text-sm text-slate-600">Records Updated</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-slate-900">2 minutes ago</div>
+                <div className="text-2xl font-bold text-slate-900">{latestFetch.timestamp?.toLocaleDateString()}</div>
                 <div className="text-sm text-slate-600">Last Fetch</div>
               </div>
-              {/* <div className="text-center">
-                <div className="text-2xl font-bold text-slate-900">{fetchStatus.nextFetch}</div>
-                <div className="text-sm text-slate-600">Next Fetch</div>
-              </div> */}
             </div>
           </CardContent>
         </Card>
