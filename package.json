@@ -32,6 +32,7 @@
     "react-hook-form": "^7.59.0",
     "react-is": "^19.1.0",
     "recharts": "^3.0.2",
+    "swiper": "^11.2.10",
     "tailwind-merge": "^3.3.1",
     "tls": "^0.0.1",
     "zod": "^3.25.67"

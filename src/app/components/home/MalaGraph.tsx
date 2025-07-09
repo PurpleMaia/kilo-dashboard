@@ -6,13 +6,25 @@ import { useEffect, useState } from 'react';
 interface MetricData {
     [metricType: string]: Array<{ timestamp: string; value: number}>
 }
-
 interface MalaGraphProps {
     data: MetricData
 }
+interface Margin {
+    top: number,
+    right: number,
+    left: number,
+    bottom: number,
+}
+
 export function MalaGraph({ data }: MalaGraphProps) { 
     const screenSize = useScreenSize()
     const [isMobile, setIsMobile] = useState<boolean>(false)
+    const [margins, setMargins] = useState<Margin>({
+        top: 20,
+        right: 40,
+        left: 10,
+        bottom: 40
+    })
     
     const metricTypes = Object.keys(data)
     const [selectedMetricType, setSelectedMetricType] = useState<string>('')
@@ -21,8 +33,20 @@ export function MalaGraph({ data }: MalaGraphProps) {
     useEffect(() => {
         if (screenSize.width < 600) {
           setIsMobile(true)
+          setMargins({
+            top: 10,
+            right: 10,
+            left:  10,
+            bottom: 50
+          })
         } else {
           setIsMobile(false)
+          setMargins({
+            top: 20,
+            right: 40,
+            left: 10,
+            bottom: 40
+          })
         }
     }, [screenSize.width])
 
@@ -68,12 +92,7 @@ export function MalaGraph({ data }: MalaGraphProps) {
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart
                         data={chartData}
-                        margin={{
-                            top: 10,
-                            right: 40,
-                            left: 1,
-                            bottom: 40,
-                        }}
+                        margin={margins}
                     >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis 

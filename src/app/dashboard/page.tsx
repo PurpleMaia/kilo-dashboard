@@ -4,7 +4,6 @@ import RecentUploadWidget from "../components/home/RecentUploadWidget";
 import SolsticeWidget from "../components/home/SolsticeWidget";
 import { Suspense } from "react";
 import { InvoiceSkeleton } from "../ui/skeletons";
-import SensorReadings from "../components/home/SensorReadings";
 import { fetchSensorsData } from "../lib/data";
 import KiloNotes from "../components/home/KiloNotesWidget";
 import LocationWidget from "../components/home/LocationWidget";
