@@ -35,7 +35,7 @@ export default function LocationWidget({ locations }: LocationWidgetProps) {
         <div className="w-full h-full flex flex-col">
             <div className="flex-1 shadow-md">
                 <Swiper
-                    spaceBetween={0}
+                    spaceBetween={10}
                     slidesPerView={1}
                     navigation={!isMobile}
                     pagination={{
