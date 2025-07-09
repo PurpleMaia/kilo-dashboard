@@ -7,9 +7,10 @@ import { InvoiceSkeleton } from "../ui/skeletons";
 import SensorReadings from "../components/home/SensorReadings";
 import { fetchSensorsData } from "../lib/data";
 import KiloNotes from "../components/home/KiloNotesWidget";
+import LocationWidget from "../components/home/LocationWidget";
 
 export default async function Page() {
-    const sensors = await fetchSensorsData() // since its a sensor component
+    const locations = await fetchSensorsData() // since its a sensor component
   
     return (
         <div className="h-full flex bg-gray-50">
@@ -33,7 +34,7 @@ export default async function Page() {
                 <h2 className="text-lg md:text-xl font-semibold text-gray-900">Sensor Readings</h2>
                 <div className="h-96">
                   <Suspense fallback={<InvoiceSkeleton />}>
-                      <SensorReadings sensors={sensors}/>
+                      <LocationWidget locations={locations}/>
                   </Suspense>
                 </div>
               </div>
