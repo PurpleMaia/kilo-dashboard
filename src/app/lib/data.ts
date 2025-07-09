@@ -39,10 +39,10 @@ export async function fetchSensorsData() {
             const typeName = row.type_name || 'unknown';
             const malaName = row.mala_name || 'unknown';
             
-            if (!grouped[typeName]) grouped[typeName] = {};
-            if (!grouped[typeName][malaName]) grouped[typeName][malaName] = [];
+            if (!grouped[malaName]) grouped[malaName] = {};
+            if (!grouped[malaName][typeName]) grouped[malaName][typeName] = [];
             
-            grouped[typeName][malaName].push({
+            grouped[malaName][typeName].push({
                 timestamp: row.timestamp?.toISOString() || new Date().toISOString(),
                 value: row.value || 0,
             });
