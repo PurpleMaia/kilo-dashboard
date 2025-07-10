@@ -1,9 +1,12 @@
 'use client'
+import BottomNav from "../components/dashboard/bottomnav"
 import SideNav from "../components/dashboard/sidenav"
 import TopPanel from "../components/dashboard/top-panel"
 import { MobileProvider } from "../contexts/MobileContext"
 
+
 export default function Layout({ children }: { children: React.ReactNode }) {
+
     return (
       <MobileProvider>
         <div className="relative h-screen overflow-hidden">
@@ -21,12 +24,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             className={`
               bg-gray-50
               md:overflow-hidden md:h-[calc(100vh-4rem)]
-              overflow-auto h-[calc(100vh-4rem)]          
+              overflow-auto h-[calc(100vh-8rem)]          
               md:ml-44
             `}
           >
             {children}
           </main>
+
+          
+          <footer className="md:hidden">
+              <BottomNav />
+          </footer>
         </div>   
       </MobileProvider>
     )

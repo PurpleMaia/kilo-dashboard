@@ -32,7 +32,7 @@ export default async function Page() {
               
               {/* Right Column - Diary Entries */}
               <div className="space-y-4">
-                <h2 className="text-lg md:text-xl font-semibold text-gray-900">Field Diary</h2>
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900">Kilo Notes</h2>
                 <div className="h-96">
                   <KiloNotes />
                 </div>

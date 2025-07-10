@@ -37,7 +37,7 @@ export default function LocationWidget({ locations }: LocationWidgetProps) {
             >
                 {locations.map((location, index) => (
                     <SwiperSlide key={index}>
-                        <div className="bg-white rounded-lg p-4 border border-gray-200 h-full flex flex-col">
+                        <div className="bg-white rounded-lg p-4 border border-gray-300 h-full flex flex-col">
                             <div className="flex items-center justify-between mb-4 flex-shrink-0">
                                 <h3 className="text-lg font-semibold text-gray-900">
                                     {location.name}
