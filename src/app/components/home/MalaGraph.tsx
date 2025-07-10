@@ -1,7 +1,7 @@
 'use client'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import useScreenSize from '@/app/lib/hooks';
 import { useEffect, useState } from 'react';
+import { useMobile } from '../../contexts/MobileContext';
 
 interface MetricData {
     [metricType: string]: Array<{ timestamp: string; value: number}>
@@ -17,8 +17,7 @@ interface Margin {
 }
 
 export function MalaGraph({ data }: MalaGraphProps) { 
-    const screenSize = useScreenSize()
-    const [isMobile, setIsMobile] = useState<boolean>(false)
+    const { isMobile } = useMobile();
     const [margins, setMargins] = useState<Margin>({
         top: 20,
         right: 40,
@@ -29,10 +28,10 @@ export function MalaGraph({ data }: MalaGraphProps) {
     const metricTypes = Object.keys(data)
     const [selectedMetricType, setSelectedMetricType] = useState<string>('')
     const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1', '#d084d0'];
+    const fillColors = colors.map(color => color + '20'); // Adding 20% opacity
 
     useEffect(() => {
-        if (screenSize.width < 600) {
-          setIsMobile(true)
+        if (isMobile) {
           setMargins({
             top: 10,
             right: 10,
@@ -40,7 +39,6 @@ export function MalaGraph({ data }: MalaGraphProps) {
             bottom: 50
           })
         } else {
-          setIsMobile(false)
           setMargins({
             top: 20,
             right: 40,
@@ -48,7 +46,7 @@ export function MalaGraph({ data }: MalaGraphProps) {
             bottom: 40
           })
         }
-    }, [screenSize.width])
+    }, [isMobile]);
 
     // Reset selected metric type when data changes (new location)
     useEffect(() => {
@@ -123,8 +121,8 @@ export function MalaGraph({ data }: MalaGraphProps) {
                             dataKey="value" 
                             stroke={colors[metricTypes.indexOf(selectedMetricType) % colors.length]} 
                             fillOpacity={1}
-                            fill={colors[metricTypes.indexOf(selectedMetricType) % colors.length]}                            
-                            dot={!isMobile}
+                            fill={fillColors[metricTypes.indexOf(selectedMetricType) % fillColors.length]}                            
+                            dot={false}
                             activeDot={!isMobile ? { r: 4 } : false}
                         />
                     </AreaChart>
