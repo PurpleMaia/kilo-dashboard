@@ -5,21 +5,31 @@ import { usePathname } from "next/navigation";
 import { links } from "@/app/lib/links";
 import Link from 'next/link'
 import clsx from 'clsx';
-import { Bars3Icon, BellAlertIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { BellAlertIcon,  } from "@heroicons/react/24/outline";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/app/ui/dropdown-menu";
 import { User } from "lucide-react";
 import { Button } from "@/app/ui/button";
 import { pageTitles } from "@/app/lib/links";
-
-// Define a mapping of route paths to page titles
+import useScreenSize from "@/app/lib/hooks";
+import { useMobile } from '../../contexts/MobileContext';
 
 
 export default function TopPanel() {
   const pathname = usePathname();
   const currentTitle = pageTitles[pathname];
+  const screenSize = useScreenSize()
+  const { isMobile } = useMobile();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [temp, setTemp] = useState<number>(75);
+  // const [isMobile, setIsMobile] = useState(false); // This line is removed as per the new_code
+
+  useEffect(() => {
+    if (screenSize.width < 600) {
+      // setIsMobile(true) // This line is removed as per the new_code
+    } else {
+      // setIsMobile(false) // This line is removed as per the new_code
+    }
+  }, [screenSize.width])
 
   const handleSignout = async () => {
     try {
@@ -44,35 +54,16 @@ export default function TopPanel() {
     }
   }
 
-  useEffect(() => {
-    // Simple weather simulation - replace with real API later
-    const getWeather = async () => {
-      try {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(async (position) => {
-            const { latitude, longitude } = position.coords;
-            // For now, just show a simulated temperature
-            setTemp(Math.floor(Math.random() * 30) + 60); // 60-90°F
-          }, () => {
-            setTemp(75); // Fallback
-          });
-        } else {
-          setTemp(75); // Fallback
-        }
-      } catch (error) {
-        setTemp(75); // Fallback
-      }
-    };
-
-    getWeather();
-  }, []);
-
   return (
     <div className="w-full bg-white border-b border-gray-200">
       {/* First Line - Alerts and Login/Logout */}
       <div className="px-6 py-3 border-b border-gray-100">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-slate-900 ml-44">{currentTitle}</h1>          
+          <h1 className={clsx(
+            "text-2xl font-bold text-slate-900",
+            isMobile ? "justify-between" : "ml-44"
+          )}> {currentTitle} </h1>
+
           <div className="flex justify-end gap-4">
             <Button variant="ghost" size="sm" className="rounded-full">            
               <BellAlertIcon className="h-10 w-10" /> 
@@ -120,7 +111,7 @@ export default function TopPanel() {
       </div> */}
 
       {/* Mobile Hamburger Button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50 flex gap-4">
+      {/* <div className="lg:hidden fixed top-4 left-4 z-50 flex gap-4">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 rounded-md bg-white/90 backdrop-blur-sm shadow border"
@@ -133,7 +124,7 @@ export default function TopPanel() {
         </button>
         
 
-      </div>
+      </div> */}
 
       {/* Overlay Mobile Menu */}
       {isOpen && (

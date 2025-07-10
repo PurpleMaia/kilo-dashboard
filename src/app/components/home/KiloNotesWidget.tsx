@@ -63,7 +63,7 @@ export default function KiloNotes() {
   };
 
     return (
-    <Card className="h-full">
+    <Card className="h-full border-gray-300 bg-white">
       <CardContent className="h-full py-4">
         <div className="space-y-4 h-full overflow-y-auto">
                 {observations.map((obs) => (

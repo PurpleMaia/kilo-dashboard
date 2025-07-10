@@ -1,8 +1,6 @@
 import {
   HomeIcon,
-  DocumentDuplicateIcon,
   ArrowUpTrayIcon,
-  UserCircleIcon,
   EyeIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
@@ -28,11 +26,6 @@ export const links = [
     name: 'Upload Data',
     href: '/dashboard/upload',
     icon: ArrowUpTrayIcon,
-  },
-  {
-    name: 'Profile',
-    href: '/dashboard/profile',
-    icon: UserCircleIcon,
   },
   // { name: 'Sensors', href: '/dashboard/sensors', icon: EyeIcon },
 ];
