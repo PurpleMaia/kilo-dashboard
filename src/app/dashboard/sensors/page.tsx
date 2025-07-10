@@ -7,7 +7,7 @@ import { LayoutGrid, Table } from "lucide-react";
 import { SensorGrid } from "@/app/components/sensors/SensorGrid";
 
 export default function Sensors() {
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid')
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('table')
   return (
     <div className="min-h-screen p-4">
       
@@ -20,7 +20,7 @@ export default function Sensors() {
           <h2 className="text-xl font-semibold text-slate-900">Sensor Readings</h2>
           <div className="flex items-center gap-2">
             <Button
-              variant={viewMode === "grid" ? "default" : "outline"}
+              variant={viewMode === "grid" ? "outline" : "default"}
               size="sm"
               onClick={() => setViewMode("grid")}
               className="flex items-center gap-2"
@@ -29,7 +29,7 @@ export default function Sensors() {
               Cards
             </Button>
             <Button
-              variant={viewMode === "table" ? "default" : "outline"}
+              variant={viewMode === "table" ? "outline" : "default"}
               size="sm"
               onClick={() => setViewMode("table")}
               className="flex items-center gap-2"
