@@ -2,6 +2,7 @@ import { db } from '../../../db/kysely/client'
 import {
     LatestSensorsList
 } from "./types"
+import { getFromCache, setInCache } from './cache';
 
 // grab the latest data from each sensor type
 export async function fetchLatestSensorsData(): Promise<LatestSensorsList[]> {
@@ -23,8 +24,16 @@ export async function fetchLatestSensorsData(): Promise<LatestSensorsList[]> {
 
 // grab all data from sensors from the past deployment
 export async function fetchSensorsData() {
+    const CACHE_KEY = 'all_sensors_per_patch'
+    const cached = getFromCache(CACHE_KEY)
+    if (cached) {
+        console.log('found SensorsData in cache... using cache')
+        return cached
+    }
+
+    console.log('fetchSensorsData not in cache, querying db...')
     try {
-        const data = await db
+        const result = await db
             .selectFrom('metric as m')
             .innerJoin('sensor_mala as sm', 'sm.sensor_id', 'm.sensor_id')
             .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
@@ -35,7 +44,7 @@ export async function fetchSensorsData() {
 
         // Group by metric type, then by mala name
         const grouped: Record<string, Record<string, Array<{ timestamp: string; value: number }>>> = {};
-        for (const row of data) {
+        for (const row of result) {
             const typeName = row.type_name || 'unknown';
             const malaName = row.mala_name || 'unknown';
             
@@ -47,8 +56,11 @@ export async function fetchSensorsData() {
                 value: row.value || 0,
             });
         }
-        
-        return Object.entries(grouped).map(([name, data]) => ({ name, data }));
+
+        const data = Object.entries(grouped).map(([name, data]) => ({ name, data }))
+        setInCache(CACHE_KEY, data, 1000 * 60 * 5)
+
+        return data
     } catch (error) {
         console.error('Database Error:', error);
         throw new Error('Failed to fetch the latest invoices.');
