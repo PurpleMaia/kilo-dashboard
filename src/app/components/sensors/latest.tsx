@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card";
-import { ArrowPathIcon, CircleStackIcon } from '@heroicons/react/24/outline';
+import { CircleStackIcon } from '@heroicons/react/24/outline';
 import { db } from "../../../../db/kysely/client";
 import { getAinaID, getUserID } from "@/app/lib/server-utils";
-import { Button } from "@/app/ui/button";
 import { sql } from 'kysely';
+import { Badge } from "@/app/ui/badge";
 
 export default async function LatestFetch() {
     const userID = await getUserID()
@@ -29,27 +29,26 @@ export default async function LatestFetch() {
     .limit(1)
     .executeTakeFirstOrThrow()
 
-
+    const diffMS = new Date().getTime() - (latestFetch.timestamp?.getTime() || 0);
+    const diff = Math.floor(diffMS / (1000 * 60 * 60 * 24))
 
     return (
         <>
-        <div className="h-full overflow-y-auto pr-2">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Current Status */}
         <Card className="lg:col-span-2 bg-white border-gray-200 shadow-md p-4">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <CircleStackIcon className="h-5 w-5 text-blue-600" />
-                Data Sync Status
+                System Status
               </CardTitle>
-              <Button 
+              {/* <Button 
                 // onClick={handleRefresh}
                 className="flex items-center gap-2"
               >
                 <ArrowPathIcon className="h-4 w-4" />
                 Refresh
-              </Button>
+              </Button> */}
             </div>
           </CardHeader>
           <CardContent>
@@ -57,11 +56,13 @@ export default async function LatestFetch() {
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">{sensorCount.count}</div>
                 <div className="text-sm text-slate-600">Active Sensors</div>
+                <Badge className="mt-1 bg-green-100 text-green-800">All Online</Badge>
               </div>              
               <div className="text-center">
                 <div className="text-2xl font-bold text-slate-900">{latestFetch.timestamp?.toLocaleDateString()}</div>
-                <div className="text-sm text-slate-600">Last Fetch</div>
-              </div>
+                <div className="text-sm text-slate-600">Last Upload</div>
+                <Badge className="mt-1 bg-gray-100 text-gray-800">{diff} days ago</Badge>
+              </div>              
             </div>
           </CardContent>
         </Card>
@@ -93,8 +94,6 @@ export default async function LatestFetch() {
             </div>
           </CardContent>
         </Card> */}
-          </div>
-      </div>
         </>
     )
 }

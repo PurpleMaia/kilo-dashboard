@@ -7,7 +7,7 @@ import LatestFetch from "@/app/components/sensors/latest";
 
 export default function Sensors() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen p-4">
       
       <div className="space-y-6">
         {/* Recent Data Fetch Status */}
