@@ -22,11 +22,11 @@ export const links = [
     icon: UserGroupIcon,
   },
   { name: 'Sensors', href: '/dashboard/sensors', icon: UserGroupIcon },
-  {
-    name: 'Upload Data',
-    href: '/dashboard/upload',
-    icon: ArrowUpTrayIcon,
-  },
+  // {
+  //   name: 'Upload Data',
+  //   href: '/dashboard/upload',
+  //   icon: ArrowUpTrayIcon,
+  // },  
   // { name: 'Sensors', href: '/dashboard/sensors', icon: EyeIcon },
 ];
 
