@@ -1,25 +1,48 @@
-// import { SensorGrid } from "@/app/components/sensors/graph";
-// import { SensorHealth } from "@/components/SensorHealth";
-// import { RecentDataFetch } from "@/components/RecentDataFetch";
-import { Suspense } from "react";
-import { InvoiceSkeleton } from "@/app/ui/skeletons";
+'use client'
+
+import { useState } from "react";
 import LatestFetch from "@/app/components/sensors/latest";
+import { Button } from "@/app/ui/button";
+import { LayoutGrid, Table } from "lucide-react";
+import { SensorGrid } from "@/app/components/sensors/SensorGrid";
 
 export default function Sensors() {
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid')
   return (
     <div className="min-h-screen p-4">
       
       <div className="space-y-6">
         {/* Recent Data Fetch Status */}
-        <Suspense fallback={<InvoiceSkeleton />}>
-            <LatestFetch />
-        </Suspense>   
+        <LatestFetch />
         
-        {/* Sensor Health Overview */}
-        {/* <SensorHealth /> */}
+        {/* View Toggle */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-slate-900">Sensor Readings</h2>
+          <div className="flex items-center gap-2">
+            <Button
+              variant={viewMode === "grid" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("grid")}
+              className="flex items-center gap-2"
+            >
+              <LayoutGrid className="h-4 w-4" />
+              Cards
+            </Button>
+            <Button
+              variant={viewMode === "table" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("table")}
+              className="flex items-center gap-2"
+            >
+              <Table className="h-4 w-4" />
+              Table
+            </Button>
+          </div>
+        </div>
         
-        {/* Live Sensor Data Grid */}
-        {/* <SensorGrid /> */}
+        {/* Sensor Data Display */}
+        <SensorGrid />
+        {/* {viewMode === "grid" ? <SensorGrid /> : <SensorTable />} */}
       </div>
     </div>
   );

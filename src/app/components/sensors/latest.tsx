@@ -1,36 +1,31 @@
+'use client'
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card";
 import { CircleStackIcon } from '@heroicons/react/24/outline';
-import { db } from "../../../../db/kysely/client";
-import { getAinaID, getUserID } from "@/app/lib/server-utils";
-import { sql } from 'kysely';
 import { Badge } from "@/app/ui/badge";
+import { useEffect, useState } from 'react';
 
-export default async function LatestFetch() {
-    const userID = await getUserID()
-    const ainaID = await getAinaID(userID)
+export default function LatestFetch() {
+    const [sensorCount, setSensorCount] = useState(0);
+    const [latestFetch, setLatestFetch] = useState<Date>();
+    const [diff, setDiff] = useState(0);
 
-    const sensorCount = await db
-    .selectFrom('sensor as s')
-    .innerJoin('sensor_mala as sm', 's.id', 'sm.sensor_id')
-    .innerJoin('mala as m', 'm.id', 'sm.mala_id')
-    .innerJoin('aina as a', 'a.id', 'm.aina_id')
-    .select(sql<number>`COUNT(DISTINCT s.name)`.as('count'))
-    .where('a.id', '=', ainaID)
-    .executeTakeFirstOrThrow();
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('/api/sensors/latest');
+                const data = await response.json();
+                setSensorCount(data.sensorCount.count); 
+                setLatestFetch(new Date(data.latestFetch.timestamp))                
 
-    const latestFetch = await db
-    .selectFrom('metric as m')
-    .select('m.timestamp')
-    .innerJoin('sensor_mala as sm', 'sm.sensor_id', 'm.sensor_id')
-    .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
-    .innerJoin('aina as a', 'a.id', 'ma.aina_id')
-    .where('a.id', '=', ainaID)
-    .orderBy('m.timestamp desc')
-    .limit(1)
-    .executeTakeFirstOrThrow()
+                const diffMS = new Date().getTime() - (new Date(data.latestFetch.timestamp).getTime() || 0);
+                setDiff(Math.floor(diffMS / (1000 * 60 * 60 * 24)));
+            } catch (error) {
+                console.error('Error fetching sensor data:', error);
+            }
+        };
 
-    const diffMS = new Date().getTime() - (latestFetch.timestamp?.getTime() || 0);
-    const diff = Math.floor(diffMS / (1000 * 60 * 60 * 24))
+        fetchData();
+    }, []);
 
     return (
         <>
@@ -54,12 +49,12 @@ export default async function LatestFetch() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{sensorCount.count}</div>
+                <div className="text-2xl font-bold text-green-600">{sensorCount}</div>
                 <div className="text-sm text-slate-600">Active Sensors</div>
                 <Badge className="mt-1 bg-green-100 text-green-800">All Online</Badge>
               </div>              
               <div className="text-center">
-                <div className="text-2xl font-bold text-slate-900">{latestFetch.timestamp?.toLocaleDateString()}</div>
+                <div className="text-2xl font-bold text-slate-900">{latestFetch?.toLocaleDateString()}</div>
                 <div className="text-sm text-slate-600">Last Upload</div>
                 <Badge className="mt-1 bg-gray-100 text-gray-800">{diff} days ago</Badge>
               </div>              
