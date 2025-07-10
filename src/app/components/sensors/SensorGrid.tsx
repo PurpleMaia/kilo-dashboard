@@ -10,8 +10,7 @@ interface Sensor {
     typeName: string,
     unit: string,
     category: string,
-    latestValue: number,
-    latestTimestamp: string
+    locations: string,
 }
 
 export function SensorGrid() {
@@ -20,7 +19,7 @@ export function SensorGrid() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('/api/sensors/latestWithValues');
+                const response = await fetch('/api/sensors');
                 const data = await response.json();
                 console.log(data.sensors)
                 setSensors(data.sensors)              
@@ -39,7 +38,7 @@ export function SensorGrid() {
       const getCategoryColor = (status: string) => {
         switch (status) {
           case "water": return "bg-blue-100 text-blue-800";
-          case "soil": return "bg-green-100 text-green-800";
+          case "soil": return "bg-amber-100 text-amber-800";
           default: return "bg-gray-100 text-gray-800";
         }
       };
@@ -57,8 +56,9 @@ export function SensorGrid() {
                         <CardTitle className="text-base flex items-center gap-2">
                         {sensor.name}
                         </CardTitle>
-                        <div className="">
-                            Type: {sensor.typeName}
+                        <div className="flex gap-2">
+                            <p className="font-bold">Type:</p>
+                            {sensor.typeName}
                         </div>
                     </div>
                     <Badge className={getCategoryColor(sensor.category)}>
@@ -68,21 +68,11 @@ export function SensorGrid() {
                     
                   </div>
                 </CardHeader>
-                
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-slate-900">
-                        {sensor.latestValue}
-                      </div>
-                      <div className="text-sm text-slate-600">{sensor.unit}</div>
-                    </div>                                        
-                    
-                    <div className="text-xs text-slate-500 text-center">
-                        Last update: {new Date(sensor.latestTimestamp).toLocaleDateString()}
-                    </div>
-                  </div>
+                <CardContent className="flex gap-2">
+                    <p className="font-bold">Locations: </p>
+                    <p>{sensor.locations}</p>
                 </CardContent>
+                
               </Card>
             );
           })}
