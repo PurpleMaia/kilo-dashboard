@@ -1,24 +1,24 @@
 'use client'
 import { Button } from "@/app/ui/button";
-import { Check, FileUp } from "lucide-react";
+import { Check, Download, LoaderCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 
-export default function ExportDataButton() {
-    const [exporting, setExporting] = useState<boolean>(false)
-    const [exported, setExported] = useState<boolean>(false)
+export default function DownloadDataButton() {
+    const [downloading, setDownloading] = useState<boolean>(false)
+    const [downloaded, setDownloaded] = useState<boolean>(false)
 
     useEffect(() => {
         const handleBeforeUnload = () => {
-            setExported(false);
+            setDownloaded(false);
         };
 
         const handleVisibilityChange = () => {
             if (document.hidden) {
-                setExported(false);
+                setDownloaded(false);
             }
         };
 
-        // add listeners to change exported state on window traversal or on page refresh
+        // add listeners to change downloaded state on window traversal or on page refresh
         window.addEventListener('beforeunload', handleBeforeUnload);
         document.addEventListener('visibilitychange', handleVisibilityChange);
 
@@ -40,65 +40,74 @@ export default function ExportDataButton() {
         document.body.removeChild(a);
     };
 
-    const handleExport = async () => {
+    const handleDownload = async () => {
         try {
-            setExporting(true);            
-            const response = await fetch('/api/export');            
+            setDownloading(true);            
+            const response = await fetch('/api/download');            
             if (!response.ok) {
-                throw new Error('Export failed');
+                throw new Error('Download failed');
             }
             
-            const exportData = await response.json();
+            const downloadData = await response.json();
             const timestamp = new Date().toISOString().split('T')[0];
             
             // Download CSV file
             downloadFile(
-                exportData.sensorData,
+                downloadData.sensorData,
                 `sensor_data_${timestamp}.csv`,
                 'text/csv'
             );
             
             // Download JSON file
             // downloadFile(
-            //     exportData.sampleTests,
+            //     downloadData.sampleTests,
             //     `sample_tests_${timestamp}.json`,
             //     'application/json'
             // );
             
             // Download PDF-like file
             // downloadFile(
-            //     exportData.sampleTestsPDF,
+            //     downloadData.sampleTestsPDF,
             //     `sample_tests_${timestamp}.txt`,
             //     'text/plain'
             // );
             
         } catch (error) {
-            console.error('Export error:', error);
-            alert('Failed to export data');
+            console.error('Download error:', error);
+            alert('Failed to download data');
         } finally {
-            setExporting(false);
-            setExported(true);
+            setDownloading(false);
+            setDownloaded(true);
         }
     }        
 
     
     return (
         <>
-            { exported ? (
-                <div className=" p-4 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm text-green-600">
+            {downloaded ? (
+                <div className="p-4 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm text-green-600">
                     <Check className="!w-6 !h-6" />
-                    Exported
+                    Downloaded
                 </div>
-            ) : (            
-                <Button 
-                    variant={"outline"} 
-                    className="bg-white border border-gray-400 text-gray-600 shadow-md"   
-                    onClick={handleExport}
-                    disabled={exporting}
-                >          
-                    <FileUp className="!w-6 !h-6" />
-                    Export Data
-                </Button>            
+            ) : (
+                <Button
+                    variant="outline"
+                    className="bg-white border border-gray-400 text-gray-600 shadow-md inline-flex items-center gap-2"
+                    onClick={handleDownload}
+                    disabled={downloading}
+                >
+                    {downloading ? (
+                        <>
+                            <LoaderCircle className="!w-6 !h-6 animate-spin" />
+                            Downloading...
+                        </>
+                    ) : (
+                        <>
+                            <Download className="!w-6 !h-6" />
+                            Download Data
+                        </>
+                    )}
+                </Button>
             )}
         </>
     )
