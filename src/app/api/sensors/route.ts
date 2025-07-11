@@ -2,8 +2,21 @@ import { db } from '../../../..//db/kysely/client';
 import { getAinaID, getUserID } from '@/app/lib/server-utils';
 import { NextResponse } from 'next/server';
 import { sql } from 'kysely';
+import { getFromCache, setInCache } from '@/app/lib/cache';
+
 
 export async function GET() {
+    let sensors 
+    const CACHE_KEY = 'sensors_info'
+    const cached = getFromCache(CACHE_KEY)
+
+    if (cached) {
+        console.log('found api/sensors data in cache, using cache...')
+        sensors = cached
+        return NextResponse.json({ sensors })
+    }
+
+    console.log('api/sensors not in cache, querying db...')
     try {
         const userID = await getUserID();
         const ainaID = await getAinaID(userID);
@@ -34,7 +47,9 @@ export async function GET() {
         .where('aina.id', '=', ainaID)
         .execute()
 
-        console.log(sensors)
+        setInCache(CACHE_KEY, sensors, 1000 * 60 * 5)
+
+        // console.log(sensors)
 
         return NextResponse.json({ sensors });
     } catch {
