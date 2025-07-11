@@ -3,6 +3,7 @@ import { db } from '../../../../db/kysely/client';
 import { cookies } from 'next/headers';
 import { validateSessionToken } from '@/app/lib/auth';
 import { Category } from '../../../../db/generated';
+import { getAinaID, getUserID } from '@/app/lib/server-utils';
 
 interface CSVRow {
   [key: string]: string | number;
@@ -245,11 +246,13 @@ async function getOrCreateMalaId(location: string): Promise<number> {
 
   // Insert new mala
   console.log(`Creating new mala for location: ${location}`)
+  const userID = await getUserID()
+  const ainaID = await getAinaID(userID) 
   const insertedMala = await db.insertInto('mala')
     .values({
       name: location,
       created_at: new Date(),
-      aina_id: 1 // test for now
+      aina_id: ainaID // test for now
     })
     .returning('id')
     .executeTakeFirst();

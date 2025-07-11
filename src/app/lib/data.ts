@@ -3,6 +3,7 @@ import {
     LatestSensorsList
 } from "./types"
 import { getFromCache, setInCache } from './cache';
+import { getUserID, getAinaID } from './server-utils';
 
 // grab the latest data from each sensor type
 export async function fetchLatestSensorsData(): Promise<LatestSensorsList[]> {
@@ -33,12 +34,17 @@ export async function fetchSensorsData() {
 
     console.log('fetchSensorsData not in cache, querying db...')
     try {
+        const userID = await getUserID()
+        const ainaID = await getAinaID(userID)
+
         const result = await db
             .selectFrom('metric as m')
             .innerJoin('sensor_mala as sm', 'sm.sensor_id', 'm.sensor_id')
             .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
+            .innerJoin('aina as a', 'a.id', 'ma.aina_id')
             .innerJoin('metric_type as mt', 'mt.id', 'm.metric_type')
             .select(['m.value', 'm.timestamp', 'mt.type_name', 'ma.name as mala_name'])
+            .where('a.id', '=', ainaID)
             .orderBy('m.timestamp asc')
             .execute();
 
