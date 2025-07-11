@@ -31,7 +31,7 @@ export async function GET() {
             'metric_type.unit',
             'metric_type.category',
             'm.value as latestValue',
-            'm.timestamp as latestTimestamp',
+            // 'm.timestamp as latestTimestamp',
             's.id',
         ])        
         .where((eb) =>
