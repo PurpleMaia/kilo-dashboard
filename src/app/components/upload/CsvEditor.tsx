@@ -281,7 +281,8 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
             <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-gray-800">CSV Validation Status</h3>
-                {(validationResult?.errors.length > 0 || validationResult?.warnings.length > 0) && (
+                {(validationResult && validationResult.errors && validationResult.errors.length > 0 ||
+                  validationResult && validationResult.warnings && validationResult.warnings.length > 0) && (
                   <button
                     onClick={() => setShowValidation(!showValidation)}
                     className="text-sm text-gray-600 hover:text-gray-800"

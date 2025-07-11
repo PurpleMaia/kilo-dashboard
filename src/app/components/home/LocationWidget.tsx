@@ -3,21 +3,13 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { MalaGraph } from './MalaGraph';
 import { useMobile } from '../../contexts/MobileContext';
+import { MalaData } from '../../lib/data';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-interface MetricData {
-    [metricType: string]: Array<{ timestamp: string; value: number }>;
-}
-
-interface Mala {
-    name: string;
-    data: MetricData;
-}
-
 interface LocationWidgetProps {
-    locations: Mala[];
+    locations: MalaData[];
 }
 
 export default function LocationWidget({ locations }: LocationWidgetProps) {

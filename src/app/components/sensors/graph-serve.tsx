@@ -10,11 +10,12 @@ export default async function GraphWrapper() {
                 <div className="overflow-y-auto h-full pr-2 space-y-6">
                     {sensors.map((sensor, i) => 
                         <div key={i} className="bg-white rounded-lg p-4 shadow-sm border">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                                {sensor.name}
+                            </h3>
                             <SensorGraph
-                                name={sensor.name}
                                 data={sensor.data}
-                            >
-                            </SensorGraph>
+                            />
                         </div>
                     )}
                 </div>

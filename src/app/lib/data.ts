@@ -5,6 +5,11 @@ import {
 import { getFromCache, setInCache } from './cache';
 import { getUserID, getAinaID } from './server-utils';
 
+export interface MalaData {
+    name: string;
+    data: Record<string, Array<{ timestamp: string; value: number }>>;
+}
+
 // grab the latest data from each sensor type
 export async function fetchLatestSensorsData(): Promise<LatestSensorsList[]> {
     try {
@@ -24,12 +29,12 @@ export async function fetchLatestSensorsData(): Promise<LatestSensorsList[]> {
 }
 
 // grab all data from sensors from the past deployment
-export async function fetchSensorsData() {
+export async function fetchSensorsData(): Promise<MalaData[]> {
     const CACHE_KEY = 'all_sensors_per_patch'
     const cached = getFromCache(CACHE_KEY)
     if (cached) {
         console.log('found SensorsData in cache... using cache')
-        return cached
+        return cached as MalaData[]
     }
 
     console.log('fetchSensorsData not in cache, querying db...')
