@@ -20,7 +20,7 @@ export default function LocationWidget({ locations }: LocationWidgetProps) {
     return (
         <div className="w-full h-full">
             <Swiper
-                spaceBetween={0}
+                spaceBetween={10}
                 slidesPerView={1}
                 navigation={!isMobile}
                 pagination={true}

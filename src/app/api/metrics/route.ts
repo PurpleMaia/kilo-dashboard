@@ -6,7 +6,7 @@ import { getFromCache, setInCache } from '@/app/lib/cache';
 
 export async function GET() {
     let locations
-    const CACHE_KEY = 'all_metrics_from_location'
+    const CACHE_KEY = 'all_sensors_per_patch'
     const cached = getFromCache(CACHE_KEY)
 
     if (cached) {
