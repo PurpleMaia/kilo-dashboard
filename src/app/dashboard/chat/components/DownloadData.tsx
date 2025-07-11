@@ -1,11 +1,12 @@
 'use client'
 import { Button } from "@/app/ui/button";
-import { Check, Download, LoaderCircle } from "lucide-react";
+import { Check, Download, LoaderCircle, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export default function DownloadDataButton() {
     const [downloading, setDownloading] = useState<boolean>(false)
     const [downloaded, setDownloaded] = useState<boolean>(false)
+    const [failed, setFailed] = useState<boolean>(false)
 
     useEffect(() => {
         const handleBeforeUnload = () => {
@@ -71,13 +72,14 @@ export default function DownloadDataButton() {
             //     `sample_tests_${timestamp}.txt`,
             //     'text/plain'
             // );
+            setDownloaded(true);
             
         } catch (error) {
             console.error('Download error:', error);
             alert('Failed to download data');
+            setFailed(true)
         } finally {
             setDownloading(false);
-            setDownloaded(true);
         }
     }        
 
@@ -89,10 +91,23 @@ export default function DownloadDataButton() {
                     <Check className="!w-6 !h-6" />
                     Downloaded
                 </div>
+            ) : failed ? (
+                <Button
+                    variant="outline"
+                    className="border-red-300 text-red-600 bg-red-50 hover:bg-red-100 inline-flex items-center gap-2"
+                    onClick={handleDownload}
+                >
+                    <AlertCircle className="!w-6 !h-6" />
+                    Retry Download
+                </Button>
             ) : (
                 <Button
                     variant="outline"
-                    className="bg-white border border-gray-400 text-gray-600 shadow-md inline-flex items-center gap-2"
+                    className={`inline-flex items-center gap-2 ${
+                        downloading 
+                            ? "border-none shadow-none bg-transparent text-gray-600" 
+                            : "bg-white border border-gray-400 text-gray-600 shadow-md"
+                    }`}
                     onClick={handleDownload}
                     disabled={downloading}
                 >
