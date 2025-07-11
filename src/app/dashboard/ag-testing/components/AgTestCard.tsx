@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { WaterDropIcon, SoilIcon, BacteriaIcon, DocumentArrowUpIcon, DocumentTextIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { DocumentArrowUpIcon, DocumentTextIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
 import PdfPreview from '@/app/dashboard/ag-testing/components/PdfPreview';
 
 interface AgTestFile {

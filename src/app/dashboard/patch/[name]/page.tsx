@@ -1,8 +1,8 @@
 'use client'
-import { usePathname, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
 export default function Page() {
-    const pathname = usePathname()
+    // const pathname = usePathname()
     const params = useParams()
     const patchName = params.name
 

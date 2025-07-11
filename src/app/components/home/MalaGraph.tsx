@@ -53,7 +53,7 @@ export function MalaGraph({ data }: MalaGraphProps) {
         if (metricTypes.length > 0) {
             setSelectedMetricType(metricTypes[0]);
         }
-    }, [data]); // Only depend on data, not metricTypes (to refer to the current data, not to change the type each time)
+    }, [data, metricTypes]); // Include metricTypes to satisfy exhaustive-deps
 
     const selectedData = selectedMetricType && data[selectedMetricType] ? data[selectedMetricType] : [];
     

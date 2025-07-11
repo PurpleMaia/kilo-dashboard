@@ -12,8 +12,8 @@ interface SensorInfo {
 interface CSVFile {
   file: File;
   id: string;
-  data: any[];
-  headers: any[];
+  data: Record<string, string>[];
+  headers: string[];
   errors?: string[];
   sensorInfo?: SensorInfo;
 }
@@ -41,7 +41,7 @@ export default function Upload() {
             try {
                 const text = await file.text();
                 const lines = text.split('\n').filter(line => line.trim());
-                let errors: string[] = []
+                const errors: string[] = []
                 
                 if (lines.length < 2) {
                     errors.push(`CSV file must contain at least a header row and one data row`);
@@ -88,9 +88,9 @@ export default function Upload() {
                     return true;
                 });
                 // only grab data within the dataHeaders
-                const data = lines.map((line, index) => {
+                const data = lines.map((line) => {
                     const values = line.split(',').map(v => v.trim());
-                    const row: any = {};
+                    const row: Record<string, string> = {};
                     dataHeaders.forEach((header) => {
                         const idx = headers.indexOf(header);
                         row[header] = values[idx] || '';
@@ -191,7 +191,7 @@ export default function Upload() {
 
     const handleDataEdit = (fileId: string, newData: any[], newHeaders: string[]) => {
         // Re-validate the edited data
-        let errors: string[] = [];
+        const errors: string[] = [];
         
         if (newData.length < 2) {
             errors.push('CSV file must contain at least a header row and one data row');

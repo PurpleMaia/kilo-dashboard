@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { PencilIcon, CheckIcon, XMarkIcon, TrashIcon, PlusIcon, ExclamationTriangleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, XMarkIcon, TrashIcon, PlusIcon, ExclamationTriangleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
 interface CsvEditorProps {
-  data: any[];
+  data: Record<string, string>[];
   headers: string[];
-  onDataChange: (data: any[], headers: string[]) => void;
+  onDataChange: (data: Record<string, string>[], headers: string[]) => void;
   onClose: () => void;
 }
 
@@ -177,7 +177,7 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
   };
 
   const addRow = () => {
-    const newRow: any = {};
+    const newRow: Record<string, string> = {};
     headers.forEach((header, index) => {
       newRow[header] = newRowData[index] || '';
     });
@@ -206,7 +206,7 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
     onClose();
   };
 
-  const getCellValue = (row: any, header: string) => {
+  const getCellValue = (row: Record<string, string>, header: string) => {
     return row[header] || '';
   };
 
@@ -343,7 +343,7 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
                   </div>
                 ) : (
                   <div className="text-gray-500">
-                    Click "Validate CSV" to check your data
+                    Click &quot;Validate CSV&quot; to check your data
                   </div>
                 )}
               </div>

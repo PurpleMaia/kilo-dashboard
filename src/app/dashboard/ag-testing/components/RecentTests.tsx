@@ -1,6 +1,7 @@
 'use client'
 import { Card, CardHeader, CardTitle, CardContent } from "@/app/ui/card"
 import { useState } from "react"
+import { CalendarIcon, MapPinIcon } from "@heroicons/react/24/outline"
 interface AgTestFile {
   id: number;
   test_type: string;
@@ -11,16 +12,16 @@ interface AgTestFile {
 }
 
 export function RecentTests() {
-    const [recentTests] = useState<[]>([])
+    const [recentTests] = useState<any[]>([])
 
-    const handleFilePreview = (file: AgTestFile) => {
-      if (file.mime_type === 'application/pdf') {
-        setPreviewFile(file);
-      } else {
-        // For non-PDF files, download them
-        window.open(`/api/ag-test-upload/${file.id}`, '_blank');
-      }
-    }
+    // const handleFilePreview = (file: AgTestFile) => {
+    //   if (file.mime_type === 'application/pdf') {
+    //     setPreviewFile(file);
+    //   } else {
+    //     // For non-PDF files, download them
+    //     window.open(`/api/ag-test-upload/${file.id}`, '_blank');
+    //   }
+    // }
     
     return (
         <>

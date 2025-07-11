@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
   try {
     // Try to login (no auto-registration)
-    const { user, token } = await loginUser(username, password);
+    const { token } = await loginUser(username, password);
   
     // Create response with redirect
     const { origin } = new URL(request.url)
