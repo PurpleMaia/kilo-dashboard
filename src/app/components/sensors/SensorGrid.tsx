@@ -1,7 +1,7 @@
 'use client'
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card";
 import { Badge } from "@/app/ui/badge";
-import { Activity, Droplets, Thermometer, Zap, Wind, Eye } from "lucide-react";
+// import { Activity, Droplets, Thermometer, Zap, Wind, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface Sensor {

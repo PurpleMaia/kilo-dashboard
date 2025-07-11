@@ -3,13 +3,10 @@ import MahinaWidget from "../components/home/MahinaWidget";
 import RecentUploadWidget from "../components/home/RecentUploadWidget";
 import SolsticeWidget from "../components/home/SolsticeWidget";
 import { Suspense } from "react";
-import { InvoiceSkeleton } from "../ui/skeletons";
-import { fetchSensorsData } from "../lib/data";
 import KiloNotes from "../components/home/KiloNotesWidget";
-import LocationWidget from "../components/home/LocationWidget";
+import LocationWidgetWrapper from "../components/home/LocationWidgetWrapper";
 
 export default async function Page() {
-    const locations = await fetchSensorsData() // since its a sensor component
   
     return (
         <div className="h-full flex bg-gray-50">
@@ -24,8 +21,8 @@ export default async function Page() {
               <div className="space-y-4">
                 <h2 className="text-lg md:text-xl font-semibold text-gray-900">Sensor Readings</h2>
                 <div className="h-96">
-                  <Suspense fallback={<InvoiceSkeleton />}>
-                      <LocationWidget locations={locations}/>
+                  <Suspense fallback={(<div className="p-4 rounded-lg bg-white border border-gray-300 shadow-md">Loading...</div>)}>
+                      <LocationWidgetWrapper />
                   </Suspense>
                 </div>
               </div>
