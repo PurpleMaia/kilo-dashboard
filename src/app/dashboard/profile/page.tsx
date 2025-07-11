@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
-import { BookmarkSquareIcon, PencilIcon, UserIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { UserIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/app/ui/button";
 import { useRouter } from "next/navigation";
 import { InvoiceSkeleton } from "@/app/ui/skeletons";
@@ -16,7 +16,7 @@ interface UserData {
 
 export default function Profile() {
     const router = useRouter()
-    const [editingProfile, setEditingProfile] = useState(false);
+    // const [editingProfile, setEditingProfile] = useState(false);
     const [userData, setUserData] = useState<UserData | null>(null);
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -29,9 +29,9 @@ export default function Profile() {
                 throw new Error('Failed to fetch sheet data');  
             }
 
-            const userData = await response.json();
-            console.log(userData)            
-            setUserData(userData)        
+            const data = await response.json();
+            console.log(data)            
+            setUserData(data.user_info)        
         } catch (error) {
             console.log(`Failed to load data: ${error}`);
         } finally {
@@ -39,16 +39,16 @@ export default function Profile() {
         }
     }
 
-    const handleSaveProfile = () => {
-        setEditingProfile(false);
-        // In a real app, this would save to the backend
-        console.log('Saving profile:', userData);
-      };
+    // const handleSaveProfile = () => {
+    //     setEditingProfile(false);
+    //     // In a real app, this would save to the backend
+    //     console.log('Saving profile:', userData);
+    //   };
     
-      const handleCancelEdit = () => {
-        setEditingProfile(false);
-        // Reset to original data
-      };
+    //   const handleCancelEdit = () => {
+    //     setEditingProfile(false);
+    //     // Reset to original data
+    //   };
 
 
       useEffect(() => {
@@ -57,7 +57,7 @@ export default function Profile() {
 
     return (
         <>
-         <div className="max-w-7xl mx-auto space-y-6">
+         <div className="max-w-7xl mx-auto space-y-6 p-4">
                 {/* Profile Header */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                     {loading ? (
@@ -76,17 +76,17 @@ export default function Profile() {
                                         {/* <p className="text-sm text-gray-500">Member since {userData?.created_at}</p> */}
                                     </div>
                                 </div>
-                                <button
+                                {/* <button
                                     onClick={() => setEditingProfile(!editingProfile)}
                                     className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
                                 >
                                     <PencilIcon className="h-4 w-4 mr-2" />
                                     Edit Profile
-                                </button>
+                                </button> */}
                             </div>
 
                             {/* Profile Details: Edit or View */}
-                            {editingProfile ? (
+                            {/* {editingProfile ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
@@ -130,23 +130,23 @@ export default function Profile() {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <h3 className="text-sm font-medium text-gray-500 mb-1">Contact Information</h3>
-                                        <p className="text-gray-900">{userData?.email}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-medium text-gray-500 mb-1">Location</h3>
-                                        {userData?.needsAinaSetup ? (
-                                            <Button variant="outline" onClick={() => router.push('/register/aina')}>
-                                                Continue Set Up
-                                            </Button>
-                                        ) : (
-                                            <p className="text-gray-900">{userData?.aina_name}</p>
-                                        )}
-                                    </div>
+                            )} */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h3 className="text-sm font-medium text-gray-500 mb-1">Contact Information</h3>
+                                    <p className="text-gray-900">{userData?.email}</p>
                                 </div>
-                            )}
+                                <div>
+                                    <h3 className="text-sm font-medium text-gray-500 mb-1">Location</h3>
+                                    {userData?.needsAinaSetup ? (
+                                        <Button variant="outline" onClick={() => router.push('/register/aina')}>
+                                            Continue Set Up
+                                        </Button>
+                                    ) : (
+                                        <p className="text-gray-900">{userData?.aina_name}</p>
+                                    )}
+                                </div>
+                            </div>
                         </>
                     )}
                 </div>
