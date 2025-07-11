@@ -11,9 +11,11 @@ export async function POST(request: Request) {
     // Try to login (no auto-registration)
     const { token } = await loginUser(username, password);
   
-    // Create response with redirect
-    const { origin } = new URL(request.url)
-    const response = NextResponse.redirect(`${origin}/dashboard`);
+    // Create response with success status
+    const response = NextResponse.json(
+      { success: true, message: 'Login successful' },
+      { status: 200 }
+    );
     
     // Set the session cookie on the response
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);

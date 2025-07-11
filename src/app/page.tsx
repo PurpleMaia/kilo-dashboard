@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { validateSessionToken } from "./lib/auth";
+import LoginForm from "./components/dashboard/LoginForm";
 
 export default async function Home() {
   // Check if user is already logged in (Server Component)
@@ -35,28 +36,7 @@ export default async function Home() {
           </p>
           
           {/* Login Form */}
-          <form className="flex flex-col gap-4" action="/api/login" method="POST">
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              className="rounded border px-3 py-2"
-              required
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              className="rounded border px-3 py-2"
-              required
-            />
-            <button
-              type="submit"
-              className="rounded-lg bg-lime-800 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-lime-700 md:text-base"
-            >
-              Log In
-            </button>
-          </form>
+          <LoginForm />
 
           {/* Divider */}
           <div className="relative">
