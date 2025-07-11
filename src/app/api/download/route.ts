@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '../../../../db/kysely/client';
 import { getAinaID, getUserID } from '@/app/lib/server-utils';
 import { sql } from 'kysely';
-// import { recentTests } from '../../../../data/sample_data';
+import { recentTests } from '../../../../data/sample_data';
 
 
 export async function GET() {
@@ -58,12 +58,12 @@ export async function GET() {
             }));
         
         const csvContent = convertDataToCSV(filteredSensors);
-        // const jsonContent = convertDataToJSON(recentTests);
+        const jsonContent = convertDataToJSON(recentTests);
         // const pdfContent = convertSamplesToPDF(recentTests);
                 
         const exportData = {
             sensorData: csvContent,
-            // sampleTests: jsonContent,
+            sampleTests: jsonContent,
             // sampleTestsPDF: pdfContent,
         };
         
@@ -121,6 +121,6 @@ function convertDataToCSV(data: SensorData[]): string {
 }
 
 
-// function convertDataToJSON(data: object) {
-//     return JSON.stringify(data, null, 2);
-// }
+function convertDataToJSON(data: object) {
+    return JSON.stringify(data, null, 2);
+}

@@ -60,11 +60,11 @@ export default function DownloadDataButton() {
             );
             
             // Download JSON file
-            // downloadFile(
-            //     downloadData.sampleTests,
-            //     `sample_tests_${timestamp}.json`,
-            //     'application/json'
-            // );
+            downloadFile(
+                downloadData.sampleTests,
+                `sample_tests_${timestamp}.json`,
+                'application/json'
+            );
             
             // Download PDF-like file
             // downloadFile(
