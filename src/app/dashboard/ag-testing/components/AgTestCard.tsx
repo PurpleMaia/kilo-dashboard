@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DocumentArrowUpIcon, DocumentTextIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
 import PdfPreview from '@/app/dashboard/ag-testing/components/PdfPreview';
 
@@ -25,11 +25,7 @@ export default function AgTestCard({ type, title }: AgTestCardProps) {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewFile, setPreviewFile] = useState<AgTestFile | null>(null);
 
-  useEffect(() => {
-    fetchFiles();
-  }, [type]);
-
-  const fetchFiles = async () => {
+  const fetchFiles = useCallback(async () => {
     try {
       const response = await fetch(`/api/ag-test-upload?type=${type}`);
       const data = await response.json();
@@ -39,7 +35,11 @@ export default function AgTestCard({ type, title }: AgTestCardProps) {
     } catch (error) {
       console.error('Failed to fetch files:', error);
     }
-  };
+  }, [type]);
+
+  useEffect(() => {
+    fetchFiles();
+  }, [fetchFiles]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

@@ -189,7 +189,7 @@ export default function Upload() {
         setFiles([]);
     };
 
-    const handleDataEdit = (fileId: string, newData: any[], newHeaders: string[]) => {
+    const handleDataEdit = (fileId: string, newData: Record<string, string>[], newHeaders: string[]) => {
         // Re-validate the edited data
         const errors: string[] = [];
         

@@ -2,17 +2,17 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/app/ui/card"
 import { useState } from "react"
 import { CalendarIcon, MapPinIcon } from "@heroicons/react/24/outline"
-interface AgTestFile {
-  id: number;
-  test_type: string;
-  file_name: string;
-  file_size: number;
-  mime_type: string;
-  uploaded_at: string;
-}
+// interface AgTestFile {
+//   id: number;
+//   test_type: string;
+//   file_name: string;
+//   file_size: number;
+//   mime_type: string;
+//   uploaded_at: string;
+// }
 
 export function RecentTests() {
-    const [recentTests] = useState<any[]>([])
+    const [recentTests] = useState<Array<{id: string; type: string; location: string; date: string}>>([])
 
     // const handleFilePreview = (file: AgTestFile) => {
     //   if (file.mime_type === 'application/pdf') {
