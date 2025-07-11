@@ -1,44 +1,33 @@
-import { db } from '../../../db/kysely/client'
-import {
-    LatestSensorsList
-} from "./types"
-import { getFromCache, setInCache } from './cache';
 
-// grab the latest data from each sensor type
-export async function fetchLatestSensorsData(): Promise<LatestSensorsList[]> {
-    try {
-        const data = await db
-            .selectFrom('sensor as s')
-            .innerJoin('metric as m', 'm.sensor_id', 's.id')
-            .select(['s.name', 'm.value'])
-            .distinctOn('s.name')
-            .orderBy(['s.name', 'm.timestamp desc'])
-            .execute();
-        
-        return data as LatestSensorsList[];
-    } catch (error) {
-        console.error('API Error:', error);
-        throw new Error('Failed to fetch the latest sensor data.');
-    }
-}
+import { db } from '../../../..//db/kysely/client';
+import { getAinaID, getUserID } from '@/app/lib/server-utils';
+import { NextResponse } from 'next/server';
+import { getFromCache, setInCache } from '@/app/lib/cache';
 
-// grab all data from sensors from the past deployment
-export async function fetchSensorsData() {
-    const CACHE_KEY = 'all_sensors_per_patch'
+export async function GET() {
+    let locations
+    const CACHE_KEY = 'all_metrics_from_location'
     const cached = getFromCache(CACHE_KEY)
+
     if (cached) {
         console.log('found SensorsData in cache... using cache')
-        return cached
+        locations = cached
+        return NextResponse.json({ locations })
     }
 
+
     console.log('fetchSensorsData not in cache, querying db...')
+    const userID = await getUserID()
+    const ainaID = await getAinaID(userID)
     try {
         const result = await db
             .selectFrom('metric as m')
             .innerJoin('sensor_mala as sm', 'sm.sensor_id', 'm.sensor_id')
             .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
+            .innerJoin('aina as a', 'a.id', 'ma.aina_id')
             .innerJoin('metric_type as mt', 'mt.id', 'm.metric_type')
             .select(['m.value', 'm.timestamp', 'mt.type_name', 'ma.name as mala_name'])
+            .where('a.id', '=', ainaID)
             .orderBy('m.timestamp asc')
             .execute();
 
@@ -57,12 +46,12 @@ export async function fetchSensorsData() {
             });
         }
 
-        const data = Object.entries(grouped).map(([name, data]) => ({ name, data }))
-        setInCache(CACHE_KEY, data, 1000 * 60 * 20) //5 minutes
+        locations = Object.entries(grouped).map(([name, data]) => ({ name, data }))
+        setInCache(CACHE_KEY, locations, 1000 * 60 * 20) //5 minutes
 
-        return data
+        return NextResponse.json({ locations })
     } catch (error) {
         console.error('Database Error:', error);
         throw new Error('Failed to fetch the latest invoices.');
     }
-}
+} 

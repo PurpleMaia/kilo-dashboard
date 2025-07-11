@@ -2,6 +2,7 @@
 import BottomNav from "../components/dashboard/bottomnav"
 import SideNav from "../components/dashboard/sidenav"
 import TopPanel from "../components/dashboard/top-panel"
+import { DrawerProvider } from "../contexts/DrawerContext"
 import { MobileProvider } from "../contexts/MobileContext"
 
 
@@ -9,6 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     return (
       <MobileProvider>
+        <DrawerProvider>
         <div className="relative h-screen overflow-hidden">
           <header className="flex items-center z-0 relative">
             <TopPanel /> 
@@ -31,11 +33,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {children}
           </main>
 
-          
-          <footer className="md:hidden">
-              <BottomNav />
-          </footer>
-        </div>   
+            <footer className="md:hidden">
+                <BottomNav />
+            </footer>
+            
+        </div>
+        </DrawerProvider>
       </MobileProvider>
     )
 }
