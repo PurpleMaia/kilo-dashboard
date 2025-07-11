@@ -25,7 +25,11 @@ export default function LocationWidget({ locations }: LocationWidgetProps) {
                 navigation={!isMobile}
                 pagination={true}
                 modules={[Navigation, Pagination]}
-                className="h-full"                
+                className="h-full"
+                allowTouchMove={true}
+                touchStartPreventDefault={false}
+                preventClicks={false}
+                preventClicksPropagation={false}
             >
                 {locations.map((location, index) => (
                     <SwiperSlide key={index}>
