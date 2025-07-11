@@ -1,13 +1,12 @@
+'use client'
 import WeatherWidget from "../components/home/WeatherWidget";
 import MahinaWidget from "../components/home/MahinaWidget";
 import RecentUploadWidget from "../components/home/RecentUploadWidget";
 import SolsticeWidget from "../components/home/SolsticeWidget";
-import { Suspense } from "react";
 import KiloNotes from "../components/home/KiloNotesWidget";
 import LocationWidgetWrapper from "../components/home/LocationWidgetWrapper";
 
-export default async function Page() {
-  
+export default function Page() {    
     return (
         <div className="h-full flex bg-gray-50">
         <div className="flex-1 flex flex-col">
@@ -21,9 +20,7 @@ export default async function Page() {
               <div className="space-y-4">
                 <h2 className="text-lg md:text-xl font-semibold text-gray-900">Sensor Readings</h2>
                 <div className="h-96">
-                  <Suspense fallback={(<div className="p-4 rounded-lg bg-white border border-gray-300 shadow-md">Loading...</div>)}>
-                      <LocationWidgetWrapper />
-                  </Suspense>
+                  <LocationWidgetWrapper />              
                 </div>
               </div>
               
