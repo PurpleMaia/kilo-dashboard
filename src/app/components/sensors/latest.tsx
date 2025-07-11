@@ -5,6 +5,7 @@ import { Badge } from "@/app/ui/badge";
 import { useEffect, useState } from 'react';
 
 export default function LatestFetch() {
+    const [loading, setLoading] = useState<boolean>(false)
     const [sensorCount, setSensorCount] = useState(0);
     const [latestFetch, setLatestFetch] = useState<Date>();
     const [diff, setDiff] = useState(0);
@@ -12,6 +13,7 @@ export default function LatestFetch() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoading(true)
                 const response = await fetch('/api/sensors/latest');
                 const data = await response.json();
                 setSensorCount(data.sensorCount.count); 
@@ -21,6 +23,8 @@ export default function LatestFetch() {
                 setDiff(Math.floor(diffMS / (1000 * 60 * 60 * 24)));
             } catch (error) {
                 console.error('Error fetching sensor data:', error);
+            } finally {
+              setLoading(false)
             }
         };
 
@@ -47,18 +51,22 @@ export default function LatestFetch() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{sensorCount}</div>
-                <div className="text-sm text-slate-600">Active Sensors</div>
-                <Badge className="mt-1 bg-green-100 text-green-800">All Online</Badge>
-              </div>              
-              <div className="text-center">
-                <div className="text-2xl font-bold text-slate-900">{latestFetch?.toLocaleDateString()}</div>
-                <div className="text-sm text-slate-600">Last Upload</div>
-                <Badge className="mt-1 bg-gray-100 text-gray-800">{diff} days ago</Badge>
-              </div>              
-            </div>
+            { loading ? (
+              <div>Loading...</div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">{sensorCount}</div>
+                  <div className="text-sm text-slate-600">Active Sensors</div>
+                  <Badge className="mt-1 bg-green-100 text-green-800">All Online</Badge>
+                </div>              
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-slate-900">{latestFetch?.toLocaleDateString()}</div>
+                  <div className="text-sm text-slate-600">Last Upload</div>
+                  <Badge className="mt-1 bg-gray-100 text-gray-800">{diff} days ago</Badge>
+                </div>              
+              </div>
+            )}
           </CardContent>
         </Card>
 

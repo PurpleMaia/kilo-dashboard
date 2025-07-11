@@ -3,7 +3,7 @@
 import { useState } from "react";
 import LatestFetch from "@/app/components/sensors/latest";
 import { Button } from "@/app/ui/button";
-import { LayoutGrid, Table } from "lucide-react";
+import { LayoutGrid } from "lucide-react";
 import { SensorGrid } from "@/app/components/sensors/SensorGrid";
 
 export default function Sensors() {
@@ -28,7 +28,7 @@ export default function Sensors() {
               <LayoutGrid className="h-4 w-4" />
               Cards
             </Button>
-            <Button
+            {/* <Button
               variant={viewMode === "table" ? "outline" : "default"}
               size="sm"
               onClick={() => setViewMode("table")}
@@ -36,7 +36,7 @@ export default function Sensors() {
             >
               <Table className="h-4 w-4" />
               Table
-            </Button>
+            </Button> */}
           </div>
         </div>
         

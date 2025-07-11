@@ -1,33 +1,27 @@
-import {
-  HomeIcon,
-  ArrowUpTrayIcon,
-  EyeIcon,
-  UserGroupIcon,
-  ChatBubbleLeftRightIcon
-} from '@heroicons/react/24/outline';
+import { Activity, BotMessageSquare, Eye, FileText, LayoutDashboard } from 'lucide-react';
 
 export const links = [
   {
-    name: 'Home',
+    name: 'Dashboard',
     href: '/dashboard',
-    icon: HomeIcon,
+    icon: LayoutDashboard,
   },
   {
     name: 'Kilo',
     href: '/dashboard/kilo',
-    icon: EyeIcon,
+    icon: Eye,
   },
-  // {
-  //   name: 'Ag Testing',
-  //   href: '/dashboard/ag-testing',
-  //   icon: UserGroupIcon,
-  // },
   {
     name: 'Chat',
     href: '/dashboard/chat',
-    icon: ChatBubbleLeftRightIcon,
+    icon: BotMessageSquare,
   },
-  { name: 'Sensors', href: '/dashboard/sensors', icon: UserGroupIcon },
+  { name: 'Sensors', href: '/dashboard/sensors', icon: Activity },
+  {
+    name: 'Ag Testing',
+    href: '/dashboard/ag-testing',
+    icon: FileText,
+  },
   // {
   //   name: 'Upload Data',
   //   href: '/dashboard/upload',

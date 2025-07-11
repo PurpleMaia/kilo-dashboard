@@ -36,7 +36,7 @@ export default function Chat() {
                             </p>
 
                             <p className="text-gray-700 mb-4">
-                            When you are ready to prompt the GPT, upload the data you just downloaded, into the prompt. When your files appear, the GPT is ready to answer questions about your data.
+                            When you are ready to prompt the GPT, upload the data you just downloaded into the prompt. When your files appear, the GPT is ready to answer questions about your data.
                             </p>
 
                             <div className="flex justify-center my-4">

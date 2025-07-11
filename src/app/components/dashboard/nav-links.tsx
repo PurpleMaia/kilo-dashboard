@@ -4,8 +4,8 @@ import Link from 'next/link' // no page refresh, optimizes and prefetches code o
 import { usePathname } from 'next/navigation'; // React web hook (client) to get the current path (need to declare a Client Component)
 import clsx from 'clsx';
 import { useMobile } from '@/app/contexts/MobileContext';
-import { Ellipsis } from 'lucide-react';
-import { useDrawer } from '@/app/contexts/DrawerContext';
+// import { Ellipsis } from 'lucide-react';
+// import { useDrawer } from '@/app/contexts/DrawerContext';
 
 
 // Map of links to display in the side navigation.
@@ -15,7 +15,7 @@ import { useDrawer } from '@/app/contexts/DrawerContext';
 export default function NavLinks() {
   const pathname = usePathname()
   const { isMobile } = useMobile()
-  const { isOpen, openDrawer, closeDrawer } = useDrawer()
+  // const { isOpen, openDrawer, closeDrawer } = useDrawer()
   
   return (
     <>
@@ -52,7 +52,7 @@ export default function NavLinks() {
             </Link>          
           );
         })}        
-        <div className='md:hidden pt-3'>
+        {/* <div className='md:hidden pt-3'>
           <button 
             className='text-xs flex flex-col px-6'
             onClick={isOpen ? closeDrawer : openDrawer}
@@ -60,7 +60,7 @@ export default function NavLinks() {
             <Ellipsis className='!w-6 !h-6'/>
             More
           </button>
-        </div>
+        </div> */}
     </>
   );
 }
