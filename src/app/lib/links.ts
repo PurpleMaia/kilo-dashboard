@@ -1,3 +1,4 @@
+import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { Activity, BotMessageSquare, Eye, FileText, LayoutDashboard } from 'lucide-react';
 
 export const links = [
@@ -6,27 +7,27 @@ export const links = [
     href: '/dashboard',
     icon: LayoutDashboard,
   },
-  {
-    name: 'Kilo',
-    href: '/dashboard/kilo',
-    icon: Eye,
-  },
+  // {
+  //   name: 'Kilo',
+  //   href: '/dashboard/kilo',
+  //   icon: Eye,
+  // },
+  { name: 'Sensors', href: '/dashboard/sensors', icon: Activity },
   {
     name: 'Chat',
     href: '/dashboard/chat',
     icon: BotMessageSquare,
   },
-  { name: 'Sensors', href: '/dashboard/sensors', icon: Activity },
   {
     name: 'Ag Testing',
     href: '/dashboard/ag-testing',
     icon: FileText,
   },
-  // {
-  //   name: 'Upload Data',
-  //   href: '/dashboard/upload',
-  //   icon: ArrowUpTrayIcon,
-  // },  
+  {
+    name: 'Upload Data',
+    href: '/dashboard/upload',
+    icon: ArrowUpTrayIcon,
+  },  
   // { name: 'Sensors', href: '/dashboard/sensors', icon: EyeIcon },
 ];
 

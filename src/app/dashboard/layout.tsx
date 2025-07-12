@@ -11,8 +11,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
       <MobileProvider>
         <DrawerProvider>
-        <div className="relative h-screen overflow-hidden">
-          <header className="flex items-center z-0 relative">
+        <div className="h-screen overflow-hidden">
+          <header className="flex fixed items-center z-0 relative">
             <TopPanel /> 
           </header>
 

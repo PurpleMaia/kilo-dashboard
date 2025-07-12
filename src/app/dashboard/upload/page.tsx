@@ -227,10 +227,10 @@ export default function Upload() {
 
     return (
         <>
-        <div className="space-y-6">
+        <div className="p-4 space-y-6">
 
             {/* Upload Area */}
-            <div className={`relative border-2 border-dashed rounded-lg p-6 transition-colors`}>
+            <div className={`border-2 border-dashed rounded-lg p-6 transition-colors`}>
                 <input
                     ref={fileInputRef}
                     type="file"
@@ -244,7 +244,7 @@ export default function Upload() {
                     <div className="space-y-2">
                     <ArrowUpTrayIcon className="mx-auto h-12 w-12 text-gray-400" />
                     <div className="text-sm text-gray-600">
-                        <span className="font-medium">Click to upload</span> or drag and drop
+                        <span className="font-medium">Click to upload</span>
                     </div>
                     <p className="text-xs text-gray-500">Multiple CSV files supported</p>
                     </div>                
