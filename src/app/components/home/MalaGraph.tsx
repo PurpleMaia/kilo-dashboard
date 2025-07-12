@@ -35,7 +35,7 @@ export function MalaGraph({ data }: MalaGraphProps) {
           setMargins({
             top: 10,
             right: 10,
-            left:  10,
+            left:  0,
             bottom: 50
           })
         } else {
@@ -108,7 +108,6 @@ export function MalaGraph({ data }: MalaGraphProps) {
                             tickFormatter={(value) => new Date(value).toLocaleDateString()}
                         />
                         <YAxis
-                            hide={isMobile}
                             domain={[
                                 (dataMin: number) => {
                                     const min = Math.floor(dataMin * 0.95);
