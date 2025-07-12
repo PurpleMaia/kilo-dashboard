@@ -376,7 +376,7 @@ export default function CsvEditor({ data: initialData, headers: initialHeaders, 
         </div>
 
         {/* Table */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto touch-pan-y">
           <div className="min-w-full">
             <table className="min-w-full border-collapse border border-gray-300">
               <thead className="bg-gray-100 sticky top-0">

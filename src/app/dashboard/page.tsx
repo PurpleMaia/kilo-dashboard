@@ -8,11 +8,11 @@ import LocationWidgetWrapper from "../components/home/LocationWidgetWrapper";
 
 export default function Page() {    
     return (
-        <div className="h-full flex bg-gray-50">
+        <div className="min-h-screen flex bg-gray-50">
         <div className="flex-1 flex flex-col">
 
         
-        <main className="flex-1 p-3 md:p-6 md:overflow-hidden overflow-auto">
+        <div className="flex-1 p-3 md:p-6">
           <div className="max-w-full space-y-6">
             {/* Main Content - Side by Side Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
@@ -43,12 +43,12 @@ export default function Page() {
             
 
             {/* Placeholder for future component */}
-            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center h-full">
+            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center min-h-32">
               <p className="text-gray-500">Data Insights w/ KILO LLM will go here</p>
-            </div>
+            </div>            
 
           </div>
-        </main>
+        </div>
       </div>
     </div>
     );

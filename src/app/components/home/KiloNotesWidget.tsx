@@ -65,7 +65,7 @@ export default function KiloNotes() {
     return (
     <Card className="h-full border-gray-300 bg-white">
       <CardContent className="h-full py-4">
-        <div className="space-y-4 h-full overflow-y-auto">
+        <div className="space-y-4 h-full overflow-y-auto touch-pan-y">
                 {observations.map((obs) => (
                     <div key={obs.id} className="border-l-4 border-purple-200 pl-4 py-2">
                     <div className="flex items-center justify-between mb-2">
