@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <MobileProvider>
         <DrawerProvider>
         <div className="h-screen overflow-hidden">
-          <header className="flex fixed items-center z-0 relative">
+          <header className="flex fixed top-0 left-0 right-0 items-center z-20 bg-white border-b border-gray-200 h-16">
             <TopPanel /> 
           </header>
 
@@ -28,12 +28,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               md:overflow-hidden md:h-[calc(100vh-4rem)]
               overflow-auto h-[calc(100vh-8rem)]          
               md:ml-44
+              mt-16
             `}
           >
             {children}
           </main>
 
-            <footer className="md:hidden">
+            <footer className="md:hidden fixed bottom-0 left-0 right-0 z-20">
                 <BottomNav />
             </footer>
             
