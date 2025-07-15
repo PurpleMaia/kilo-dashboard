@@ -4,6 +4,7 @@ import {
 } from "./types"
 import { getFromCache, setInCache } from './cache';
 import { getUserID, getAinaID } from './server-utils';
+import { sql } from 'kysely';
 
 export interface MalaData {
     name: string;
@@ -76,4 +77,61 @@ export async function fetchSensorsData(): Promise<MalaData[]> {
         console.error('Database Error:', error);
         throw new Error('Failed to fetch the latest invoices.');
     }
+}
+
+export async function fetchSensorDataByAinaName(ainaID: number) {
+    // subquery to get the latest values and timestamp
+    const rankedMetrics = db
+    .selectFrom('metric')
+    .select([
+        'metric.id', 'metric.sensor_id', 'metric.metric_type', 'metric.timestamp', 'metric.value',
+        sql<number>`ROW_NUMBER() OVER (PARTITION BY metric.sensor_id, metric.metric_type ORDER BY metric.timestamp DESC)`.as('rn'),
+    ])
+    .as('m')
+
+    // query on the latest values
+    const sensors = await db
+    .selectFrom(rankedMetrics)
+    .innerJoin('sensor as s', 's.id', 'm.sensor_id')
+    .innerJoin('metric_type', 'metric_type.id', 'm.metric_type')
+    .innerJoin('sensor_mala as sm', 'sm.sensor_id', 's.id')
+    .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
+    .innerJoin('aina as a', 'a.id', 'ma.aina_id')
+    .select([
+        's.name as name',
+        'ma.name as location',
+        'm.value as latestValue',
+        'metric_type.type_name as metricType',
+        'metric_type.unit',
+        'metric_type.category',
+        'm.timestamp',
+    ])        
+    .where((eb) =>
+        eb('m.rn', '>=', 1).and('m.rn', '<=', 5).and('a.id', '=', ainaID) // collecting latest 5 batches from each sensor (can edit from a couple days)
+    )     
+    .orderBy('s.name')
+    .execute()    
+
+    return sensors
+}
+
+export async function fetchAinaIDByName(ainaName: string) {
+    const result = await db
+        .selectFrom('aina')
+        .select(['aina.id', 'aina.name'])
+        .where('aina.name', 'ilike', ainaName)
+        .executeTakeFirst()
+
+    return result
+}
+
+export async function fetchAinaLocations() {
+    const result = await db
+        .selectFrom('aina')
+        .select('aina.name')        
+        .execute()
+
+    console.log(result)
+    
+    return result
 }
