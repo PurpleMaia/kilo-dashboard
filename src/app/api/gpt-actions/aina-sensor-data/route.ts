@@ -1,4 +1,4 @@
-import { fetchSensorDataByAinaName } from '@/app/lib/data';
+import { fetchAinaIDByName, fetchSensorDataByAinaName } from '@/app/lib/data';
 import { NextRequest, NextResponse } from 'next/server';
 
 const corsHeaders = {
@@ -28,8 +28,14 @@ export async function POST(request: NextRequest) {
 
     console.log('Fetching sensor data for:', name);
     
-    // Replace with your actual function
-    const sensorData = await fetchSensorDataByAinaName(name);
+    const aina = await fetchAinaIDByName(name)
+    if (!aina) {
+        return NextResponse.json(
+            { error: 'ʻĀina not found'},
+            { status: 404},
+        )
+    }
+    const sensorData = await fetchSensorDataByAinaName(aina.id);
 
     return NextResponse.json(
       sensorData,
