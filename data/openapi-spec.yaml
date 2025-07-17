@@ -1,0 +1,110 @@
+openapi: 3.1.0
+info:
+  title: Sensor Data Fetch API
+  description: Internal API to fetch raw sensor data for a specified aina. The GPT performs the analysis.
+  version: 1.0.2
+servers:
+  - url: https://4e0893a25325.ngrok-free.app
+    description: Local development server tunnel via ngrok
+  # - url: https://kilo-dashboard.sandbox.purplemaia.org
+  #   description: Production server
+paths:
+  /api/gpt-actions/aina-list:
+    get:
+      operationId: listAinaLocations
+      summary: Get list of all ʻāina locations and sensor counts.
+      description: Returns a list of all ʻāina with their names, IDs, and number of sensors.
+      responses:
+        '200':
+          description: List of ʻāina with metadata.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ainaList:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ainaName:
+                          type: string
+                          description: Name of the ʻāina location.
+        '500':
+          description: Server error retrieving ʻāina list.
+  /api/gpt-actions/aina-sensor-data:  
+    post:
+      operationId: getSensorData
+      summary: Get sensor data for a specific ʻāina location
+      description: Retrieves all sensor data for the specified ʻāina location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the ʻāina location
+              required:
+                - name
+      responses:
+        '200':
+          description: Successfully retrieved sensor data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ainaName:
+                    type: string
+                  sensorData:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        location:
+                          type: string
+                        latestValue:
+                          type: number
+                        metricType:
+                          type: string
+                        unit:
+                          type: string
+                        category:
+                          type: string
+                        timestamp:
+                          type: string
+                          format: date-time
+        '400':
+          description: Bad request - missing ʻāina name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: ʻĀina location not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: string
