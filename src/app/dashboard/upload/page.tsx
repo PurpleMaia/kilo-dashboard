@@ -227,7 +227,7 @@ export default function Upload() {
 
     return (
         <>
-        <div className="p-4 space-y-6">
+        <div className="p-4 space-y-6 mt-4">
 
             {/* Upload Area */}
             <div className={`border-2 border-dashed rounded-lg p-6 transition-colors`}>
@@ -237,7 +237,7 @@ export default function Upload() {
                     accept=".csv"
                     multiple
                     onChange={handleFileInput}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    className="absolute inset-0 w-full h-1/3 cursor-pointer"
                 />
 
                 <div className="text-center">                
@@ -252,7 +252,7 @@ export default function Upload() {
             </div>
 
             {/* File List */}
-            {files.length > 0 && (
+            {files.length > 0 ? (
                 <div className="space-y-4">
                 <div className="flex items-center justify-between">
                     <h3 className="text-lg font-medium text-gray-900">Uploaded Files</h3>
@@ -365,6 +365,10 @@ export default function Upload() {
                     </div>
                     ))}
                 </div>
+                </div>
+            ) : (
+                <div className="p-4 text-center text-gray-500 mt-12 mb-96">
+                    No files uploaded
                 </div>
             )}
 

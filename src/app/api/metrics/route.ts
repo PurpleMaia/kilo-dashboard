@@ -12,6 +12,7 @@ export async function GET() {
     if (cached) {
         console.log('fetchSensorsData in cache, using cache...')
         locations = cached
+        console.log('Cached locations:', locations)
         return NextResponse.json({ locations })
     }
 
