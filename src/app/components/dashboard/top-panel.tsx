@@ -55,9 +55,10 @@ export default function TopPanel() {
   }
 
   return (
-    <div className="w-full bg-white border-b border-gray-200">
-      {/* First Line - Alerts and Login/Logout */}
-      <div className="px-6 py-3 border-b border-gray-100">
+    <div className="h-16 content-end w-full border-b bg-white border-gray-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]">
+
+      
+      <div className="px-6 py-3">
         <div className="flex justify-between items-center">
           <h1 className={clsx(
             "text-2xl font-bold text-slate-900",

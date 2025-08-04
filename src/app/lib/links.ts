@@ -19,12 +19,12 @@ export const links = [
     icon: BotMessageSquare,
   },
   {
-    name: 'Ag Testing',
+    name: 'Samples',
     href: '/dashboard/ag-testing',
     icon: FileText,
   },
   {
-    name: 'Upload Data',
+    name: 'Upload',
     href: '/dashboard/upload',
     icon: ArrowUpTrayIcon,
   },  
@@ -35,7 +35,7 @@ export const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/dashboard/sensors': 'Sensor Overview',
   '/dashboard/kilo': 'Kilo Form',
-  '/dashboard/ag-testing': 'Agriculture Testing Center',
+  '/dashboard/ag-testing': 'Test Samples',
   '/dashboard/upload': 'Upload Center',
   '/dashboard/profile': 'Profile Settings',
   '/dashboard/chat': 'Kilo Chat',

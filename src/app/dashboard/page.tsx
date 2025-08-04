@@ -8,7 +8,7 @@ import LocationWidgetWrapper from "../components/home/LocationWidgetWrapper";
 
 export default function Page() {    
     return (
-        <div className="min-h-screen flex bg-gray-50">
+        <div className="min-h-screen flex">
         <div className="flex-1 flex flex-col">
 
         

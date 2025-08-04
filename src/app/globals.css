@@ -20,7 +20,11 @@
 } */
 
 body {
-  background: var(--background);
+  background: #f9fafb; /* Tailwind's bg-gray-50 */
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+  padding-top: env(safe-area-inset-top);
 }
