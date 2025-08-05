@@ -22,34 +22,40 @@ export async function GET() {
     console.log('api/sensors/latest data not in cache, querying db...')
     try {
         const userID = await getUserID();
-        const ainaID = await getAinaID(userID);
 
-        const sensorCount = await db
-            .selectFrom('sensor as s')
-            .innerJoin('sensor_mala as sm', 's.id', 'sm.sensor_id')
-            .innerJoin('mala as m', 'm.id', 'sm.mala_id')
-            .innerJoin('aina as a', 'a.id', 'm.aina_id')
-            .select(sql<number>`COUNT(DISTINCT s.name)`.as('count'))
-            .where('a.id', '=', ainaID)
-            .executeTakeFirstOrThrow();
-
-        const latestFetch = await db
-            .selectFrom('metric as m')
-            .select('m.timestamp')
-            .innerJoin('sensor_mala as sm', 'sm.sensor_id', 'm.sensor_id')
-            .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
-            .innerJoin('aina as a', 'a.id', 'ma.aina_id')
-            .where('a.id', '=', ainaID)
-            .orderBy('m.timestamp desc')
-            .limit(1)
-            .executeTakeFirstOrThrow();
-
-        console.log(sensorCount, latestFetch)
-
-        setInCache(SENSOR_COUNT_CACHE_KEY, sensorCount, 1000 * 60 * 5)
-        setInCache(LATEST_CACHE_KEY, latestFetch, 1000 * 60 * 5)
-
-        return NextResponse.json({ sensorCount, latestFetch });
+        try  {
+            const ainaID = await getAinaID(userID);
+            
+            const sensorCount = await db
+                .selectFrom('sensor as s')
+                .innerJoin('sensor_mala as sm', 's.id', 'sm.sensor_id')
+                .innerJoin('mala as m', 'm.id', 'sm.mala_id')
+                .innerJoin('aina as a', 'a.id', 'm.aina_id')
+                .select(sql<number>`COUNT(DISTINCT s.name)`.as('count'))
+                .where('a.id', '=', ainaID)
+                .executeTakeFirstOrThrow();
+    
+            const latestFetch = await db
+                .selectFrom('metric as m')
+                .select('m.timestamp')
+                .innerJoin('sensor_mala as sm', 'sm.sensor_id', 'm.sensor_id')
+                .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
+                .innerJoin('aina as a', 'a.id', 'ma.aina_id')
+                .where('a.id', '=', ainaID)
+                .orderBy('m.timestamp desc')
+                .limit(1)
+                .executeTakeFirstOrThrow();
+    
+            console.log(sensorCount, latestFetch)
+    
+            setInCache(SENSOR_COUNT_CACHE_KEY, sensorCount, 1000 * 60 * 5)
+            setInCache(LATEST_CACHE_KEY, latestFetch, 1000 * 60 * 5)
+    
+            return NextResponse.json({ sensorCount, latestFetch });
+        } catch (error) {
+            console.error('Error fetching Aina ID:', error);
+            return NextResponse.json({ error: 'You are not registered to any ʻāina. Please select an ʻāina in your profile settings.' }, { status: 400 });
+        }
     } catch {
         return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
     }

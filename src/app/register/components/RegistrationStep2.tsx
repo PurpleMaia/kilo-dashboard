@@ -25,6 +25,7 @@ export default function RegistrationStep2({ ainaList }: RegistrationFormProps) {
 
     const handleSkip = (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
+      console.log('Skipping registration step 2, navigating to dashboard...')
       router.push('/dashboard')
     }    
 

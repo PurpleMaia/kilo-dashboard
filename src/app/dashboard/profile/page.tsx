@@ -57,7 +57,7 @@ export default function Profile() {
 
     return (
         <>
-         <div className="max-w-7xl mx-auto space-y-6 p-4">
+         <div className="max-w-7xl mx-auto space-y-6 p-4 mb-96">
                 {/* Profile Header */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                     {loading ? (
