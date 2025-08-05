@@ -31,10 +31,6 @@ export function SensorGrid() {
         fetchData()
     }, [])
 
-    if (!sensors || !Array.isArray(sensors)) {
-        return <div>Loading...</div>;
-      }
-
       const getCategoryColor = (status: string) => {
         switch (status) {
           case "water": return "bg-blue-100 text-blue-800";
@@ -44,38 +40,41 @@ export function SensorGrid() {
       };
       
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">                   
-          {sensors.map((sensor) => {
-            // const Icon = sensor.icon;
-            
-            return (
-              <Card key={sensor.id} className="relative border-gray-300 shadow-md">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="justify-begin">
-                        <CardTitle className="text-base flex items-center gap-2">
-                        {sensor.name}
-                        </CardTitle>
-                        <div className="flex gap-2">
-                            <p className="font-bold">Type:</p>
-                            {sensor.typeName}
-                        </div>
-                    </div>
-                    <Badge className={getCategoryColor(sensor.category)}>
-                        {sensor.category}
-                    </Badge>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">      
 
+          {sensors && (
+            <>          
+              {sensors.map((sensor) => {                
+                return (
+                  <Card key={sensor.id} className="relative border-gray-300 shadow-md">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div className="justify-begin">
+                            <CardTitle className="text-base flex items-center gap-2">
+                            {sensor.name}
+                            </CardTitle>
+                            <div className="flex gap-2">
+                                <p className="font-bold">Type:</p>
+                                {sensor.typeName}
+                            </div>
+                        </div>
+                        <Badge className={getCategoryColor(sensor.category)}>
+                            {sensor.category}
+                        </Badge>
+
+                        
+                      </div>
+                    </CardHeader>
+                    <CardContent className="flex gap-2">
+                        <p className="font-bold">Locations: </p>
+                        <p>{sensor.locations}</p>
+                    </CardContent>
                     
-                  </div>
-                </CardHeader>
-                <CardContent className="flex gap-2">
-                    <p className="font-bold">Locations: </p>
-                    <p>{sensor.locations}</p>
-                </CardContent>
-                
-              </Card>
-            );
-          })}
+                  </Card>
+                );
+              })}
+            </>
+          )}             
         </div>
       );
 }
