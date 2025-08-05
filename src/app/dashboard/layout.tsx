@@ -1,6 +1,5 @@
 'use client'
 import BottomNav from "../components/dashboard/bottomnav"
-import SideNav from "../components/dashboard/sidenav"
 import TopPanel from "../components/dashboard/top-panel"
 import { DrawerProvider } from "../contexts/DrawerContext"
 import { MobileProvider } from "../contexts/MobileContext"
