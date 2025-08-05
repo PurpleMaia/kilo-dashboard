@@ -24,3 +24,6 @@ type CacheEntry<T> = {
     });
   }
   
+  export function clearCache(): void {
+    cache.clear();
+  }

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { invalidateSession } from '@/app/lib/auth';
 import { deleteSessionTokenCookie } from '@/app/lib/session';
 import { cookies } from 'next/headers';
+import { clearCache } from '@/app/lib/cache';
 
 export async function POST() {
   try {
@@ -9,12 +10,18 @@ export async function POST() {
     
     // invalidate the session in the DB
     if (sessionCookie && sessionCookie.value) {
+      console.log('Invalidating session:', sessionCookie.value);
       await invalidateSession(sessionCookie.value);
     }
     
     // Clear the session cookie using the utility function
+    console.log('Deleting session cookie');
     await deleteSessionTokenCookie();
-    
+
+    // clear out cache
+    console.log('Clearing cache');
+    clearCache()
+
     console.log('Successfully signed out user');
     return NextResponse.json({ 
       success: true, 
