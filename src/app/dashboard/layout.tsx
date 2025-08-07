@@ -9,40 +9,41 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     return (
       <MobileProvider>
-        <DrawerProvider>          
-          <header 
-            className="bg-white fixed top-0 left-0 right-0 z-20"
-            style={{ paddingTop: 'env(safe-area-inset-top)'}}
-          >
-            <TopPanel /> 
-          </header>
+        <DrawerProvider>
+          <div className="flex flex-col min-h-screen">
+            <header 
+              className="bg-white fixed top-0 left-0 right-0 z-20"
+              style={{ paddingTop: 'env(safe-area-inset-top)'}}
+            >
+              <TopPanel /> 
+            </header>
 
-          {/* Sidebar - layered on top
-          <aside className="hidden md:block fixed top-0 left-0 w-44 h-full z-10">
-            <SideNav />
-          </aside> */}
+            {/* Sidebar - layered on top
+            <aside className="hidden md:block fixed top-0 left-0 w-44 h-full z-10">
+              <SideNav />
+            </aside> */}
 
-          {/* Main content - responsive scrolling */}
-          <main
-            className={`
-              bg-gray-50              
-              overflow-y-auto
-              md:ml-44                                                        
-              touch-pan-y
-              overscroll-contain              
-            `}
-            style={{ marginTop: 'calc(4rem + env(safe-area-inset-top))' }}
-          >
-            {children}
-            
-            {/* Bottom Spacer */}
-            <div className="h-20 md:hidden"></div>
-          </main>                    
-
+            {/* Main content - responsive scrolling */}
+            <main
+              className={`
+                bg-gray-50              
+                flex-1                
+                touch-pan-y
+                overscroll-contain
+                relative
+                z-10
+                overflow-y-auto
+              `}
+              style={{ marginTop: 'calc(4.5rem + env(safe-area-inset-top))', marginBottom: '6rem' }}
+            >
+              {children}
+              
+            </main>
 
             <footer className="md:hidden fixed bottom-0 left-0 right-0 z-20">
-                <BottomNav />
-            </footer>            
+              <BottomNav />
+            </footer>
+          </div>
         </DrawerProvider>
       </MobileProvider>
     )

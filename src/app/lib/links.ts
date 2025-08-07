@@ -1,5 +1,5 @@
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
-import { Activity, BotMessageSquare, FileText, LayoutDashboard } from 'lucide-react';
+import { Activity, BotMessageSquare, Eye, FileText, LayoutDashboard } from 'lucide-react';
 
 export const links = [
   {
@@ -7,12 +7,12 @@ export const links = [
     href: '/dashboard',
     icon: LayoutDashboard,
   },
-  // {
-  //   name: 'Kilo',
-  //   href: '/dashboard/kilo',
-  //   icon: Eye,
-  // },
   { name: 'Sensors', href: '/dashboard/sensors', icon: Activity },
+  {
+    name: 'Kilo',
+    href: '/dashboard/kilo',
+    icon: Eye,
+  },
   {
     name: 'Chat',
     href: '/dashboard/chat',
@@ -23,11 +23,9 @@ export const links = [
     href: '/dashboard/ag-testing',
     icon: FileText,
   },
-  {
-    name: 'Upload',
-    href: '/dashboard/upload',
-    icon: ArrowUpTrayIcon,
-  },  
+  // {
+  //   name: 'Upload', href: '/dashboard/upload', icon: ArrowUpTrayIcon,
+  // },  
   // { name: 'Sensors', href: '/dashboard/sensors', icon: EyeIcon },
 ];
 

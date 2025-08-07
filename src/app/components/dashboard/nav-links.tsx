@@ -25,30 +25,31 @@ export default function NavLinks() {
             <Link
               key={link.name}
               href={link.href}
-              // if the pathname matches the link.href, then highlight blue
               className={clsx(
-                "pl-2 grow gap-2 font-medium items-center transition-colors",
+                // Set fixed width and flex column for even spacing
+                "flex flex-col items-center justify-center w-full min-w-[64px] max-w-[96px] px-0 py-0 gap-1 font-medium transition-colors",
                 {
                   'text-lime-600' : pathname === link.href,
-                  'flex text-white justify-begin' : !isMobile,
-                  'justify-center' : isMobile
+                  'text-white' : !isMobile,
+                  'justify-between' : isMobile
                 }
               )}        
             >
               <div className={clsx(
-                'pt-3 flex items-center justify-center text-center transition-all duration-200', 
+                'flex items-center justify-center text-center transition-all duration-200 w-full', 
                 {
-                  'border-t-2 border-lime-600' : pathname === link.href
+                  'border-t-2 border-lime-600 pt-3' : pathname === link.href,
+                  'pt-3' : pathname !== link.href
                 }
               )}>
-                <LinkIcon className="w-6" />
+                <LinkIcon className="w-6 h-6" />
               </div>
-                <p className={clsx(
-                  'text-center',
-                  {
-                    'text-xs' : isMobile 
-                  }
-                )}>{link.name}</p>
+              <p className={clsx(
+                'text-center truncate w-full', // truncate and force label to single line
+                {
+                  'text-xs' : isMobile 
+                }
+              )}>{link.name}</p>
             </Link>          
           );
         })}        
