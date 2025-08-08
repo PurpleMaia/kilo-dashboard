@@ -5,7 +5,7 @@ export default function Page() {
     return (
         <>
         {/* <GoogleForm></GoogleForm> */}
-            <div className="mx-auto p-4 mb-80">
+            <div className="mx-auto p-4">
                 <SimplifiedKiloForm />                                    
             </div>
         </>

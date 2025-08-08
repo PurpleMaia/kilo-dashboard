@@ -3,38 +3,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { formSchema, type FormData } from './kiloformschema';
 
-// Define the form schema
-const formSchema = z.object({
-  name: z.string().min(1, 'Please enter your name'),
-  // Soil
-  soil_texture: z.array(z.string()).min(1, 'Please choose one or more options'),
-  soil_moisture: z.array(z.string()).min(1, 'Please choose one or more options'),
-  soil_life: z.array(z.string()).min(1, 'Please choose one or more options'),
-  
-  // Weather
-  sky_condition: z.array(z.string()).min(1, 'Please choose one or more options'),
-  rain_today: z.array(z.string()).min(1, 'Please choose one or more options'),
-  wind_condition: z.array(z.string()).min(1, 'Please choose one or more options'),
-  
-  // Plant Health
-  leaf_condition: z.array(z.string()).min(1, 'Please choose one or more options'),
-  growth_rate: z.array(z.string()).min(1, 'Please choose one or more options'),
-  pest_disease: z.array(z.string()).min(1, 'Please choose one or more options'),
-  
-  // Other Lifeforms
-  beneficial_insects: z.array(z.string()).min(1, 'Please choose one or more options'),
-  pest_insects: z.array(z.string()).min(1, 'Please choose one or more options'),
-  larger_animals: z.array(z.string()).min(1, 'Please choose one or more options'),
-  
-  // Seasonal
-  seasonal_markers: z.array(z.string()).min(1, 'Please choose one or more options'),
-  moon_phase: z.array(z.string()).min(1, 'Please choose one or more options'),
-  planting_action: z.array(z.string()).min(1, 'Please choose one or more options')
-});
-
-type FormData = z.infer<typeof formSchema>;
 
 export default function KiloForm() {
   const [submittedData, setSubmittedData] = useState<FormData | null>(null);

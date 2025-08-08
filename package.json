@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
-    "@hookform/resolvers": "^5.1.1",
+    "@hookform/resolvers": "^5.2.1",
     "axios": "^1.10.0",
     "chartjs": "^0.3.24",
     "class-variance-authority": "^0.7.1",
@@ -32,13 +32,13 @@
     "radix-ui": "^1.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-hook-form": "^7.59.0",
+    "react-hook-form": "^7.62.0",
     "react-is": "^19.1.0",
     "recharts": "^3.0.2",
     "swiper": "^11.2.10",
     "tailwind-merge": "^3.3.1",
     "tls": "^0.0.1",
-    "zod": "^3.25.67"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
