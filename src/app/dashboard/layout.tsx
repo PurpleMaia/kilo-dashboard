@@ -10,7 +10,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
       <MobileProvider>
         <DrawerProvider>
-          <div className="flex flex-col h-dvh overflow-hidden">
+          <div className="flex flex-col h-dvh overflow-hidden"
+            style={{ marginBottom: 'env(safe-area-inset-bottom)' }}>
 
             <header 
               className="bg-white fixed top-0 left-0 right-0 z-20 w-full"
@@ -31,7 +32,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 relative
                 z-10
               `}
-              style={{ marginTop: 'calc(4.5rem + env(safe-area-inset-top))', marginBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
+              style={{ marginTop: 'calc(4rem + env(safe-area-inset-top))', marginBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
             >
               {children}
               

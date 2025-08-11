@@ -29,7 +29,7 @@ export default function SimplifiedKiloForm() {
     }
 
     return (
-        <div className="border rounded-lg shadow-md border-gray-300 bg-white max-w-xl mx-auto p-6">        
+        <div className="border rounded-lg shadow-md border-gray-300 bg-white mx-auto">        
             <p className="mb-4 text-gray-600 text-md">
                 Please write down your kilo observations and where you are.
             </p>

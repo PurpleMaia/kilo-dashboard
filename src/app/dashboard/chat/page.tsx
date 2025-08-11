@@ -6,8 +6,8 @@ export default function Chat() {
 
     return (
         <>
-            <div className="p-4">
-                <Card className="bg-white border border-gray-300 shadow-md">
+            <div>
+                <Card className="bg-white border border-gray-300 shadow-md p-4 min-h-screen">
                     <CardHeader>
                         <CardTitle>
                             Talk to Kilo LLM
