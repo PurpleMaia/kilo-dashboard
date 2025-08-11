@@ -1,9 +1,9 @@
 'use client'
 import { useEffect, useState } from "react";
 import { UserIcon } from "@heroicons/react/24/outline";
-import { Button } from "@/app/ui/button";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { InvoiceSkeleton } from "@/app/ui/skeletons";
+import { InvoiceSkeleton } from "@/components/ui/skeletons";
 
 interface UserData {
     username: string,

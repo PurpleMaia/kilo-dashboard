@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowUpTrayIcon, DocumentChartBarIcon } from "@heroicons/react/24/outline"
 import { useState } from "react"
 

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { validateSessionToken } from "./lib/auth";
-import LoginForm from "./components/dashboard/LoginForm";
+import { validateSessionToken } from "@/lib/auth";
+import LoginForm from "@/components/dashboard/LoginForm";
 
 export default async function Home() {
   // Check if user is already logged in (Server Component)

@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DownloadDataButton from "./components/DownloadData";
 import CustomGPTNavButton from "./components/CustomGPTNav";
 

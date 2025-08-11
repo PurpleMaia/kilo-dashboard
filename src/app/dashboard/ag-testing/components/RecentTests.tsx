@@ -1,5 +1,5 @@
 'use client'
-import { Card, CardHeader, CardTitle, CardContent } from "@/app/ui/card"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { useState } from "react"
 import { CalendarIcon, MapPinIcon } from "@heroicons/react/24/outline"
 // interface AgTestFile {

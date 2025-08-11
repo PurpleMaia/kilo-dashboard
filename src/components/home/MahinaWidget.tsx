@@ -1,6 +1,6 @@
 import React from "react";
 import { Moon } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 function getMoonPhase(date: Date): { phase: string; emoji: string } {
   // Simple moon phase calculation

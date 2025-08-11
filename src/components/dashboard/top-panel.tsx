@@ -2,15 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { links } from "@/app/lib/links";
+import { links } from "@/lib/links";
 import Link from 'next/link'
 import clsx from 'clsx';
 import { BellAlertIcon,  } from "@heroicons/react/24/outline";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/app/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { User } from "lucide-react";
-import { Button } from "@/app/ui/button";
-import { pageTitles } from "@/app/lib/links";
-import useScreenSize from "@/app/lib/hooks";
+import { Button } from "@/components/ui/button";
+import { pageTitles } from "@/lib/links";
+import useScreenSize from "@/lib/hooks";
 import { useMobile } from '../../contexts/MobileContext';
 
 

@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from "react";
-import LatestFetch from "@/app/components/sensors/latest";
-import { Button } from "@/app/ui/button";
+import LatestFetch from "@/components/sensors/latest";
+import { Button } from "@/components/ui/button";
 import { LayoutGrid } from "lucide-react";
-import { SensorGrid } from "@/app/components/sensors/SensorGrid";
+import { SensorGrid } from "@/components/sensors/SensorGrid";
 
 export default function Sensors() {
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('table')

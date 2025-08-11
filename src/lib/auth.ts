@@ -1,5 +1,5 @@
 import { randomBytes, pbkdf2Sync, createHash, timingSafeEqual } from 'crypto';
-import { db } from '../../../db/kysely/client';
+import { db } from '../../db/kysely/client';
 
 import * as base64 from 'hi-base64'
 

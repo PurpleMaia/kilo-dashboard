@@ -1,6 +1,6 @@
 'use client'
-import { CardTitle } from "@/app/ui/card";
-import { Button } from "@/app/ui/button";
+import { CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
 interface Test {

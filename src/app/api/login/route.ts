@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { loginUser } from '@/app/lib/auth';
-import { sessionCookieName } from '@/app/lib/session';
+import { loginUser } from '@/lib/auth';
+import { sessionCookieName } from '@/lib/session';
 
 export async function POST(request: Request) {
   const form = await request.formData();

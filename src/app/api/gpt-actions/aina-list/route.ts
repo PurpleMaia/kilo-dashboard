@@ -1,4 +1,4 @@
-import { fetchAinaLocations } from '@/app/lib/data';
+import { fetchAinaLocations } from '@/lib/data';
 import { NextRequest, NextResponse } from 'next/server';
 
 // CORS headers specifically for Custom GPT

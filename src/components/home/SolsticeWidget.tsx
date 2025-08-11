@@ -1,5 +1,5 @@
 import { Sun } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // Simple static solstice/equinox dates for 2025
 const events = [

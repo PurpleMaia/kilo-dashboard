@@ -1,4 +1,4 @@
-import { patches } from "@/app/lib/temp-data";
+import { patches } from "@/lib/temp-data";
 import Link from 'next/link';
 
 export default function PatchesWrapper() {

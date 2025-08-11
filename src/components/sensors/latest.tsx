@@ -1,7 +1,7 @@
 'use client'
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleStackIcon } from '@heroicons/react/24/outline';
-import { Badge } from "@/app/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from 'react';
 
 export default function LatestFetch() {

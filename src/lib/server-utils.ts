@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { hashToken } from "./auth";
-import { db } from "../../../db/kysely/client";
+import { db } from "../../db/kysely/client";
 
 export async function getUserID(): Promise<string> {
     // Get the session to find the user ID        

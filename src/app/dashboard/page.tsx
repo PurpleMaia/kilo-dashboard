@@ -1,10 +1,10 @@
 'use client'
-import WeatherWidget from "../components/home/WeatherWidget";
-import MahinaWidget from "../components/home/MahinaWidget";
-import RecentUploadWidget from "../components/home/RecentUploadWidget";
-import SolsticeWidget from "../components/home/SolsticeWidget";
-import KiloNotes from "../components/home/KiloNotesWidget";
-import LocationWidgetWrapper from "../components/home/LocationWidgetWrapper";
+import WeatherWidget from "@/components/home/WeatherWidget";
+import MahinaWidget from "@/components/home/MahinaWidget";
+import RecentUploadWidget from "@/components/home/RecentUploadWidget";
+import SolsticeWidget from "@/components/home/SolsticeWidget";
+import KiloNotes from "@/components/home/KiloNotesWidget";
+import LocationWidgetWrapper from "@/components/home/LocationWidgetWrapper";
 
 export default function Page() {    
     return (

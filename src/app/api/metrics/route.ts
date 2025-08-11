@@ -1,8 +1,8 @@
 
 import { db } from '../../../..//db/kysely/client';
-import { getAinaID, getUserID } from '@/app/lib/server-utils';
+import { getAinaID, getUserID } from '@/lib/server-utils';
 import { NextResponse } from 'next/server';
-import { getFromCache, setInCache } from '@/app/lib/cache';
+import { getFromCache, setInCache } from '@/lib/cache';
 
 export async function GET() {
     let locations

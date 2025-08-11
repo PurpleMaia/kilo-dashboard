@@ -1,5 +1,5 @@
 'use client'
-import { Card, CardContent } from "@/app/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useState } from 'react'
 import { MessageCircle, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 

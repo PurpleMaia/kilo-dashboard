@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { db } from '../../../../db/kysely/client';
 import { cookies } from 'next/headers';
-import { validateSessionToken } from '@/app/lib/auth';
+import { validateSessionToken } from '@/lib/auth';
 import { Category } from '../../../../db/generated';
-import { getAinaID, getUserID } from '@/app/lib/server-utils';
+import { getAinaID, getUserID } from '@/lib/server-utils';
 
 interface CSVRow {
   [key: string]: string | number;

@@ -1,11 +1,11 @@
 'use client'
-import { links } from '@/app/lib/links'
+import { links } from '@/lib/links'
 import Link from 'next/link' // no page refresh, optimizes and prefetches code on navigation
 import { usePathname } from 'next/navigation'; // React web hook (client) to get the current path (need to declare a Client Component)
 import clsx from 'clsx';
-import { useMobile } from '@/app/contexts/MobileContext';
+import { useMobile } from '@/contexts/MobileContext';
 // import { Ellipsis } from 'lucide-react';
-// import { useDrawer } from '@/app/contexts/DrawerContext';
+// import { useDrawer } from '@/contexts/DrawerContext';
 
 
 // Map of links to display in the side navigation.

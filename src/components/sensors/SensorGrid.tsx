@@ -1,6 +1,6 @@
 'use client'
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card";
-import { Badge } from "@/app/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 // import { Activity, Droplets, Thermometer, Zap, Wind, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 

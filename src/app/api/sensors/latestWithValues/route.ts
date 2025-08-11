@@ -1,5 +1,5 @@
 import { db } from '../../../../../db/kysely/client';
-import { getAinaID, getUserID } from '@/app/lib/server-utils';
+import { getAinaID, getUserID } from '@/lib/server-utils';
 import { sql } from 'kysely';
 import { NextResponse } from 'next/server';
 
