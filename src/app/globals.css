@@ -3,6 +3,8 @@
 :root {
   --background: #f5f5f5;
   --foreground: #171717;
+  --background-start: #3f6212;
+  --background-end: #4d7c0f;  
 }
 
 @theme inline {
@@ -20,11 +22,34 @@
 } */
 
 body {
-  background: #f9fafb; /* Tailwind's bg-gray-50 */
+  background:
+    /* First layer: gradient strip */
+    linear-gradient(to right, var(--background-start), var(--background-end)) no-repeat,
+    /* Second layer: plain background */
+    #f9fafb; /* Tailwind's gray-50 */
+
+  /* Make the gradient strip only a fixed height (e.g., 16rem for h-64) */
+  background-size: 100% 16rem, auto;
+
+  /* Position both layers at the top */
+  background-position: top left, top left;
+
+  /* Ensure text styles */
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
 
 header {
   padding-top: env(safe-area-inset-top);
+}
+
+.scrolling-hero {
+  background:
+    /* gradient block */
+    linear-gradient(to right, var(--background-start), var(--background-end)) no-repeat,
+    /* rest of page */
+    #f9fafb; /* Tailwind gray-50 */
+  background-size: 100% 12rem, auto;
+  background-position: top left, top left;
+  background-attachment: local, local;  /* tie to element's scroll */
 }

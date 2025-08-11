@@ -14,28 +14,29 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             style={{ marginBottom: 'env(safe-area-inset-bottom)' }}>
 
             <header 
-              className="bg-white fixed top-0 left-0 right-0 z-20 w-full overflow-hidden touch-none"
+              className="bg-gradient-to-r from-lime-800 to-lime-700 fixed top-0 left-0 right-0 z-20 w-full overflow-hidden touch-none"
               style={{ paddingTop: 'env(safe-area-inset-top)'}}
             >
               <TopPanel /> 
             </header>            
 
+
             {/* Main content - responsive scrolling */}
             <main
-              className={`
-                bg-gray-50              
+              className={`                          
                 flex-1                
                 touch-pan-y
                 overflow-y-auto
+                overflow-x-hidden
                 overscroll-contain
                 h-full
                 relative
-                z-10
-              `}
-              style={{ marginTop: 'calc(4rem + env(safe-area-inset-top))', marginBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
-            >
-              {children}
-              
+                scrolling-hero
+                pb-2
+                `}
+              style={{ marginTop: 'calc(4rem + env(safe-area-inset-top))', marginBottom: 'calc(3.75rem + env(safe-area-inset-bottom))' }}
+            >              
+              {children}              
             </main>
 
             <footer className="fixed bottom-0 left-0 right-0 z-20 overflow-hidden touch-none">

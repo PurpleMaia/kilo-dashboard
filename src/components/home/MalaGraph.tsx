@@ -34,8 +34,8 @@ export function MalaGraph({ data }: MalaGraphProps) {
         if (isMobile) {
           setMargins({
             top: 10,
-            right: 10,
-            left:  0,
+            right: 30,
+            left:  10,
             bottom: 50
           })
         } else {
@@ -72,7 +72,7 @@ export function MalaGraph({ data }: MalaGraphProps) {
     return (
         <>
         {/* Navigation Bar */}
-        <div className="flex flex-wrap gap-2 mb-2" style={{ pointerEvents: 'auto' }}>
+        <div className="flex flex-wrap gap-2 mb-2 ml-4" style={{ pointerEvents: 'auto' }}>
             {metricTypes.map((metricType) => (
                 <button
                     key={metricType}

@@ -12,13 +12,12 @@ export default function Page() {
         <div className="flex-1 flex flex-col">
 
         
-        <div className="flex-1 p-3 md:p-6">
+        <div className="flex-1">
           <div className="max-w-full space-y-6">
             {/* Main Content - Side by Side Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
               {/* Left Column - Sensor Readings */}
               <div className="space-y-4">
-                <h2 className="text-lg md:text-xl font-semibold text-gray-900">Sensor Readings</h2>
                 <div className="h-96">
                   <LocationWidgetWrapper />              
                 </div>
