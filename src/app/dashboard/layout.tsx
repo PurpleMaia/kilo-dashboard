@@ -10,11 +10,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
       <MobileProvider>
         <DrawerProvider>
-          <div className="flex flex-col h-dvh overflow-hidden"
+          <div className="flex flex-col h-dvh overflow-hidden overscroll-none"
             style={{ marginBottom: 'env(safe-area-inset-bottom)' }}>
 
             <header 
-              className="bg-white fixed top-0 left-0 right-0 z-20 w-full"
+              className="bg-white fixed top-0 left-0 right-0 z-20 w-full overflow-hidden touch-none"
               style={{ paddingTop: 'env(safe-area-inset-top)'}}
             >
               <TopPanel /> 
@@ -38,7 +38,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               
             </main>
 
-            <footer className="fixed bottom-0 left-0 right-0 z-20">
+            <footer className="fixed bottom-0 left-0 right-0 z-20 overflow-hidden touch-none">
               <BottomNav />
             </footer>
           </div>
