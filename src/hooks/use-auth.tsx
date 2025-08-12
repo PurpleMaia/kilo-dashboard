@@ -1,47 +1,36 @@
-import { useState, useEffect, createContext, useContext } from "react";
-import { getAinaID, getUserID } from "@/lib/server-utils";
+// client-side state management for user data (sort of like a session)
+'use client'
+
+import { useState, createContext, useContext } from "react";
+import { User, Aina } from "@/lib/auth/utils";
 
 interface AuthContextType {
-  user: string | null;
-  aina: number | null;
+  user: User | null;
+  login: (user: User) => Promise<void>;
+  logout: () => Promise<void>;  
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<string | null>(null);
-  const [aina, setAina] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
+// initUser is retrieved once on server (app/layout.tsx)
+export const AuthProvider = ({ children, initUser }: { children: React.ReactNode, initUser: User | null }) => {
+  const [user, setUser] = useState<User | null>(initUser);
 
-  useEffect(() => {
+  // state setting 
+  const login = async (userData: User) => {    
+    setUser(userData);
+  };
 
-    const fetchUserInfo = async () => {
-        try {
-            const userID = await getUserID();
-            setUser(userID);
-
-            const ainaID = await getAinaID(userID);
-            setAina(ainaID);
-
-            setLoading(false)
-        } catch (error) {
-            console.error('Error fetching user ID:', error);
-            setUser(null);
-            setLoading(false);
-        }
-    }
-    fetchUserInfo();
-
-
-  }, []);
-  
+  const logout = async () => {    
+    setUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, aina }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+      <AuthContext.Provider value={{ user, login, logout }}>
+        {children}
+      </AuthContext.Provider>
+    );
+  };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);

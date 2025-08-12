@@ -1,6 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Metadata, Viewport } from "next";
+import { AuthProvider } from "@/hooks/use-auth";
+import { getUser } from "@/lib/auth/cache";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,18 +31,24 @@ export const metadata: Metadata = {
   // ...other metadata
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  // get the user with the React Cache (might need to error check), this is dependent on load
+  const initUser = await getUser()
+  
   return (
     <html lang="en">
       <head>
         <link rel="manifest" href='/site.webmanifest' />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
+        <AuthProvider initUser={initUser}>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

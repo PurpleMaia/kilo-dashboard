@@ -1,6 +1,6 @@
 
 import { db } from '../../../..//db/kysely/client';
-import { getAina } from '@/lib/auth/cache';
+import { getUser } from '@/lib/auth/cache';
 import { NextResponse } from 'next/server';
 import { getFromCache, setInCache } from '@/lib/data/cache';
 
@@ -19,8 +19,9 @@ export async function GET() {
 
     console.log('fetchSensorsData not in cache, querying db...')
 
-    try {
-        const ainaID = await getAina()
+    const user = await getUser()
+    if (user?.aina) {
+        const ainaID = user?.aina.id
         try {
             const result = await db
                 .selectFrom('metric as m')
@@ -56,9 +57,8 @@ export async function GET() {
             console.error('Database Error:', error);
             return NextResponse.json({ error: 'Failed to fetch the latest invoices.' }, { status: 500 });
         }
-    } catch (error) {
-        console.error('Error fetching Aina ID:', error);
+    } else {
+        console.error('Error fetching Aina ID');
         return NextResponse.json({ error: 'You are not registered to any ʻāina. Please select an ʻāina in your profile settings.' }, { status: 400 });
     }
-
-} 
+}
