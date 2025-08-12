@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <MobileProvider>
         <DrawerProvider>
           <div 
-            className="grid grid-rows-[auto_1fr_auto] h-dvh overflow-hidden"            
+            className="grid grid-rows-[auto_1fr_auto] h-screen overflow-hidden"                  
           >
 
             <header className="bg-gradient-to-r from-lime-800 to-lime-700 z-20">
@@ -21,7 +21,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               {children}              
             </main>
 
-            <footer className="z-20">
+            <footer className="bottom-0 z-20">            
               <BottomNav />
             </footer>
           </div>
