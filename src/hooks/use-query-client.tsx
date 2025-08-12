@@ -1,40 +1,32 @@
 'use client';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { useState, ReactNode } from 'react';
+import { getQueryClient } from '@/lib/queryClient';
+import { User } from '@/lib/auth/utils';
+import { useEffect } from 'react';
 
 interface QueryProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
+  initUser: User | null;
 }
 
-export function QueryProvider({ children }: QueryProviderProps) {
-  // Create query client with configuration
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            // How long data stays fresh (won't refetch during this time)
-            staleTime: 5 * 60 * 1000, // 5 minutes
-            
-            // How long data stays in cache after component unmounts
-            gcTime: 10 * 60 * 1000, // 10 minutes 
+export function QueryProvider({ children, initUser }: QueryProviderProps) {
+  const queryClient = getQueryClient();
 
-            // Retry failed requests
-            retry: 2,            
-          },
-          mutations: {
-            retry: 1,
-          },
-        },
-      })
-  );
+  // Set initial user data once
+  useEffect(() => {
+    if (initUser && !queryClient.getQueryData(['auth', 'user'])) {
+      queryClient.setQueryData(['auth', 'user'], initUser);
+    }
+  }, [initUser, queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-        <ReactQueryDevtools initialIsOpen={false} />      
+      {process.env.NODE_ENV === 'development' && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
     </QueryClientProvider>
   );
 }

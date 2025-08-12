@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useLogin } from '@/hooks/use-auth';
 import { useState } from 'react';
 
 export default function LoginForm() {
@@ -8,9 +8,8 @@ export default function LoginForm() {
     username: '',
     password: '',
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const login = useLogin()
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -21,72 +20,58 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
+    
+    login.reset()
 
-    try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('username', formData.username);
-      formDataToSend.append('password', formData.password);
-
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        body: formDataToSend,
-      });
-
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        console.log('Login successful, redirecting to dashboard');
-        router.push('/dashboard');
-      } else {
-        setError(result.error || 'Login failed');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      setError('Login failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    login.mutate({
+      username: formData.username,
+      password: formData.password
+    })    
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      {error && <div className="text-red-600 text-sm">{error}</div>}
+     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {login.error && (
+        <div className="text-red-600 text-sm bg-red-50 p-3 rounded border border-red-200">
+          {login.error.message}
+        </div>
+      )}
+      
+      {login.isSuccess && (
+        <div className="text-green-600 text-sm bg-green-50 p-3 rounded border border-green-200">
+          Login successful! Redirecting...
+        </div>
+      )}
+      
       <input
         type="text"
         name="username"
         placeholder="Username"
-        className="rounded border px-3 py-2"
+        className="rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
         value={formData.username}
         onChange={handleChange}
+        disabled={login.isPending}
         required
       />
+      
       <input
         type="password"
         name="password"
         placeholder="Password"
-        className="rounded border px-3 py-2"
+        className="rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
         value={formData.password}
         onChange={handleChange}
+        disabled={login.isPending}
         required
       />
-      {loading ? (
-        <button
-          type="button"
-          disabled
-          className="rounded-lg bg-lime-700 px-6 py-3 text-sm font-medium text-white transition-colors md:text-base"
-        >
-          Logging in...
-        </button>
-      ) : (
-        <button
-          type="submit"
-          className="rounded-lg bg-lime-800 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-lime-700 md:text-base"
-        >
-          Log In
-        </button>
-      )}
+      
+      <button
+        type="submit"
+        disabled={login.isPending || !formData.username || !formData.password}
+        className="rounded-lg bg-lime-800 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-lime-700 disabled:opacity-50 disabled:cursor-not-allowed md:text-base"
+      >
+        {login.isPending ? 'Logging in...' : 'Log In'}
+      </button>
     </form>
   );
 }

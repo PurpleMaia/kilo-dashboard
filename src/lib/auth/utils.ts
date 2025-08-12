@@ -189,7 +189,28 @@ export async function registerUser(username: string, email: string, password: st
 // --- User Login ---
 
 export async function loginUser(username: string, password: string) {
-  const user = await db.selectFrom('user').selectAll().where('username', '=', username).executeTakeFirst();
+  const row = await db
+    .selectFrom('user')
+    .innerJoin('profile', 'profile.user_id', 'user.id')
+    .innerJoin('aina', 'profile.aina_id', 'aina.id')
+    .selectAll()
+    .where('username', '=', username)
+    .executeTakeFirst();
+
+  const aina: Aina = {
+    id: row?.aina_id || null,
+    name: row?.name || '',
+    createdAt: new Date(row?.created_at || '')
+  }
+  const user = {
+    id: row?.user_id || '',
+    username: row?.username || '',
+    password_hash: row?.password_hash || '',
+    email: row?.email || '',
+    email_verified: row?.email_verified || false,     
+    aina: aina  
+  };
+
   if (!user || !user.password_hash) throw new Error('Invalid credentials');
   if (!verifyPassword(password, user.password_hash)) throw new Error('Invalid credentials');
 

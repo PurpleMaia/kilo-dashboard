@@ -9,11 +9,11 @@ export async function POST(request: Request) {
 
   try {
     // Try to login (no auto-registration)
-    const { token } = await loginUser(username, password);
+    const { token, user } = await loginUser(username, password);
   
     // Create response with success status
     const response = NextResponse.json(
-      { success: true, message: 'Login successful' },
+      { success: true, message: 'Login successful', user: user },
       { status: 200 }
     );
     

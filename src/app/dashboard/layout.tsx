@@ -1,31 +1,24 @@
 'use client'
 import BottomNav from "@/components/dashboard/bottomnav"
 import TopPanel from "@/components/dashboard/top-panel"
-import { DrawerProvider } from "@/hooks/use-drawer"
-import { MobileProvider } from "@/hooks/use-mobile"
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
-      <MobileProvider>
-        <DrawerProvider>
-          <div 
-            className="grid grid-rows-[auto_1fr_auto] h-screen overflow-hidden"                  
-          >
+      <div className="grid grid-rows-[auto_1fr_auto] h-screen overflow-hidden">
 
-            <header className="bg-gradient-to-r from-lime-800 to-lime-700 z-20">
-              <TopPanel /> 
-            </header>            
+        <header className="bg-gradient-to-r from-lime-800 to-lime-700 z-20">
+          <TopPanel /> 
+        </header>            
 
-            <main className="overflow-y-auto overflow-x-hidden overscroll-contain scrolling-hero">              
-              {children}              
-            </main>
+        <main className="overflow-y-auto overflow-x-hidden overscroll-contain scrolling-hero">              
+          {children}              
+        </main>
 
-            <footer className="bottom-0 z-20">            
-              <BottomNav />
-            </footer>
-          </div>
-        </DrawerProvider>
-      </MobileProvider>
+        <footer className="bottom-0 z-20">            
+          <BottomNav />
+        </footer>
+
+      </div>        
     )
 }

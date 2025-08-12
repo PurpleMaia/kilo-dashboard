@@ -22,10 +22,9 @@ const fetchAuth = async (): Promise<SessionValidationResult> => {
   return { user: null, session: null };
 };
 
-const getCurrentUser = async () => {
-  const authData = await getAuth();
+export const getUser = async () => {
+  const authData = await getAuthServerCache();
   return authData.user;
 };
 
-export const getAuth = cache(fetchAuth)       // object { user, session, aina }
-export const getUser = cache(getCurrentUser); // string
+export const getAuthServerCache = cache(fetchAuth)
