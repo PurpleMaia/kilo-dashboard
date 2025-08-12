@@ -1,5 +1,5 @@
 import { db } from '../../../../../db/kysely/client';
-import { getAinaID, getUserID } from '@/lib/server-utils';
+import { getUser, getAina } from '@/lib/auth/cache';
 import { sql } from 'kysely';
 import { NextResponse } from 'next/server';
 import { getFromCache, setInCache } from '@/lib/data/cache';
@@ -21,10 +21,10 @@ export async function GET() {
     
     console.log('api/sensors/latest data not in cache, querying db...')
     try {
-        const userID = await getUserID();
+        const userID = await getUser()
 
         try  {
-            const ainaID = await getAinaID(userID);
+            const ainaID = await getAina();
             
             const sensorCount = await db
                 .selectFrom('sensor as s')

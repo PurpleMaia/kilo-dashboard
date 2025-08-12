@@ -47,7 +47,7 @@ export default function LatestFetch() {
           </>
         ) : (
           <>
-            <Card className="lg:col-span-2 bg-white border-gray-200 shadow-md p-4">
+            <Card className="lg:col-span-2 bg-white border-gray-200 shadow-md p-4 touch-none">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">

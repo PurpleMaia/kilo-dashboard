@@ -55,7 +55,7 @@ export default function TopPanel() {
   }
 
   return (
-    <div className="h-16 content-end w-full bg-gradient-to-r from-lime-800 to-lime-700 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]">
+    <div className="h-16 content-end w-full bg-gradient-to-r from-lime-800 to-lime-700">
 
       
       <div className="px-6 py-3">
