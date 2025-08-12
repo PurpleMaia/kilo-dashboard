@@ -1,5 +1,5 @@
 import { SensorGraph } from './graph';
-import { fetchSensorsData } from '@/lib/data';
+import { fetchSensorsData } from '@/lib/data/api';
 
 export default async function GraphWrapper() {
     const sensors = await fetchSensorsData()

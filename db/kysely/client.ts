@@ -7,10 +7,9 @@ import { DB } from '../generated'
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   // Connection pool configuration to prevent exhaustion
-  max: 10, // Maximum number of connections in the pool
-  min: 2,  // Minimum number of connections in the pool
-  connectionTimeoutMillis: 5000,
-  idleTimeoutMillis: 10000,
+  max: 20, // Maximum number of connections in the pool
+  connectionTimeoutMillis: 10000,
+  idleTimeoutMillis: 30000,
 });
 
 // Handle pool errors

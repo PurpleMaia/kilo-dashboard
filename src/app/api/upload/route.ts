@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '../../../../db/kysely/client';
 import { cookies } from 'next/headers';
-import { validateSessionToken } from '@/lib/auth';
+import { validateSessionToken } from '@/lib/auth/utils';
 import { Category } from '../../../../db/generated';
 import { getAinaID, getUserID } from '@/lib/server-utils';
 

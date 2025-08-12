@@ -2,8 +2,8 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { MalaGraph } from './MalaGraph';
-import { useMobile } from '../../contexts/MobileContext';
-import { MalaData } from '../../lib/data';
+import { useMobile } from '../../hooks/use-mobile';
+import { MalaData } from '../../lib/data/api';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';

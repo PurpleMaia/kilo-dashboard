@@ -1,7 +1,7 @@
 'use client'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useEffect, useState } from 'react';
-import { useMobile } from '../../contexts/MobileContext';
+import { useMobile } from '../../hooks/use-mobile';
 
 interface MetricData {
     [metricType: string]: Array<{ timestamp: string; value: number}>

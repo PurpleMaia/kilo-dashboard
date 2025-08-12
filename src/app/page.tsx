@@ -1,28 +1,14 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { validateSessionToken } from "@/lib/auth";
 import LoginForm from "@/components/dashboard/LoginForm";
+import { getUser } from "@/lib/auth/cache";
 
 export default async function Home() {
   // Check if user is already logged in (Server Component)
-  const sessionCookie = (await cookies()).get('auth_session');
-  let canRedirect = false
-  if (sessionCookie) {
-    try {
-      const sessionValidation = await validateSessionToken(sessionCookie.value);
-      if (sessionValidation.user) {
-        canRedirect = true
-        console.log('Valid session, redirecting to dashboard home')
-      }
-    } catch {
-      // Invalid session, continue to login form
-      console.log('Invalid session, showing login form');
-    }
-  }
+  const user = await getUser();
 
-  if (canRedirect) {
-    redirect('/dashboard')
+  if (user) {
+    redirect("/dashboard");
   }
 
   return (

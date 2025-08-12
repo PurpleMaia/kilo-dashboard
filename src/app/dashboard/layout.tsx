@@ -1,8 +1,9 @@
 'use client'
 import BottomNav from "@/components/dashboard/bottomnav"
 import TopPanel from "@/components/dashboard/top-panel"
-import { DrawerProvider } from "@/contexts/DrawerContext"
-import { MobileProvider } from "@/contexts/MobileContext"
+import { AuthProvider } from "@/hooks/use-auth"
+import { DrawerProvider } from "@/hooks/use-drawer"
+import { MobileProvider } from "@/hooks/use-mobile"
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {

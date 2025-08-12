@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '../../../../db/kysely/client';
-import { getUserID } from '@/lib/server-utils';
-import { getFromCache, setInCache } from '@/lib/cache';
+import { getFromCache, setInCache } from '@/lib/data/cache';
+import { getUser } from '@/lib/auth/cache';
 
 export async function GET() {
     let user_info
@@ -18,7 +18,13 @@ export async function GET() {
     console.log('api/profile not in cache, querying db...')
 
     try {
-        const userID = await getUserID()
+        const user = await getUser()
+        if (!user) {
+            return NextResponse.json(
+                { error: 'User not authenticated' },
+                { status: 401 }
+            );
+        }
         const result = await db
         .selectFrom('user as u')
         .leftJoin('profile as p', 'p.user_id', 'u.id')
@@ -30,7 +36,7 @@ export async function GET() {
             'p.role',
             'a.name as aina_name',
         ])
-        .where('u.id', '=', userID)
+        .where('u.id', '=', user?.id)
         .executeTakeFirst();
         const needsAinaSetup = !result?.aina_name
 

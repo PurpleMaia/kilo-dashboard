@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { invalidateSession } from '@/lib/auth';
-import { deleteSessionTokenCookie } from '@/lib/session';
+import { invalidateSession } from '@/lib/auth/utils';
+import { deleteSessionTokenCookie } from '@/lib/auth/session';
 import { cookies } from 'next/headers';
-import { clearCache } from '@/lib/cache';
+import { clearCache } from '@/lib/data/cache';
 
 export async function POST() {
   try {

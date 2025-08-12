@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from "react";
-import { MalaData } from "../../lib/data";
+import { MalaData } from "../../lib/data/api";
 import LocationWidget from "./LocationWidget";
 
 export default function LocationWidgetWrapper() {

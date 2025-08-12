@@ -1,8 +1,8 @@
 
 import { db } from '../../../..//db/kysely/client';
-import { getAinaID, getUserID } from '@/lib/server-utils';
+import { getAina } from '@/lib/auth/cache';
 import { NextResponse } from 'next/server';
-import { getFromCache, setInCache } from '@/lib/cache';
+import { getFromCache, setInCache } from '@/lib/data/cache';
 
 export async function GET() {
     let locations
@@ -18,11 +18,9 @@ export async function GET() {
 
 
     console.log('fetchSensorsData not in cache, querying db...')
-    const userID = await getUserID()
-    console.log('User ID:', userID)
 
     try {
-        const ainaID = await getAinaID(userID)
+        const ainaID = await getAina()
         try {
             const result = await db
                 .selectFrom('metric as m')

@@ -11,7 +11,7 @@ import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { pageTitles } from "@/lib/links";
 import useScreenSize from "@/lib/hooks";
-import { useMobile } from '../../contexts/MobileContext';
+import { useMobile } from '../../hooks/use-mobile';
 
 
 export default function TopPanel() {
