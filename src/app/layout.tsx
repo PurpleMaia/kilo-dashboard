@@ -2,9 +2,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Metadata, Viewport } from "next";
 import { getUser } from "@/lib/auth/cache";
-import { DrawerProvider } from "@/hooks/use-drawer";
-import { MobileProvider } from "@/hooks/use-mobile";
-import { QueryProvider } from "@/hooks/use-query-client";
+import { DrawerProvider } from "@/providers/DrawerProvider";
+import { MobileProvider } from "@/providers/MobileProvider";
+import { QueryProvider } from "@/providers/QueryClientProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

@@ -10,8 +10,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { pageTitles } from "@/lib/links";
-import useScreenSize from "@/lib/hooks";
-import { useMobile } from '../../hooks/use-mobile';
+import useScreenSize from "@/hooks/use-screensize";
+import { useMobile } from '../../providers/MobileProvider';
 import { useLogout } from "@/hooks/use-logout";
 
 

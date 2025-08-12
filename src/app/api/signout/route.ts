@@ -16,11 +16,7 @@ export async function POST() {
     
     // Clear the session cookie using the utility function
     console.log('Deleting session cookie');
-    await deleteSessionTokenCookie();
-
-    // clear out cache
-    console.log('Clearing cache');
-    clearCache()
+    await deleteSessionTokenCookie();        
 
     console.log('Successfully signed out user');
     return NextResponse.json({ 
