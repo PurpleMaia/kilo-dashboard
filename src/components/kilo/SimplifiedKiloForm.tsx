@@ -35,16 +35,10 @@ export default function SimplifiedKiloForm() {
             </p>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
 
-                <div className="border border-gray-300 rounded-lg shadow-sm p-4 mb-2 bg-gray-50">
-                    <h3 className="text-lg font-bold mb-2 text-gray-700 gap-2 flex items-center"><Moon className="h-5 w-5"></Moon>Mahina</h3>
-                    <p className="text-md font-semibold text-gray-700"> Akua </p>
-                    <p> Support vegetative growth; consider foliar feed</p>
-                </div>
-
                 <textarea
                     {...register('description')}
                     placeholder="Describe your kilo..."
-                    className="border border-gray-400 shadow-sm rounded p-2 min-h-28 resize-y focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="overflow-y-auto touch-none border border-gray-400 shadow-sm rounded p-2 min-h-28 resize-y focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
                 {errors.description && <span className="text-red-500 text-xs">{errors.description.message as string}</span>}
                 <div className="flex flex-col md:flex-row gap-2 mt-4">
