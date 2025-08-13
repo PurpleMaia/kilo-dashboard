@@ -39,23 +39,8 @@ export default function LocationWidget({ locations }: LocationWidgetProps) {
                 preventClicksPropagation={false}
             >
                 {locations.map((location, index) => (
-                    <SwiperSlide key={index} className='border-red-500 border'>
-                        <div className="bg-white rounded-lg border border-gray-300 h-full flex flex-col">
-                            <div className="pt-4 px-4 flex items-center justify-between mb-2 flex-shrink-0">
-                                <h3 className="text-lg font-semibold text-gray-900">
-                                    {location.name}
-                                </h3>
-                                {isMobile ? (
-                                    <p></p>
-                                ) : (
-                                    <div className="text-sm text-gray-600">
-                                        {index + 1} / {locations.length}
-                                    </div>
-                                )}
-                            </div>
-
-                            <MalaGraph data={location.data} />
-                        </div>
+                    <SwiperSlide key={index}>
+                        <MalaGraph location={location} />
                     </SwiperSlide>
                 ))}
             </Swiper>
