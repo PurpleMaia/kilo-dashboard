@@ -26,11 +26,11 @@ export class AuthCache {
       
       // Return cached user if valid
       if (cached && Date.now() < cached.expiresAt) {
-        console.log('Auth cache hit for token:', sessionToken.slice(0, 8) + '...');
+        console.log('Auth cache hit for token:', sessionToken + '...');
         return cached.user;
       }
 
-      console.log('Auth cache miss, validating session...');
+      console.log('Auth cache miss, validating session...', sessionToken);
       
       // Validate session and get user data in single query
       const result = await validateSessionToken(sessionToken);

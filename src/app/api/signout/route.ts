@@ -18,7 +18,7 @@ export async function POST() {
     console.log('Deleting session cookie');
     await deleteSessionTokenCookie();        
 
-    authCache.invalidateAll()
+    authCache.invalidateAll()    
 
     console.log('Successfully signed out user');
     return NextResponse.json({ 

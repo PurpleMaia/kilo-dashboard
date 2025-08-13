@@ -2,23 +2,8 @@
 import { db } from '../../../..//db/kysely/client';
 import { authCache } from '@/lib/auth/cache';
 import { NextResponse } from 'next/server';
-import { getFromCache, setInCache } from '@/lib/data/cache';
 
 export async function GET() {
-    let locations
-    const CACHE_KEY = 'all_sensors_per_patch'
-    const cached = getFromCache(CACHE_KEY)
-
-    if (cached) {
-        console.log('fetchSensorsData in cache, using cache...')
-        locations = cached
-        console.log('Cached locations:', locations)
-        return NextResponse.json({ locations })
-    }
-
-
-    console.log('fetchSensorsData not in cache, querying db...')
-
     const user = await authCache.getCurrentUser()
     if (user?.aina) {
         const ainaID = user?.aina.id
@@ -49,8 +34,7 @@ export async function GET() {
                 });
             }
     
-            locations = Object.entries(grouped).map(([name, data]) => ({ name, data }))
-            setInCache(CACHE_KEY, locations, 1000 * 60 * 30) // 30 minutes
+            const locations = Object.entries(grouped).map(([name, data]) => ({ name, data }))
     
             return NextResponse.json({ locations })
         } catch (error) {

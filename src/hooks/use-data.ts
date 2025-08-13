@@ -1,30 +1,25 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { User } from '@/lib/auth/utils';
+// hooks/use-sensors-data.ts
+import { useQuery } from '@tanstack/react-query';
 
 interface SensorDataPoint {
   timestamp: string;
   value: number;
 }
 
-interface LocationData {
+export interface LocationData {
   name: string;
   data: Record<string, SensorDataPoint[]>;
 }
 
-interface SensorsResponse {
+export interface SensorsResponse {
   locations: LocationData[];
 }
 
 export function useSensorsData() {
-  const queryClient = useQueryClient();
-  
-  // Get user from auth cache
-  const user = queryClient.getQueryData<User>(['auth', 'user']);
-
   return useQuery<SensorsResponse, Error>({
-    queryKey: ['sensors', 'patches', user?.aina?.id],
+    queryKey: ['sensors', 'patches'],
     queryFn: async () => {
-      const response = await fetch('/api/sensors/patches', {
+      const response = await fetch('/api/metrics', {
         method: 'GET',
         credentials: 'include',
       });
@@ -39,12 +34,10 @@ export function useSensorsData() {
         throw new Error(`HTTP ${response.status}: Failed to fetch sensors data`);
       }
 
-      const data = await response.json();
-      return data;
+      return response.json();
     },
-    enabled: !!user?.aina?.id, // Only run query if user has an aina
-    staleTime: 5 * 60 * 1000, // 5 minutes (matches your server cache)
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 20 * 60 * 1000, // 20 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes  
     retry: (failureCount, error) => {
       // Don't retry on 400 errors (user not registered)
       if (error.message.includes('not registered')) return false;

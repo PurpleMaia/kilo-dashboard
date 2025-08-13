@@ -6,7 +6,7 @@ import { getFromCache, setInCache } from './cache';
 import { getUserID, getAinaID } from '../server-utils';
 import { sql } from 'kysely';
 
-export interface MalaData {
+interface MalaData {
     name: string;
     data: Record<string, Array<{ timestamp: string; value: number }>>;
 }

@@ -1,51 +1,41 @@
 'use client'
-import { useState, useEffect } from "react";
-import { MalaData } from "../../lib/data/api";
 import LocationWidget from "./LocationWidget";
+import { useSensorsData } from "@/hooks/use-data";
 
 export default function LocationWidgetWrapper() {
-  const [loading, setLoading] = useState<boolean>(false)
-  const [locations, setLocations] = useState<MalaData[]>([])
-  const [error, setError] = useState<string | null>(null)
+  const { data: sensorsData, isLoading, error, isError } = useSensorsData();  
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          setLoading(true)
-          const res = await fetch('api/metrics')
-          const data = await res.json()
-          setLocations(data.locations)   
-          setError(data.error || null)     
-        } catch (e) {
-          console.log(e)
-          if (e instanceof Error) {
-            const errorMessage = e.message
-            setError(errorMessage)
-          }
-        } finally {
-          setLoading(false)
-        }
-      }
+  if (isLoading) {
+    return (
+      <div className="m-2 p-4 rounded-lg bg-white border border-gray-300 shadow-md">
+        Loading sensor data...
+      </div>
+    );
+  }
 
-      fetchData()
-    }, [])
-  return (
-    <>
-      { loading ? (
-        <div className="p-4 rounded-lg bg-white border border-gray-300 shadow-md">Loading...</div>
-      ) : (
-        <>
-          {error ? (
-            <div className="p-4 rounded-lg bg-yellow-100 border border-yellow-300 text-yellow-700">
-              {error}
-            </div>
-          ) : (
-           <LocationWidget locations={locations} />
-          )}
-        </>
-      )}    
-    </>
-  )
-  
-  
+  if (!sensorsData || !sensorsData.locations) {
+    return (
+      <div className="m-2 p-4 rounded-lg bg-gray-100 border border-gray-300 text-gray-600">
+        No sensor data available
+      </div>
+    );
+  }
+
+  if (sensorsData.locations.length === 0) {
+    return (
+      <div className="m-2 p-4 rounded-lg bg-blue-100 border border-blue-300 text-blue-700">
+        No locations found
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="m-2 p-4 rounded-lg bg-yellow-100 border border-yellow-300 text-yellow-700">
+        {error?.message || 'An error occurred while fetching sensor data'}
+      </div>
+    );
+  }  
+
+  return <LocationWidget locations={sensorsData?.locations} /> 
 }

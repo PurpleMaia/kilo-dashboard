@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '../../../../db/kysely/client';
 import { getFromCache, setInCache } from '@/lib/data/cache';
-import { getUser } from '@/lib/auth/cache';
 
 export async function GET() {
     let user_info

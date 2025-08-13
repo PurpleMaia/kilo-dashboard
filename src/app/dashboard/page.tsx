@@ -19,9 +19,7 @@ export default function Page() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
               {/* Left Column - Sensor Readings */}
               <div className="space-y-4">
-                <div className="h-96">
                   <LocationWidgetWrapper />              
-                </div>
               </div>
               
               {/* Right Column - Diary Entries */}

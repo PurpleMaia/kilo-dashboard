@@ -37,5 +37,6 @@ export function invalidateAllCache(): void {
 
 export function clearCache(): void {
   cache.clear();
+  console.log(cache)
   currentVersion++;
 }
