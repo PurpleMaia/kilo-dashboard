@@ -15,7 +15,7 @@ export interface SensorsResponse {
   locations: LocationData[];
 }
 
-export function useSensorsData(user: User) {
+export function useSensorsData(user: User) {  
   return useQuery<SensorsResponse, Error>({
     queryKey: ['sensors', 'patches', user],
     queryFn: async () => {
