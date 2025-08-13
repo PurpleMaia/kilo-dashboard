@@ -72,7 +72,7 @@ export function MalaGraph({ location }: MalaGraphProps) {
 
     return (
         <>
-        <div className='bg-white rounded-md border-solid border-gray-300 border shadow-sm'>
+        <div className='bg-white rounded-md border-solid border-gray-300 border shadow-lg'>
             {/* Location Header */}
             <h3 className="p-4 text-xl font-semibold text-gray-900">
                 {location.name}

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function LogoutButton() {
     const router = useRouter()

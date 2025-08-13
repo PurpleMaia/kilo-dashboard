@@ -15,16 +15,16 @@ export default function LocationWidgetWrapper() {
 
   if (!sensorsData || !sensorsData.locations) {
     return (
-      <div className="m-2 p-4 rounded-lg bg-gray-100 border border-gray-300 text-gray-600">
-        No sensor data available
+      <div className="shadow-md m-4 bg-yellow-100 border-2 border-yellow-500 rounded-lg p-8 text-yellow-700 flex items-center text-center justify-center h-96">
+        You are not assigned to an ʻāina, please select an ʻāina in your profile settings
       </div>
     );
   }
 
   if (sensorsData.locations.length === 0) {
     return (
-      <div className="m-2 p-4 rounded-lg bg-blue-100 border border-blue-300 text-blue-700">
-        No locations found
+      <div className="shadow-md m-4 bg-gray-100 border-2 border-gray-300 rounded-lg p-8 text-gray-600 flex items-center justify-center h-96">
+        <p>No data found for this ʻāina</p>
       </div>
     );
   }

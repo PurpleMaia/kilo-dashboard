@@ -1,5 +1,5 @@
-// hooks/use-sensors-data.ts
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { User } from '@/lib/auth/utils';
 
 interface SensorDataPoint {
   timestamp: string;
