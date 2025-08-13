@@ -1,10 +1,10 @@
 
 import { db } from '../../../..//db/kysely/client';
-import { authCache } from '@/lib/auth/cache';
+import { getUserDataFromServer } from '@/lib/auth/cache';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-    const user = await authCache.getCurrentUser()
+    const user = await getUserDataFromServer()
     if (user?.aina) {
         const ainaID = user?.aina.id
         try {
@@ -16,7 +16,7 @@ export async function GET() {
                 .innerJoin('metric_type as mt', 'mt.id', 'm.metric_type')
                 .select(['m.value', 'm.timestamp', 'mt.type_name', 'ma.name as mala_name'])
                 .where('a.id', '=', ainaID)
-                .orderBy('m.timestamp asc')
+                .orderBy('m.timestamp', 'asc')
                 .execute();
     
             // Group by metric type, then by mala name

@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import LoginForm from "@/components/dashboard/LoginForm";
-import { authCache } from "@/lib/auth/cache";
+import { getUserDataFromServer } from "@/lib/auth/cache";
 
 export default async function Home() {
   // Check if user is already logged in from server-cache
-  const user = await authCache.getCurrentUser();
+  const user = await getUserDataFromServer();
 
   if (user) {
     redirect("/dashboard");

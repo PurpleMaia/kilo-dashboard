@@ -1,9 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Metadata, Viewport } from "next";
-import { DrawerProvider } from "@/providers/DrawerProvider";
-import { MobileProvider } from "@/providers/MobileProvider";
-import { QueryProvider } from "@/providers/QueryClientProvider";
+import Providers from "@/providers/Providers";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,13 +43,9 @@ export default async function RootLayout({
         <link rel="manifest" href='/site.webmanifest' />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <MobileProvider>
-          <DrawerProvider>
-            <QueryProvider>              
-                {children}              
-            </QueryProvider>
-          </DrawerProvider>
-        </MobileProvider>
+        <Providers>
+          {children}              
+        </Providers>             
       </body>
     </html>
   );

@@ -1,28 +1,28 @@
 import { cookies } from 'next/headers';
 import { cache } from 'react';
-import { SessionValidationResult, validateSessionToken } from './utils';
+import { User, validateSessionToken } from './utils';
 
-const fetchAuth = async (): Promise<SessionValidationResult> => {
+const fetchAuth = async () => {
   const sessionCookie = (await cookies()).get('auth_session');
   if (!sessionCookie) {
-    return { user: null, session: null };
+    return null;
   }
 
   try {
     const sessionValidation = await validateSessionToken(sessionCookie.value);
     if (sessionValidation.user) {
-      return sessionValidation;
+      return sessionValidation.user;
     }
   } catch (error) {
     console.error('Session validation failed:', error);
   }
 
-  return { user: null, session: null };
+  return null;
 };
 
-export const getUser = async () => {
+export const getUserDataFromServer = async (): Promise<User | null> =>  {
   const authData = await getAuthServerCache();
-  return authData.user;
+  return authData
 };
 
 export const getAuthServerCache = cache(fetchAuth)

@@ -15,12 +15,13 @@ export interface SensorsResponse {
   locations: LocationData[];
 }
 
-export function useSensorsData() {
+export function useSensorsData(user: User) {
   return useQuery<SensorsResponse, Error>({
-    queryKey: ['sensors', 'patches'],
+    queryKey: ['sensors', 'patches', user],
     queryFn: async () => {
       const response = await fetch('/api/metrics', {
         method: 'GET',
+        body: JSON.stringify(user),
         credentials: 'include',
       });
 

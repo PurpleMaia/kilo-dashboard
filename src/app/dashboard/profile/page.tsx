@@ -1,14 +1,12 @@
 'use client'
-import { useQueryClient } from '@tanstack/react-query';
 import { UserIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
-import { User } from '@/lib/auth/utils';
 import { redirect } from 'next/navigation';
 import { useLogout } from '@/hooks/use-auth';
+import { getUserDataFromClient } from "@/providers/AuthProvider";
 
 export default function Profile() {
-    const queryClient = useQueryClient();
-    const user = queryClient.getQueryData<User>(['auth', 'user']);
+    const user = getUserDataFromClient()
     const logout = useLogout()    
     
     if (!user) {

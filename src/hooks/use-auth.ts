@@ -1,9 +1,9 @@
-// hooks/useLogout.ts
 import { User } from '@/lib/auth/utils';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { getUserDataFromClient } from '@/providers/AuthProvider';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
-export function useLogout() {
+export function useLogout() {  
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -20,7 +20,7 @@ export function useLogout() {
     },
     onSettled: () => {
       // Always clear data, even if server call fails
-      queryClient.setQueryData(['auth', 'user'], null);
+      queryClient.setQueryData(['user'], null);
       queryClient.clear();      
       router.push('/');
     },
@@ -71,7 +71,7 @@ export function useLogin() {
     onSuccess: (data) => {
       if (data.user) {
         // Update the auth cache with new user data
-        queryClient.setQueryData(['auth', 'user'], data.user);
+        queryClient.setQueryData(['user'], data.user);
                 
         console.log('Login successful, redirecting to dashboard');
         router.push('/dashboard');
@@ -82,5 +82,18 @@ export function useLogin() {
       // Clear any existing user data on login failure
       queryClient.setQueryData(['auth', 'user'], null);
     },
+  });
+}
+
+// React Query so it can be exposed to other queries can depend on this with enabled flag (safety)
+export function useQueryUserData() {
+  const userData = getUserDataFromClient()
+
+  return useQuery<User | null>({
+    queryKey: ["user"],
+    queryFn: async () => userData ?? null,
+    initialData: userData,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 }
