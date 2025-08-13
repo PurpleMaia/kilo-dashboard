@@ -1,5 +1,5 @@
 import { db } from '../../../../../db/kysely/client';
-import { getUser } from '@/lib/auth/cache';
+import { authCache } from '@/lib/auth/cache';
 import { sql } from 'kysely';
 import { NextResponse } from 'next/server';
 import { getFromCache, setInCache } from '@/lib/data/cache';
@@ -20,7 +20,7 @@ export async function GET() {
     }
     
     console.log('api/sensors/latest data not in cache, querying db...')
-    const user = await getUser()
+    const user = await authCache.getCurrentUser()
 
     if (user?.aina) {
         const ainaID = user.aina?.id

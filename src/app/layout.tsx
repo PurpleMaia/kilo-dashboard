@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Metadata, Viewport } from "next";
-import { getUser } from "@/lib/auth/cache";
 import { DrawerProvider } from "@/providers/DrawerProvider";
 import { MobileProvider } from "@/providers/MobileProvider";
 import { QueryProvider } from "@/providers/QueryClientProvider";
@@ -37,10 +36,7 @@ export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
-
-  // get the user with the React Cache (might need to error check), this is dependent on load
-  const initUser = await getUser()
+}>) {  
   
   return (
     <html lang="en">
@@ -50,7 +46,7 @@ export default async function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <MobileProvider>
           <DrawerProvider>
-            <QueryProvider initUser={initUser}>              
+            <QueryProvider>              
                 {children}              
             </QueryProvider>
           </DrawerProvider>

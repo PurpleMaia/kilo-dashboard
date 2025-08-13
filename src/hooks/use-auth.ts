@@ -21,7 +21,7 @@ export function useLogout() {
     onSettled: () => {
       // Always clear data, even if server call fails
       queryClient.setQueryData(['auth', 'user'], null);
-      queryClient.clear();
+      queryClient.clear();      
       router.push('/');
     },
   });

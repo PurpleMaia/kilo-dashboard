@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { loginUser } from '@/lib/auth/utils';
 import { sessionCookieName } from '@/lib/auth/session';
+import { authCache } from '@/lib/auth/cache';
 
 export async function POST(request: Request) {
   const form = await request.formData();
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
       path: "/"
     });
     
-    console.log('Session cookie set:', token);
+    console.log('Session cookie set:', token);    
     return response;
   } catch (error) {
     console.error('Login Error:', error);

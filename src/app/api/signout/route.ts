@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { invalidateSession } from '@/lib/auth/utils';
 import { deleteSessionTokenCookie } from '@/lib/auth/session';
 import { cookies } from 'next/headers';
-import { clearCache } from '@/lib/data/cache';
+import { authCache } from '@/lib/auth/cache';
 
 export async function POST() {
   try {
@@ -17,6 +17,8 @@ export async function POST() {
     // Clear the session cookie using the utility function
     console.log('Deleting session cookie');
     await deleteSessionTokenCookie();        
+
+    authCache.invalidateAll()
 
     console.log('Successfully signed out user');
     return NextResponse.json({ 
