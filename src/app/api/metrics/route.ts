@@ -50,7 +50,7 @@ export async function GET() {
             }
     
             locations = Object.entries(grouped).map(([name, data]) => ({ name, data }))
-            setInCache(CACHE_KEY, locations, 1000 * 60 * 5) //5 minutes
+            setInCache(CACHE_KEY, locations, 1000 * 60 * 30) // 30 minutes
     
             return NextResponse.json({ locations })
         } catch (error) {

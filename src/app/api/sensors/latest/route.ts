@@ -1,5 +1,5 @@
 import { db } from '../../../../../db/kysely/client';
-import { getUser, getAina } from '@/lib/auth/cache';
+import { getUser } from '@/lib/auth/cache';
 import { sql } from 'kysely';
 import { NextResponse } from 'next/server';
 import { getFromCache, setInCache } from '@/lib/data/cache';
@@ -20,12 +20,11 @@ export async function GET() {
     }
     
     console.log('api/sensors/latest data not in cache, querying db...')
-    try {
-        const userID = await getUser()
+    const user = await getUser()
 
-        try  {
-            const ainaID = await getAina();
-            
+    if (user?.aina) {
+        const ainaID = user.aina?.id
+        try  {                        
             const sensorCount = await db
                 .selectFrom('sensor as s')
                 .innerJoin('sensor_mala as sm', 's.id', 'sm.sensor_id')
@@ -48,15 +47,16 @@ export async function GET() {
     
             console.log(sensorCount, latestFetch)
     
-            setInCache(SENSOR_COUNT_CACHE_KEY, sensorCount, 1000 * 60 * 5)
-            setInCache(LATEST_CACHE_KEY, latestFetch, 1000 * 60 * 5)
+            setInCache(SENSOR_COUNT_CACHE_KEY, sensorCount, 1000 * 60 * 30)
+            setInCache(LATEST_CACHE_KEY, latestFetch, 1000 * 60 * 30)
     
             return NextResponse.json({ sensorCount, latestFetch });
         } catch (error) {
-            console.error('Error fetching Aina ID:', error);
-            return NextResponse.json({ error: 'You are not registered to any ʻāina. Please select an ʻāina in your profile settings.' }, { status: 400 });
+            console.error('Database Error:', error);
+            return NextResponse.json({ error: 'Failed to fetch the latest invoices.' }, { status: 500 });
         }
-    } catch {
-        return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+    } else {
+        console.error('Error fetching Aina ID');
+        return NextResponse.json({ error: 'You are not registered to any ʻāina. Please select an ʻāina in your profile settings.' }, { status: 400 });
     }
 } 

@@ -70,7 +70,7 @@ export async function fetchSensorsData(): Promise<MalaData[]> {
         }
 
         const data = Object.entries(grouped).map(([name, data]) => ({ name, data }))
-        setInCache(CACHE_KEY, data, 1000 * 60 * 20) //5 minutes
+        setInCache(CACHE_KEY, data, 1000 * 60 * 30) //5 minutes
 
         return data
     } catch (error) {

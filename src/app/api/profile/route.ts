@@ -49,7 +49,7 @@ export async function GET() {
             needsAinaSetup,
           }
 
-          setInCache(CACHE_KEY, user_info, 1000 * 60 * 5)
+          setInCache(CACHE_KEY, user_info, 1000 * 60 * 30)
         
         console.log(user_info)
 

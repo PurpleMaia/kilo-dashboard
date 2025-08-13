@@ -47,7 +47,7 @@ export async function GET() {
         .where('aina.id', '=', ainaID)
         .execute()
 
-        setInCache(CACHE_KEY, sensors, 1000 * 60 * 5)
+        setInCache(CACHE_KEY, sensors, 1000 * 60 * 30)
 
         // console.log(sensors)
 
