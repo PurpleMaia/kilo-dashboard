@@ -26,10 +26,11 @@ export default function LocationWidget({ locations }: LocationWidgetProps) {
                     pagination={true}
                     modules={[Navigation, Pagination]}
                     style={{
-                        // CSS vars – these always win because they’re on the element itself
+                        /* eslint-disable @typescript-eslint/no-explicit-any */
                         ['--swiper-pagination-color' as any]: '#65a30d',                // active
                         ['--swiper-pagination-bullet-inactive-color' as any]: '#d1d5db',// inactive
                         ['--swiper-pagination-bullet-inactive-opacity' as any]: '1',
+                        /* eslint-enable @typescript-eslint/no-explicit-any */
                     }}                    
                     className="h-full !px-4"
                     allowTouchMove={true}

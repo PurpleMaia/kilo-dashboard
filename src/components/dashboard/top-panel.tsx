@@ -6,13 +6,11 @@ import { links } from "@/lib/links";
 import Link from 'next/link'
 import clsx from 'clsx';
 import { BellAlertIcon,  } from "@heroicons/react/24/outline";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { pageTitles } from "@/lib/links";
 import useScreenSize from "@/hooks/use-screensize";
 import { useMobile } from '../../providers/MobileProvider';
-import { useLogout } from "@/hooks/use-logout";
 
 
 export default function TopPanel() {

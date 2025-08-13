@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useState } from "react"
-import { Moon } from "lucide-react"
+// import { useState } from "react"
 
 // Define a simple kilo schema
 const kiloSchema = z.object({
@@ -19,8 +18,8 @@ export default function SimplifiedKiloForm() {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<KiloFormType>({
         resolver: zodResolver(kiloSchema),
     })
-    const [file, setFile] = useState<File | null>(null)
-    const [image, setImage] = useState<File | null>(null)
+    // const [file, setFile] = useState<File | null>(null)
+    // const [image, setImage] = useState<File | null>(null)
 
     const onSubmit = async (data: KiloFormType) => {
         // Handle form data, file, and image upload logic here

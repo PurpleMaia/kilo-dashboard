@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { User, Session, validateSessionToken } from './utils';
+import { User, validateSessionToken } from './utils';
 
 interface CachedUser {
   user: User;
