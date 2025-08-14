@@ -5,7 +5,6 @@ import { getAuthData } from '@/lib/server-utils';
 
 export async function GET() {
     const data = await getAuthData()
-    console.log(data)
     const ainaID = data.ainaID
     if (ainaID) {
         try  {                        

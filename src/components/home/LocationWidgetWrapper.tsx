@@ -1,9 +1,9 @@
 'use client'
 import LocationWidget from "./LocationWidget";
-import { useSensorsData } from "@/hooks/use-data";
+import { useLocationData } from "@/hooks/use-data";
 
 export default function LocationWidgetWrapper() {
-  const { data: sensorsData, isLoading, error, isError } = useSensorsData();  
+  const { data: sensorsData, isLoading, error, isError } = useLocationData();  
 
   if (isLoading) {
     return (

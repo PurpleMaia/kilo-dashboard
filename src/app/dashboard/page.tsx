@@ -5,9 +5,16 @@ import RecentUploadWidget from "@/components/home/RecentUploadWidget";
 import SolsticeWidget from "@/components/home/SolsticeWidget";
 import KiloNotes from "@/components/home/KiloNotesWidget";
 import LocationWidgetWrapper from "@/components/home/LocationWidgetWrapper";
+import { useQueryUserData } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
 
 export default function Page() {       
-
+    const user = useQueryUserData()
+    const router = useRouter()
+    
+    if (!user) {
+      router.push('/')
+    }
     return (
         <div className="min-h-screen flex">
         <div className="flex-1 flex flex-col">

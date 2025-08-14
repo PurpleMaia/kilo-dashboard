@@ -11,17 +11,18 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: async () => {
+            
       const response = await fetch('/api/signout', {
         method: 'POST',
       });
+
+      queryClient.clear();
       
       if (!response.ok) {
         throw new Error('Logout failed');
       }
     },
     onSettled: () => {
-      // Always clear data, even if server call fails
-      queryClient.invalidateQueries();      
       router.push('/');
     },
   });

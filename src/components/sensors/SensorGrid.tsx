@@ -3,33 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 // import { Activity, Droplets, Thermometer, Zap, Wind, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
-
-interface Sensor {
-    id: number,
-    name: string,
-    typeName: string,
-    unit: string,
-    category: string,
-    locations: string,
-}
+import { useSensorsData } from "@/hooks/use-data";
 
 export function SensorGrid() {
-    const [sensors, setSensors] = useState<Sensor[]>()
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('/api/sensors');
-                const data = await response.json();
-                console.log(data.sensors)
-                setSensors(data.sensors)              
-            } catch (error) {
-                console.error('Error fetching sensor data:', error);
-            }
-        };
-
-        fetchData()
-    }, [])
+    const { data: sensors } = useSensorsData()
 
       const getCategoryColor = (status: string) => {
         switch (status) {
