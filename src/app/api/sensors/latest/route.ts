@@ -1,29 +1,13 @@
 import { db } from '../../../../../db/kysely/client';
-import { authCache } from '@/lib/auth/cache';
 import { sql } from 'kysely';
 import { NextResponse } from 'next/server';
-import { getFromCache, setInCache } from '@/lib/data/cache';
+import { getAuthData } from '@/lib/server-utils';
 
 export async function GET() {
-    let sensorCount, latestFetch 
-
-    const SENSOR_COUNT_CACHE_KEY = 'sensor_count'
-    const LATEST_CACHE_KEY = 'latest'
-    const count_cached = getFromCache(SENSOR_COUNT_CACHE_KEY)
-    const latest_cached = getFromCache(LATEST_CACHE_KEY)
-
-    if (count_cached && latest_cached) {
-        console.log('found api/sensors/latest data in cache, using cache...')
-        sensorCount = count_cached
-        latestFetch = latest_cached
-        return NextResponse.json({ sensorCount, latestFetch })
-    }
-    
-    console.log('api/sensors/latest data not in cache, querying db...')
-    const user = await authCache.getCurrentUser()
-
-    if (user?.aina) {
-        const ainaID = user.aina?.id
+    const data = await getAuthData()
+    console.log(data)
+    const ainaID = data.ainaID
+    if (ainaID) {
         try  {                        
             const sensorCount = await db
                 .selectFrom('sensor as s')
@@ -45,10 +29,7 @@ export async function GET() {
                 .limit(1)
                 .executeTakeFirstOrThrow();
     
-            console.log(sensorCount, latestFetch)
-    
-            setInCache(SENSOR_COUNT_CACHE_KEY, sensorCount, 1000 * 60 * 30)
-            setInCache(LATEST_CACHE_KEY, latestFetch, 1000 * 60 * 30)
+            console.log(sensorCount, latestFetch)            
     
             return NextResponse.json({ sensorCount, latestFetch });
         } catch (error) {
