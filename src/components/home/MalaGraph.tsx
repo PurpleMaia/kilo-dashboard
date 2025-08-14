@@ -59,8 +59,8 @@ export function MalaGraph({ location }: MalaGraphProps) {
     const selectedData = selectedMetricType && location.data[selectedMetricType] ? location.data[selectedMetricType] : [];
     
     // Debug logging
-    console.log('Current selectedMetricType:', selectedMetricType);
-    console.log('Available metricTypes:', metricTypes);
+    // console.log('Current selectedMetricType:', selectedMetricType);
+    // console.log('Available metricTypes:', metricTypes);
     
     // Transform data for the selected metric type with error handling
     const chartData = Array.isArray(selectedData) 

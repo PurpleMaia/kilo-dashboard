@@ -2,15 +2,16 @@
 import { UserIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { redirect } from 'next/navigation';
-import { useLogout } from '@/hooks/use-auth';
-import { getUserDataFromClient } from "@/providers/AuthProvider";
+import { useLogout, useQueryUserData } from '@/hooks/use-auth';
 
 export default function Profile() {
-    const user = getUserDataFromClient()
-    const logout = useLogout()    
-    
+    const { data: user } = useQueryUserData()
+    const logout = useLogout()        
+
     if (!user) {
-        redirect('/')
+        return (
+            <div>Please log in</div>
+        )
     }
 
     return (

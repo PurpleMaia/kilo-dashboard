@@ -1,12 +1,11 @@
 
 import { db } from '../../../..//db/kysely/client';
-import { getUserDataFromServer } from '@/lib/auth/cache';
+import { getAuthData } from '@/lib/server-utils';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-    const user = await getUserDataFromServer()
-    if (user?.aina) {
-        const ainaID = user?.aina.id
+    const { userID, ainaID }= await getAuthData()
+    if (userID) {
         try {
             const result = await db
                 .selectFrom('metric as m')

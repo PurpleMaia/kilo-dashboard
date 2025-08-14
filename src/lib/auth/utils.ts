@@ -186,9 +186,17 @@ export async function registerUser(username: string, email: string, password: st
   return { id, username, email, token };
 }
 
-// --- User Login ---
-
-export async function loginUser(username: string, password: string) {
+interface LoginResponse {
+  user: User,
+  token: string
+}
+/**
+ * Fetches user information from database, generates session token and inserts session to database 
+ * @param {string} username
+ * @param {string} password
+ * @returns { LoginResponse } User object & session token
+ */
+export async function loginUser(username: string, password: string): Promise<LoginResponse> {
   const row = await db
     .selectFrom('user')
     .innerJoin('profile', 'profile.user_id', 'user.id')

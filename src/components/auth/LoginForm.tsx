@@ -21,8 +21,10 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
+    // clear any stale login information
     login.reset()
 
+    // set user query client on successful login
     login.mutate({
       username: formData.username,
       password: formData.password
@@ -35,13 +37,7 @@ export default function LoginForm() {
         <div className="text-red-600 text-sm bg-red-50 p-3 rounded border border-red-200">
           {login.error.message}
         </div>
-      )}
-      
-      {login.isSuccess && (
-        <div className="text-green-600 text-sm bg-green-50 p-3 rounded border border-green-200">
-          Login successful! Redirecting...
-        </div>
-      )}
+      )}  
       
       <input
         type="text"
