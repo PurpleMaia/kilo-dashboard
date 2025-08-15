@@ -3,22 +3,23 @@ import { getUserData } from '@/lib/server-utils';
 
 export async function GET() {
   try {
-    const user = getUserData()
-
+    const user = await getUserData()    
+    
     if (!user) {
-        console.log('No user found');
-        return NextResponse.json(
-            { error: 'No session found or session invalid' },
-            { status: 401 }
-        );
+      console.log('Unauthorized - no user')
+      return NextResponse.json(
+        { error: 'Unauthorized' }, 
+        { status: 401 }
+      );
     }
     
+    console.log('I am: ', user)
     return NextResponse.json(user)
-  } catch (error) {
-        console.error('Error in /api/me:', error);
-            return NextResponse.json(
-                { error: 'Internal server error' },
-                { status: 500 }
-        );
+  } catch (error) {    
+      console.error('Error in /api/me:', error);
+          return NextResponse.json(
+              { error: 'Internal server error' },
+              { status: 500 }
+      );
   }
 }

@@ -8,10 +8,9 @@ export default function Profile() {
     const { data: user } = useQueryUserData()
     const logout = useLogout()        
 
+    // Check for stored data in user cache (same as useAuthGuard)
     if (!user) {
-        return (
-            <div>Please log in</div>
-        )
+        redirect('/')
     }
 
     return (
@@ -26,7 +25,7 @@ export default function Profile() {
                             <UserIcon className="h-8 w-8 text-green-600" />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">{user.username}</h1>
+                            <h1 className="text-2xl font-bold text-gray-900">{user?.username}</h1>
                             {/* <p className="text-gray-600 capitalize">{user?.role}</p> */}
                         </div>
                     </div>                                
@@ -35,12 +34,12 @@ export default function Profile() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <h3 className="text-sm font-medium text-gray-500 mb-1">Contact Information</h3>
-                        <p className="text-gray-900">{user.email}</p>
+                        <p className="text-gray-900">{user?.email}</p>
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500 mb-1">Location</h3>
-                        {user.aina ? (
-                            <p className="text-gray-900">{user.aina.name}</p>
+                        {user?.aina ? (
+                            <p className="text-gray-900">{user?.aina.name}</p>
                         ) : (
                             <Button variant="outline" onClick={() => redirect('/register/aina')}>
                                 Continue Set Up

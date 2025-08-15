@@ -5,16 +5,15 @@ import RecentUploadWidget from "@/components/home/RecentUploadWidget";
 import SolsticeWidget from "@/components/home/SolsticeWidget";
 import KiloNotes from "@/components/home/KiloNotesWidget";
 import LocationWidgetWrapper from "@/components/home/LocationWidgetWrapper";
-import { useQueryUserData } from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
+import { useAuthGuard } from "@/hooks/use-auth";
 
 export default function Page() {       
-    const user = useQueryUserData()
-    const router = useRouter()
-    
-    if (!user) {
-      router.push('/')
+    const { isAuthenticated } = useAuthGuard()
+
+    if (!isAuthenticated) {
+      return null // Show nothing, but will redirect in hook
     }
+
     return (
         <div className="min-h-screen flex">
         <div className="flex-1 flex flex-col">

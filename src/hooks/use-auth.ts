@@ -1,28 +1,27 @@
 import { User } from '@/lib/auth/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 /**
- * Log out mutation, calls API signout (invalidates session), then clears query client
+ * Log out mutation, calls API signout (invalidates session cookie & deletes session from DB), then clears query client
  */
 export function useLogout() {  
   const queryClient = useQueryClient();
   const router = useRouter();
 
   return useMutation({
-    mutationFn: async () => {
-            
+    mutationFn: async () => {            
       const response = await fetch('/api/signout', {
         method: 'POST',
       });
-
-      queryClient.clear();
       
       if (!response.ok) {
         throw new Error('Logout failed');
       }
     },
     onSettled: () => {
+      queryClient.clear();
       router.push('/');
     },
   });
@@ -77,7 +76,7 @@ export function useLogin() {
         console.log('Login successful, redirecting to dashboard');
         router.push('/dashboard');
       }
-    },
+    },    
     onError: (error) => {
       console.error('Login error:', error);
       
@@ -88,9 +87,13 @@ export function useLogin() {
 }
 
 /**
- * Client cache of user data from an api call
+ * Client cache of user data from an api call (only called for Authentication Guard or to set)
+ * @returns cached user data on successful API call or null when no Session Token
  */
 export function useQueryUserData() {
+  const pathname = usePathname()
+  const isPublicRoute = pathname === '/' || pathname === '/register' || pathname === '/dashboard/profile';
+
   return useQuery<User | null, Error>({
     queryKey: ['user'],
     queryFn: async (): Promise<User | null> => {
@@ -115,13 +118,38 @@ export function useQueryUserData() {
       console.log('Client received user data:', userData);
       return userData;
     },
-    staleTime: 15 * 60 * 1000, // 15 minutes - longer than server cache
+    enabled: !isPublicRoute,
+    staleTime: 15 * 60 * 1000, // 15 minutes 
     gcTime: 30 * 60 * 1000,    // 30 minutes
     retry: (failureCount, error) => {
       if (error.message.includes('401')) return false;
       return failureCount < 2;
     },
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: true
   });
+}
+
+/**
+ * Authentication Guard, checks authentication on cached User Data and redirects to login
+ */
+export function useAuthGuard() {
+  const { data: user, isLoading } = useQueryUserData();
+  const router = useRouter();
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  useEffect(() => {
+
+    // Handle query errors (like network failures)
+    if (!user && !isLoading && !isRedirecting) {      
+      setIsRedirecting(true);
+      router.push('/');
+    }     
+
+  }, [user, isLoading, router, isRedirecting]);
+
+  return {
+    user,
+    isLoading: isLoading || isRedirecting,
+    isAuthenticated: !!user,
+    isRedirecting
+  };
 }

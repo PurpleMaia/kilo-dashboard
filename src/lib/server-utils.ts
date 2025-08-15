@@ -73,12 +73,13 @@ export async function getAuthData(): Promise<{userID: string, ainaID: number | n
 }
 
 /**
- * @returns Full user profile information
+ * Fetches user profile information based on the current session cookie
+ * @returns {User | null} user data if found, if not then null
  */
-export async function getUserData() {
+export async function getUserData(): Promise<User | null> {
     const sessionCookie = (await cookies()).get('auth_session');
     if (!sessionCookie?.value) {
-        throw Error('No session found')
+        return null
     }
 
     const sessionId = hashToken(sessionCookie.value);

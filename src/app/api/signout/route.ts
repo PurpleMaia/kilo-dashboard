@@ -9,7 +9,7 @@ export async function POST() {
     
     // invalidate the session in the DB
     if (sessionCookie && sessionCookie.value) {
-      console.log('  - Invalidating session:', sessionCookie.value);
+      console.log('   - Invalidating session:', sessionCookie.value);
       await invalidateSession(sessionCookie.value);
     }
     
