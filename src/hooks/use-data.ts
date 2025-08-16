@@ -91,5 +91,24 @@ export function useSensorsData() {
       return failureCount < 3;
     },
   })
+}
 
+export function usePublicData() {
+  return useQuery<LocationData, Error>({
+    queryKey: ['public', ['usgs']],
+    queryFn: async () => {
+      const usgs_res = await fetch('/api/public/usgs');
+
+      const usgs_data = await usgs_res.json()
+
+      return usgs_data
+    },
+    staleTime: 20 * 60 * 1000, // 20 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes  
+    retry: (failureCount, error) => {
+      // Don't retry on 400 errors (user not registered)
+      if (error.message.includes('not registered')) return false;
+      return failureCount < 3;
+    },
+  })
 }

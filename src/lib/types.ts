@@ -32,8 +32,8 @@ export interface SensorDataPoint {
 }
 
 export interface LocationData {
-  name: string;
-  data: Record<string, SensorDataPoint[]>;
+  siteName: string; // location name
+  data: Record<string, SensorDataPoint[]>; // key is the metric type
 }
 
 export interface Sensor {

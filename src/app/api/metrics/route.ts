@@ -33,7 +33,7 @@ export async function GET() {
                 });
             }
     
-            const locations = Object.entries(grouped).map(([name, data]) => ({ name, data }))
+            const locations = Object.entries(grouped).map(([siteName, data]) => ({ siteName, data }))
     
             return NextResponse.json({ locations })
         } catch (error) {
