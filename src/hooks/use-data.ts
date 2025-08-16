@@ -1,24 +1,13 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { User } from '@/lib/auth/utils';
+import { useQuery } from '@tanstack/react-query';
 import { useQueryUserData } from './use-auth';
+import { Sensor, LocationData, LatestSensorsData } from '@/lib/types';
 
-interface SensorDataPoint {
-  timestamp: string;
-  value: number;
+interface LocationDataResponse {
+  locations: LocationData[]
 }
-
-export interface LocationData {
-  name: string;
-  data: Record<string, SensorDataPoint[]>;
-}
-
-export interface SensorsResponse {
-  locations: LocationData[];
-}
-
 export function useLocationData() {  
   const user = useQueryUserData()
-  return useQuery<SensorsResponse, Error>({
+  return useQuery<LocationDataResponse, Error>({
     queryKey: ['sensors', 'patches'],
     queryFn: async () => {
       const response = await fetch('/api/metrics', {
@@ -49,11 +38,7 @@ export function useLocationData() {
   });
 }
 
-interface LatestSensorsData {
-  count: number,
-  timestamp: Date,
-  timeDiff: number
-}
+
 export function useLatestSensorData() {
     const user = useQueryUserData()
     return useQuery<LatestSensorsData, Error>({
@@ -83,24 +68,19 @@ export function useLatestSensorData() {
   });
 }
 
-interface Sensor {
-    id: number,
-    name: string,
-    typeName: string,
-    unit: string,
-    category: string,
-    locations: string,
+interface SensorResponse {
+  sensors: Sensor[]
 }
 export function useSensorsData() {
   const user = useQueryUserData()
-  return useQuery<Sensor[], Error>({
+  return useQuery<SensorResponse, Error>({
     queryKey: ['sensors'],
     queryFn: async () => {
       const response = await fetch('/api/sensors');
 
       const data = await response.json()
 
-      return data.sensors
+      return data
     },
     enabled: !!user,
     staleTime: 20 * 60 * 1000, // 20 minutes

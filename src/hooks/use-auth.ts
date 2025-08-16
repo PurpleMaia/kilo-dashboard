@@ -1,7 +1,7 @@
-import { User } from '@/lib/auth/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { User, LoginResponse } from '@/lib/types';
 
 /**
  * Log out mutation, calls API signout (invalidates session cookie & deletes session from DB), then clears query client
@@ -27,22 +27,11 @@ export function useLogout() {
   });
 }
 
-interface LoginCredentials {
-  username: string;
-  password: string;
-}
-
-interface LoginResponse {
-  success: boolean;
-  user?: User;
-  error?: string;
-}
-
 export function useLogin() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  return useMutation<LoginResponse, Error, LoginCredentials>({
+  return useMutation<LoginResponse, Error, {username: string, password: string}>({
     mutationFn: async (credentials) => {
       const formData = new FormData();
       formData.append('username', credentials.username);

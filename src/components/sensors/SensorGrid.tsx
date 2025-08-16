@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useSensorsData } from "@/hooks/use-data";
 
 export function SensorGrid() {
-    const { data: sensors } = useSensorsData()
+    const { data } = useSensorsData()
 
       const getCategoryColor = (status: string) => {
         switch (status) {
@@ -19,9 +19,9 @@ export function SensorGrid() {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">      
 
-          {sensors && (
+          {data?.sensors && (
             <>          
-              {sensors.map((sensor) => {                
+              {data?.sensors.map((sensor) => {                
                 return (
                   <Card key={sensor.id} className="relative border-gray-300 shadow-md">
                     <CardHeader className="pb-3">

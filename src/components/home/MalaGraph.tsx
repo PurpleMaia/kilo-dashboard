@@ -2,11 +2,8 @@
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useEffect, useState } from 'react';
 import { useMobile } from '../../providers/MobileProvider';
-import { LocationData } from '@/hooks/use-data';
+import { LocationData } from '@/lib/types';
 
-interface MetricData {
-    [metricType: string]: Array<{ timestamp: string; value: number}>
-}
 interface MalaGraphProps {
     location: LocationData
 }
