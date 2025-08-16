@@ -1,6 +1,6 @@
 'use client'
 import { Line, LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from 'recharts';
-import useScreenSize from '@/lib/hooks';
+import useScreenSize from '@/hooks/use-screensize';
 import { useEffect, useState } from 'react';
 interface MalaData {
     [malaName: string]: Array<{ timestamp: string; value: number }>;

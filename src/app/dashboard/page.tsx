@@ -5,8 +5,15 @@ import RecentUploadWidget from "@/components/home/RecentUploadWidget";
 import SolsticeWidget from "@/components/home/SolsticeWidget";
 import KiloNotes from "@/components/home/KiloNotesWidget";
 import LocationWidgetWrapper from "@/components/home/LocationWidgetWrapper";
+import { useAuthGuard } from "@/hooks/use-auth";
 
-export default function Page() {    
+export default function Page() {       
+    const { isAuthenticated } = useAuthGuard()
+
+    if (!isAuthenticated) {
+      return null // Show nothing, but will redirect in hook
+    }
+
     return (
         <div className="min-h-screen flex">
         <div className="flex-1 flex flex-col">
@@ -18,9 +25,7 @@ export default function Page() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
               {/* Left Column - Sensor Readings */}
               <div className="space-y-4">
-                <div className="h-96">
                   <LocationWidgetWrapper />              
-                </div>
               </div>
               
               {/* Right Column - Diary Entries */}

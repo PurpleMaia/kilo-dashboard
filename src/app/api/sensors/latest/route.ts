@@ -1,31 +1,13 @@
 import { db } from '../../../../../db/kysely/client';
-import { getAinaID, getUserID } from '@/lib/server-utils';
 import { sql } from 'kysely';
 import { NextResponse } from 'next/server';
-import { getFromCache, setInCache } from '@/lib/cache';
+import { getAuthData } from '@/lib/server-utils';
 
 export async function GET() {
-    let sensorCount, latestFetch 
-
-    const SENSOR_COUNT_CACHE_KEY = 'sensor_count'
-    const LATEST_CACHE_KEY = 'latest'
-    const count_cached = getFromCache(SENSOR_COUNT_CACHE_KEY)
-    const latest_cached = getFromCache(LATEST_CACHE_KEY)
-
-    if (count_cached && latest_cached) {
-        console.log('found api/sensors/latest data in cache, using cache...')
-        sensorCount = count_cached
-        latestFetch = latest_cached
-        return NextResponse.json({ sensorCount, latestFetch })
-    }
-    
-    console.log('api/sensors/latest data not in cache, querying db...')
-    try {
-        const userID = await getUserID();
-
-        try  {
-            const ainaID = await getAinaID(userID);
-            
+    const data = await getAuthData()
+    const ainaID = data.ainaID
+    if (ainaID) {
+        try  {                        
             const sensorCount = await db
                 .selectFrom('sensor as s')
                 .innerJoin('sensor_mala as sm', 's.id', 'sm.sensor_id')
@@ -46,17 +28,15 @@ export async function GET() {
                 .limit(1)
                 .executeTakeFirstOrThrow();
     
-            console.log(sensorCount, latestFetch)
-    
-            setInCache(SENSOR_COUNT_CACHE_KEY, sensorCount, 1000 * 60 * 5)
-            setInCache(LATEST_CACHE_KEY, latestFetch, 1000 * 60 * 5)
+            console.log(sensorCount, latestFetch)            
     
             return NextResponse.json({ sensorCount, latestFetch });
         } catch (error) {
-            console.error('Error fetching Aina ID:', error);
-            return NextResponse.json({ error: 'You are not registered to any ʻāina. Please select an ʻāina in your profile settings.' }, { status: 400 });
+            console.error('Database Error:', error);
+            return NextResponse.json({ error: 'Failed to fetch the latest invoices.' }, { status: 500 });
         }
-    } catch {
-        return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+    } else {
+        console.error('Error fetching Aina ID');
+        return NextResponse.json({ error: 'You are not registered to any ʻāina. Please select an ʻāina in your profile settings.' }, { status: 400 });
     }
 } 

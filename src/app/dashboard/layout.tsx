@@ -1,49 +1,24 @@
 'use client'
 import BottomNav from "@/components/dashboard/bottomnav"
 import TopPanel from "@/components/dashboard/top-panel"
-import { DrawerProvider } from "@/contexts/DrawerContext"
-import { MobileProvider } from "@/contexts/MobileContext"
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-
     return (
-      <MobileProvider>
-        <DrawerProvider>
-          <div className="flex flex-col h-dvh overflow-hidden overscroll-none"
-            style={{ marginBottom: 'env(safe-area-inset-bottom)' }}>
+      <div className="grid grid-rows-[auto_1fr_auto] h-screen overflow-hidden">
 
-            <header 
-              className="bg-gradient-to-r from-lime-800 to-lime-700 fixed top-0 left-0 right-0 z-20 w-full overflow-hidden touch-none"
-              style={{ paddingTop: 'env(safe-area-inset-top)'}}
-            >
-              <TopPanel /> 
-            </header>            
+        <header className="bg-gradient-to-r from-lime-800 to-lime-700 z-20">
+          <TopPanel /> 
+        </header>            
 
+        <main className="overflow-y-auto overflow-x-hidden overscroll-contain scrolling-hero">              
+          {children}              
+        </main>
 
-            {/* Main content - responsive scrolling */}
-            <main
-              className={`                          
-                flex-1                
-                touch-pan-y
-                overflow-y-auto
-                overflow-x-hidden
-                overscroll-contain
-                h-full
-                relative
-                scrolling-hero
-                pb-2
-                `}
-              style={{ marginTop: 'calc(4rem + env(safe-area-inset-top))', marginBottom: 'calc(3.75rem + env(safe-area-inset-bottom))' }}
-            >              
-              {children}              
-            </main>
+        <footer className="bottom-0 z-20">            
+          <BottomNav />
+        </footer>
 
-            <footer className="fixed bottom-0 left-0 right-0 z-20 overflow-hidden touch-none">
-              <BottomNav />
-            </footer>
-          </div>
-        </DrawerProvider>
-      </MobileProvider>
+      </div>        
     )
 }

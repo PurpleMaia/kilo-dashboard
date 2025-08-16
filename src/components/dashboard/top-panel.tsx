@@ -6,12 +6,11 @@ import { links } from "@/lib/links";
 import Link from 'next/link'
 import clsx from 'clsx';
 import { BellAlertIcon,  } from "@heroicons/react/24/outline";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { pageTitles } from "@/lib/links";
-import useScreenSize from "@/lib/hooks";
-import { useMobile } from '../../contexts/MobileContext';
+import useScreenSize from "@/hooks/use-screensize";
+import { useMobile } from '../../providers/MobileProvider';
 
 
 export default function TopPanel() {
@@ -31,53 +30,15 @@ export default function TopPanel() {
     }
   }, [screenSize.width])
 
-  const handleSignout = async () => {
-    try {
-      const response = await fetch('/api/signout', {
-        method: 'POST',
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok && data.success) {
-        console.log(data.message);
-        // Redirect to home page after successful signout
-        window.location.href = '/';
-      } else {
-        console.error('Signout failed:', data.error || 'Unknown error');
-        // Optionally show user-friendly error message
-        alert('Sign out failed. Please try again.');
-      }
-    } catch (e) {
-      console.error("Error signing out:", e);
-      alert('Sign out failed. Please try again.');
-    }
-  }
-
   return (
-    <div className="h-16 content-end w-full bg-gradient-to-r from-lime-800 to-lime-700 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]">
+    <div className="w-full bg-gradient-to-r from-lime-800 to-lime-700">
 
       
       <div className="px-6 py-3">
         <div className="flex justify-between items-center">
-           <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="rounded-full text-white">
-                  <User className="h-5! w-5!" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white">
-                <DropdownMenuItem>
-                  <Link href={"/dashboard/profile"}>                
-                    Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleSignout}>
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>      
-
+            <Link className='text-white' href={"/dashboard/profile"}>                
+                <User className="h-5! w-5!" /> 
+            </Link>              
 
             <h1 className={clsx(
             "text-2xl font-light text-white",
@@ -86,8 +47,7 @@ export default function TopPanel() {
             
             <Button variant="ghost" size="sm" className="rounded-full text-white">            
               <BellAlertIcon className="h-5! w-5!" /> 
-            </Button>
-               
+            </Button>               
         </div>
       </div>
 

@@ -1,28 +1,11 @@
 
 import { db } from '../../../..//db/kysely/client';
-import { getAinaID, getUserID } from '@/lib/server-utils';
+import { getAuthData } from '@/lib/server-utils';
 import { NextResponse } from 'next/server';
-import { getFromCache, setInCache } from '@/lib/cache';
 
 export async function GET() {
-    let locations
-    const CACHE_KEY = 'all_sensors_per_patch'
-    const cached = getFromCache(CACHE_KEY)
-
-    if (cached) {
-        console.log('fetchSensorsData in cache, using cache...')
-        locations = cached
-        console.log('Cached locations:', locations)
-        return NextResponse.json({ locations })
-    }
-
-
-    console.log('fetchSensorsData not in cache, querying db...')
-    const userID = await getUserID()
-    console.log('User ID:', userID)
-
-    try {
-        const ainaID = await getAinaID(userID)
+    const { userID, ainaID }= await getAuthData()
+    if (userID) {
         try {
             const result = await db
                 .selectFrom('metric as m')
@@ -32,7 +15,7 @@ export async function GET() {
                 .innerJoin('metric_type as mt', 'mt.id', 'm.metric_type')
                 .select(['m.value', 'm.timestamp', 'mt.type_name', 'ma.name as mala_name'])
                 .where('a.id', '=', ainaID)
-                .orderBy('m.timestamp asc')
+                .orderBy('m.timestamp', 'asc')
                 .execute();
     
             // Group by metric type, then by mala name
@@ -50,17 +33,15 @@ export async function GET() {
                 });
             }
     
-            locations = Object.entries(grouped).map(([name, data]) => ({ name, data }))
-            setInCache(CACHE_KEY, locations, 1000 * 60 * 5) //5 minutes
+            const locations = Object.entries(grouped).map(([name, data]) => ({ name, data }))
     
             return NextResponse.json({ locations })
         } catch (error) {
             console.error('Database Error:', error);
             return NextResponse.json({ error: 'Failed to fetch the latest invoices.' }, { status: 500 });
         }
-    } catch (error) {
-        console.error('Error fetching Aina ID:', error);
+    } else {
+        console.error('Error fetching Aina ID');
         return NextResponse.json({ error: 'You are not registered to any ʻāina. Please select an ʻāina in your profile settings.' }, { status: 400 });
     }
-
-} 
+}

@@ -1,51 +1,41 @@
 'use client'
-import { useState, useEffect } from "react";
-import { MalaData } from "../../lib/data";
 import LocationWidget from "./LocationWidget";
+import { useLocationData } from "@/hooks/use-data";
 
 export default function LocationWidgetWrapper() {
-  const [loading, setLoading] = useState<boolean>(false)
-  const [locations, setLocations] = useState<MalaData[]>([])
-  const [error, setError] = useState<string | null>(null)
+  const { data: sensorsData, isLoading, error, isError } = useLocationData();  
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          setLoading(true)
-          const res = await fetch('api/metrics')
-          const data = await res.json()
-          setLocations(data.locations)   
-          setError(data.error || null)     
-        } catch (e) {
-          console.log(e)
-          if (e instanceof Error) {
-            const errorMessage = e.message
-            setError(errorMessage)
-          }
-        } finally {
-          setLoading(false)
-        }
-      }
+  if (isLoading) {
+    return (
+      <div className="m-2 p-4 rounded-lg bg-white border border-gray-300 shadow-md">
+        Loading sensor data...
+      </div>
+    );
+  }
 
-      fetchData()
-    }, [])
-  return (
-    <>
-      { loading ? (
-        <div className="p-4 rounded-lg bg-white border border-gray-300 shadow-md">Loading...</div>
-      ) : (
-        <>
-          {error ? (
-            <div className="p-4 rounded-lg bg-yellow-100 border border-yellow-300 text-yellow-700">
-              {error}
-            </div>
-          ) : (
-           <LocationWidget locations={locations} />
-          )}
-        </>
-      )}    
-    </>
-  )
-  
-  
+  if (!sensorsData || !sensorsData.locations) {
+    return (
+      <div className="shadow-md m-4 bg-yellow-100 border-2 border-yellow-500 rounded-lg p-8 text-yellow-700 flex items-center text-center justify-center h-96">
+        You are not assigned to an ʻāina, please select an ʻāina in your profile settings
+      </div>
+    );
+  }
+
+  if (sensorsData.locations.length === 0) {
+    return (
+      <div className="shadow-md m-4 bg-gray-100 border-2 border-gray-300 rounded-lg p-8 text-gray-600 flex items-center justify-center h-96">
+        <p>No data found for this ʻāina</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="m-2 p-4 rounded-lg bg-yellow-100 border border-yellow-300 text-yellow-700">
+        {error?.message || 'An error occurred while fetching sensor data'}
+      </div>
+    );
+  }  
+
+  return <LocationWidget locations={sensorsData?.locations} /> 
 }

@@ -1,12 +1,12 @@
-import { db } from '../../db/kysely/client'
+import { db } from '../../../db/kysely/client'
 import {
     LatestSensorsList
-} from "./types"
+} from "../types"
 import { getFromCache, setInCache } from './cache';
-import { getUserID, getAinaID } from './server-utils';
+import { getUserID, getAinaID } from '../server-utils';
 import { sql } from 'kysely';
 
-export interface MalaData {
+interface MalaData {
     name: string;
     data: Record<string, Array<{ timestamp: string; value: number }>>;
 }
@@ -70,7 +70,7 @@ export async function fetchSensorsData(): Promise<MalaData[]> {
         }
 
         const data = Object.entries(grouped).map(([name, data]) => ({ name, data }))
-        setInCache(CACHE_KEY, data, 1000 * 60 * 20) //5 minutes
+        setInCache(CACHE_KEY, data, 1000 * 60 * 30) //5 minutes
 
         return data
     } catch (error) {

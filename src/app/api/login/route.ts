@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { loginUser } from '@/lib/auth';
-import { sessionCookieName } from '@/lib/session';
+import { loginUser } from '@/lib/auth/utils';
+import { sessionCookieName } from '@/lib/auth/session';
 
 export async function POST(request: Request) {
   const form = await request.formData();
@@ -9,11 +9,11 @@ export async function POST(request: Request) {
 
   try {
     // Try to login (no auto-registration)
-    const { token } = await loginUser(username, password);
+    const { token, user } = await loginUser(username, password);
   
     // Create response with success status
     const response = NextResponse.json(
-      { success: true, message: 'Login successful' },
+      { success: true, message: 'Login successful', user: user },
       { status: 200 }
     );
     
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       path: "/"
     });
     
-    console.log('Session cookie set:', token);
+    console.log('Session cookie set:', token);    
     return response;
   } catch (error) {
     console.error('Login Error:', error);

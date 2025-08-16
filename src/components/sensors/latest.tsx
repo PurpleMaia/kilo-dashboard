@@ -2,39 +2,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleStackIcon } from '@heroicons/react/24/outline';
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from 'react';
+import { useLatestSensorData } from "@/hooks/use-data";
 
 export default function LatestFetch() {
-    const [loading, setLoading] = useState<boolean>(false)
-    const [sensorCount, setSensorCount] = useState(0);
-    const [latestFetch, setLatestFetch] = useState<Date>();
-    const [diff, setDiff] = useState(0);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true)
-                const response = await fetch('/api/sensors/latest');
-                const data = await response.json();
-                if (data.error) {
-                  setError(data.error || null);
-                } else {
-                  setSensorCount(data.sensorCount.count);
-                  setLatestFetch(new Date(data.latestFetch.timestamp));
-
-                  const diffMS = new Date().getTime() - (new Date(data.latestFetch.timestamp).getTime() || 0);
-                  setDiff(Math.floor(diffMS / (1000 * 60 * 60 * 24)));
-                }
-              } catch (error) {
-                console.error('Error fetching sensor data:', error);
-            } finally {
-              setLoading(false)
-            }
-        };
-
-        fetchData();
-    }, []);
+    const {data: latest, isLoading, error} = useLatestSensorData()
 
     return (
         <>
@@ -42,12 +13,12 @@ export default function LatestFetch() {
         {error ? (
           <>
             <div className="p-4 rounded-lg bg-yellow-100 border border-yellow-300 text-yellow-700">
-              {error}
+              {error.message}
             </div>
           </>
         ) : (
           <>
-            <Card className="lg:col-span-2 bg-white border-gray-200 shadow-md p-4">
+            <Card className="lg:col-span-2 bg-white border-gray-200 shadow-md p-4 touch-none">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
@@ -57,19 +28,19 @@ export default function LatestFetch() {
                 </div>
               </CardHeader>
               <CardContent>
-                { loading ? (
+                { isLoading ? (
                   <div>Loading...</div>
                 ) : (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">{sensorCount}</div>
+                      <div className="text-2xl font-bold text-green-600">{latest?.count}</div>
                       <div className="text-sm text-slate-600">Active Sensors</div>
                       <Badge className="mt-1 bg-green-100 text-green-800">All Online</Badge>
                     </div>              
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-slate-900">{latestFetch?.toLocaleDateString()}</div>
+                      <div className="text-2xl font-bold text-slate-900">{latest?.timestamp?.toLocaleDateString()}</div>
                       <div className="text-sm text-slate-600">Last Upload</div>
-                      <Badge className="mt-1 bg-gray-100 text-gray-800">{diff} days ago</Badge>
+                      <Badge className="mt-1 bg-gray-100 text-gray-800">{latest?.timeDiff} days ago</Badge>
                     </div>              
                   </div>
                 )}

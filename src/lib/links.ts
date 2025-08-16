@@ -1,4 +1,4 @@
-import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+// import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { Activity, BotMessageSquare, Eye, FileText, LayoutDashboard } from 'lucide-react';
 
 export const links = [
