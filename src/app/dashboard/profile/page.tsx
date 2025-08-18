@@ -2,17 +2,17 @@
 import { UserIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { redirect } from 'next/navigation';
-import { useLogout, useQueryUserData } from '@/hooks/use-auth';
+import { useAuthGuard, useLogout, useQueryUserData } from '@/hooks/use-auth';
 
 export default function Profile() {
     const { data: user } = useQueryUserData()
-    const logout = useLogout()        
+    const { isAuthenticated } = useAuthGuard()
+    const logout = useLogout()            
 
-    // Check for stored data in user cache (same as useAuthGuard)
-    if (!user) {
-        redirect('/')
+    if (!isAuthenticated) {
+        return null
     }
-
+    
     return (
         <>
          <div className="max-w-7xl mx-auto space-y-6 p-4 mb-96">
