@@ -44,15 +44,15 @@ export function MalaGraph({ location }: MalaGraphProps) {
         const range = dataMax - dataMin;
         
         // Handle small ranges with tighter margins
-        if (range < 10) {
+        if (range < 1) {
             return [
-                Math.max(0, dataMin - range),
-                dataMax
+                Number(Math.max(0, dataMin - range).toPrecision(2)),
+                Number((dataMax + range).toPrecision(2))
             ];
-        } else if (range < 100) {
+        } else if (range < 10) {
             return [
-                Math.max(0, dataMin - range * 0.05),
-                dataMax + range * 0.05
+                Number(Math.max(0, dataMin - range * 0.5).toPrecision(1)),
+                Number((dataMax + range * 0.5).toPrecision(1))
             ];
         } else {
             return [

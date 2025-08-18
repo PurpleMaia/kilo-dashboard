@@ -97,12 +97,15 @@ export function usePublicData() {
   return useQuery<LocationData, Error>({
     queryKey: ['public', ['usgs']],
     queryFn: async () => {
+
+      console.log('Fetching from public data...', Date.now().toLocaleString())
       const usgs_res = await fetch('/api/public/usgs');
 
       const usgs_data = await usgs_res.json()
 
       return usgs_data
     },
+    refetchInterval: 5 * 60 * 1000, // refetch every 5 minutes 
     staleTime: 20 * 60 * 1000, // 20 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes  
     retry: (failureCount, error) => {
