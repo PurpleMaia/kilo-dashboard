@@ -93,17 +93,29 @@ export function useSensorsData() {
   })
 }
 
+
 export function usePublicData() {
-  return useQuery<LocationData, Error>({
+  return useQuery<LocationDataResponse, Error>({
     queryKey: ['public', ['usgs']],
     queryFn: async () => {
 
-      console.log('Fetching from public data...', Date.now().toLocaleString())
+      // new every 5 minutes
+      console.log('Fetching USGS public data...', Date.now().toLocaleString())
       const usgs_res = await fetch('/api/public/usgs');
-
+      
       const usgs_data = await usgs_res.json()
+      
+      // new every hour
+      console.log('Fetching EPA public data...', Date.now().toLocaleString())
+      const epa_res = await fetch('/api/public/epa/uv')
 
-      return usgs_data
+      const epa_data = await epa_res.json()
+
+      const data: LocationData[] = [ usgs_data, epa_data ]      
+
+      return {
+        locations: data
+      }
     },
     refetchInterval: 5 * 60 * 1000, // refetch every 5 minutes 
     staleTime: 20 * 60 * 1000, // 20 minutes

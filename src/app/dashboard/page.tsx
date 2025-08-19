@@ -30,12 +30,6 @@ export default function Page() {
               <div className="space-y-4">
                   <LocationWidgetWrapper /> 
               </div>
-
-              { publicData && (
-                <div>
-                  <MalaGraph location={publicData} />
-                </div>
-              )}
               
               {/* Right Column - Diary Entries */}
               <div className="space-y-4">

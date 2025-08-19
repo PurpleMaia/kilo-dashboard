@@ -1,9 +1,10 @@
 'use client'
 import LocationWidget from "./LocationWidget";
-import { useLocationData } from "@/hooks/use-data";
+import { useLocationData, usePublicData } from "@/hooks/use-data";
 
 export default function LocationWidgetWrapper() {
   const { data: sensorsData, isLoading, error, isError } = useLocationData();  
+  const { data: publicData } = usePublicData()
 
   if (isLoading) {
     return (
@@ -23,9 +24,14 @@ export default function LocationWidgetWrapper() {
 
   if (sensorsData.locations.length === 0) {
     return (
-      <div className="shadow-md m-4 bg-gray-100 border-2 border-gray-300 rounded-lg p-8 text-gray-600 flex items-center justify-center h-96">
-        <p>No data found for this ʻāina</p>
-      </div>
+      // <div className="shadow-md m-4 bg-gray-100 border-2 border-gray-300 rounded-lg p-8 text-gray-600 flex items-center justify-center h-96">
+      //   <p>No location data found for this ʻāina</p>
+      // </div>
+      <>
+        { publicData && 
+          <LocationWidget locations={publicData?.locations} />        
+        }
+      </>
     );
   }
 

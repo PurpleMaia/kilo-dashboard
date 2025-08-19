@@ -14,9 +14,8 @@ interface LocationWidgetProps {
 
 export default function LocationWidget({ locations }: LocationWidgetProps) {
     const { isMobile } = useMobile();
-
     return (
-        <div className="w-full h-full mb-4">
+        <div className="w-full h-fit">
             <Swiper
                 spaceBetween={10}
                 slidesPerView={1}
@@ -30,7 +29,7 @@ export default function LocationWidget({ locations }: LocationWidgetProps) {
                     ['--swiper-pagination-bullet-inactive-opacity' as any]: '1',
                     /* eslint-enable @typescript-eslint/no-explicit-any */
                 }}                    
-                className="h-full !px-4"
+                className="h-fit !px-4"
                 allowTouchMove={true}
                 touchStartPreventDefault={false}
                 preventClicks={false}
