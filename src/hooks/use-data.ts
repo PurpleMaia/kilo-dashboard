@@ -10,7 +10,7 @@ export function useLocationData() {
   return useQuery<LocationDataResponse, Error>({
     queryKey: ['sensors', 'patches'],
     queryFn: async () => {
-      const response = await fetch('/api/metrics', {
+      const response = await fetch('/api/data/locations', {
         method: 'GET',        
         credentials: 'include',
       });
@@ -44,7 +44,7 @@ export function useLatestSensorData() {
     return useQuery<LatestSensorsData, Error>({
     queryKey: ['sensors', 'latest'],
     queryFn: async () => {
-      const response = await fetch('/api/sensors/latest');
+      const response = await fetch('/api/data/sensors/latest');
       const data = await response.json();      
 
       const diffMS = new Date().getTime() - (new Date(data.latestFetch.timestamp).getTime() || 0);
@@ -76,7 +76,7 @@ export function useSensorsData() {
   return useQuery<SensorResponse, Error>({
     queryKey: ['sensors'],
     queryFn: async () => {
-      const response = await fetch('/api/sensors');
+      const response = await fetch('/api/data/sensors');
 
       const data = await response.json()
 
@@ -101,13 +101,13 @@ export function usePublicData() {
 
       // new every 5 minutes
       console.log('Fetching USGS public data...', Date.now().toLocaleString())
-      const usgs_res = await fetch('/api/public/usgs');
+      const usgs_res = await fetch('/api/data/public/usgs');
       
       const usgs_data = await usgs_res.json()
       
       // new every hour
       console.log('Fetching EPA public data...', Date.now().toLocaleString())
-      const epa_res = await fetch('/api/public/epa/uv')
+      const epa_res = await fetch('/api/data/public/epa/uv')
 
       const epa_data = await epa_res.json()
 

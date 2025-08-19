@@ -12,7 +12,7 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: async () => {            
-      const response = await fetch('/api/signout', {
+      const response = await fetch('/api/auth/signout', {
         method: 'POST',
       });
       
@@ -37,7 +37,7 @@ export function useLogin() {
       formData.append('username', credentials.username);
       formData.append('password', credentials.password);
 
-      const response = await fetch('/api/login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -88,7 +88,7 @@ export function useQueryUserData() {
     queryFn: async (): Promise<User | null> => {
       console.log('Client fetching user data...');
       
-      const response = await fetch('/api/me', {
+      const response = await fetch('/api/auth/me', {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
