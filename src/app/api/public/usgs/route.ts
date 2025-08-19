@@ -36,7 +36,8 @@ export async function GET() {
     const raw_metrics = json.value.timeSeries    
 
     // store site name for indexing
-    const site_name = raw_metrics[0].sourceInfo.siteName
+    const site_name = 'USGS Waimanalo Str'
+    // raw_metrics[0].sourceInfo.siteName
     
     // parse json for only necessary data to graph
     const data: Record<string, SensorDataPoint[]> = {}
