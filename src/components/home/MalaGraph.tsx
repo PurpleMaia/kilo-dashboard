@@ -1,113 +1,121 @@
 'use client'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useMobile } from '../../providers/MobileProvider';
-import { LocationData } from '@/hooks/use-data';
+import { LocationData } from '@/lib/types';
 
-interface MetricData {
-    [metricType: string]: Array<{ timestamp: string; value: number}>
-}
 interface MalaGraphProps {
-    location: LocationData
+    location: LocationData;
 }
-interface Margin {
-    top: number,
-    right: number,
-    left: number,
-    bottom: number,
-}
+
+const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1', '#d084d0'];
 
 export function MalaGraph({ location }: MalaGraphProps) { 
     const { isMobile } = useMobile();
-    const [margins, setMargins] = useState<Margin>({
-        top: 20,
-        right: 40,
-        left: 10,
-        bottom: 40
-    })
+    const [selectedMetricType, setSelectedMetricType] = useState<string>('');
     
-    const [selectedMetricType, setSelectedMetricType] = useState<string>('')
-    const metricTypes = Object.keys(location.data)
-    const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1', '#d084d0'];
-    const fillColors = colors.map(color => color + '20'); // Adding 20% opacity
+    // Memoize derived values
+    const metricTypes = useMemo(() => Object.keys(location.data), [location.data]);
+    
+    const margins = useMemo(() => ({
+        top: isMobile ? 10 : 20,
+        right: isMobile ? 30 : 40,
+        left: 10,
+        bottom: isMobile ? 50 : 40
+    }), [isMobile]);
 
-    useEffect(() => {
-        if (isMobile) {
-          setMargins({
-            top: 10,
-            right: 30,
-            left:  10,
-            bottom: 50
-          })
+    // Color functions with stable references
+    const getMetricColor = useCallback((metricType: string) => {
+        const index = metricTypes.indexOf(metricType);
+        return COLORS[index % COLORS.length];
+    }, [metricTypes]);
+
+    const getFillColor = useCallback((metricType: string) => {
+        return getMetricColor(metricType) + '20';
+    }, [getMetricColor]);
+
+    // Dynamic Y-axis domain calculation
+    const calculateDynamicDomain = useCallback((data: any[]) => {
+        if (!data.length) return ['auto', 'auto'];
+        
+        const values = data.map(d => d.value);
+        const dataMin = Math.min(...values);
+        const dataMax = Math.max(...values);
+        const range = dataMax - dataMin;
+        
+        // Handle small ranges with tighter margins
+        if (range < 1) {
+            return [
+                Number(Math.max(0, dataMin - range).toPrecision(2)),
+                Number((dataMax + range).toPrecision(2))
+            ];
+        } else if (range < 10) {
+            return [
+                Number(Math.max(0, dataMin - range * 0.5).toPrecision(1)),
+                Number((dataMax + range * 0.5).toPrecision(1))
+            ];
         } else {
-          setMargins({
-            top: 20,
-            right: 40,
-            left: 10,
-            bottom: 40
-          })
+            return [
+                Math.max(0, Math.floor(dataMin * 0.95)),
+                Math.ceil(dataMax * 1.05)
+            ];
         }
-    }, [isMobile]);
+    }, []);
 
-    // Reset selected metric type when data changes (new location)
+    // Memoized chart data transformation
+    const chartData = useMemo(() => {
+        const selectedData = selectedMetricType && location.data[selectedMetricType] 
+            ? location.data[selectedMetricType] 
+            : [];
+        
+        return Array.isArray(selectedData) 
+            ? selectedData.map(point => ({
+                timestamp: point.timestamp,
+                value: point.value
+            }))
+            : [];
+    }, [selectedMetricType, location.data]);
+
+    // Reset selected metric when location changes
     useEffect(() => {
         if (metricTypes.length > 0) {
             setSelectedMetricType(metricTypes[0]);
         }
-    }, [location.data]); // Only depend on data, not metricTypes (will rerender the set type)
+    }, [metricTypes]);
 
-    const selectedData = selectedMetricType && location.data[selectedMetricType] ? location.data[selectedMetricType] : [];
-    
-    // Debug logging
-    // console.log('Current selectedMetricType:', selectedMetricType);
-    // console.log('Available metricTypes:', metricTypes);
-    
-    // Transform data for the selected metric type with error handling
-    const chartData = Array.isArray(selectedData) 
-        ? selectedData.map(point => ({
-            timestamp: point.timestamp,
-            value: point.value
-        }))
-        : [];
+    const handleMetricChange = useCallback((metricType: string) => {
+        setSelectedMetricType(metricType);
+    }, []);
 
     return (
-        <>
-        <div className='bg-white rounded-md border-solid border-gray-300 border shadow-lg'>
+        <div className='bg-white rounded-md border border-gray-300 shadow-lg mb-10'>
             {/* Location Header */}
             <h3 className="p-4 text-xl font-semibold text-gray-900">
-                {location.name}
+                {location.siteName}
             </h3>
             
             {/* Navigation Bar */}
-            <div className="flex flex-wrap gap-2 mb-8 ml-4" style={{ pointerEvents: 'auto' }}>
+            <div className="flex flex-wrap gap-2 mb-8 ml-4">
                 {metricTypes.map((metricType) => (
                     <button
                         key={metricType}
-                        onClick={(e) => {
-                            e.stopPropagation();                        
-                            console.log('Setting selectedMetricType to:', metricType);
-                            setSelectedMetricType(metricType);
-                        }}
+                        onClick={() => handleMetricChange(metricType)}
                         className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                             selectedMetricType === metricType
                                 ? 'bg-lime-800 text-white'
                                 : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
                         }`}
-                        style={{ pointerEvents: 'auto' }}
                     >
                         {metricType}
                     </button>
                 ))}
             </div>
 
-            {/* Selected Graph */}
+            {/* Chart Container */}
             {selectedMetricType && chartData.length > 0 && (
                 <div className="w-full h-full">
                     <ResponsiveContainer width="100%" height={300}>
-                        <AreaChart
-                            data={chartData}
-                            margin={margins}
-                        >
+                        <AreaChart data={chartData} margin={margins}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis 
                                 dataKey="timestamp" 
@@ -115,28 +123,24 @@ export function MalaGraph({ location }: MalaGraphProps) {
                                 tickFormatter={(value) => new Date(value).toLocaleDateString()}
                             />
                             <YAxis
-                                domain={[
-                                    (dataMin: number) => {
-                                        const min = Math.floor(dataMin * 0.95);
-                                        return min < 0 ? 0 : min;
-                                    },
-                                    (dataMax: number) => Math.ceil(dataMax * 1.05)
-                                ]}
-                                tickCount={6}
+                                domain={calculateDynamicDomain(chartData)}
+                                tickCount={isMobile ? 4 : 6}
                             />
-                            {!isMobile ? (
+                            {!isMobile && (
                                 <Tooltip 
                                     labelFormatter={(value) => new Date(value).toLocaleString()}
+                                    formatter={(value: number) => [
+                                        value.toFixed(2), 
+                                        selectedMetricType
+                                    ]}
                                 />
-                            ) : (
-                                <p></p>
                             )}
                             <Area 
                                 type="monotone" 
                                 dataKey="value" 
-                                stroke={colors[metricTypes.indexOf(selectedMetricType) % colors.length]} 
+                                stroke={getMetricColor(selectedMetricType)} 
                                 fillOpacity={1}
-                                fill={fillColors[metricTypes.indexOf(selectedMetricType) % fillColors.length]}                            
+                                fill={getFillColor(selectedMetricType)}
                                 dot={false}
                                 activeDot={!isMobile ? { r: 4 } : false}
                             />
@@ -145,7 +149,5 @@ export function MalaGraph({ location }: MalaGraphProps) {
                 </div>
             )}
         </div>
-       
-        </>
-    )
+    );
 }

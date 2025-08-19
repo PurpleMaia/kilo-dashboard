@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
-import { Aina, hashToken, User } from "./auth/utils";
+import { hashToken } from "./auth/utils";
+import { User, Aina } from "./types";
 import { db } from "../../db/kysely/client";
 
 export async function getUserID(): Promise<string> {
@@ -107,7 +108,7 @@ export async function getUserData(): Promise<User | null> {
     }
 
     const aina: Aina = {
-        id: row?.aina_id || null,
+        id: row?.aina_id,
         name: row?.aina_name || '',
         createdAt: new Date(row?.created_at || '')
     }

@@ -6,8 +6,11 @@ import SolsticeWidget from "@/components/home/SolsticeWidget";
 import KiloNotes from "@/components/home/KiloNotesWidget";
 import LocationWidgetWrapper from "@/components/home/LocationWidgetWrapper";
 import { useAuthGuard } from "@/hooks/use-auth";
+import { MalaGraph } from "@/components/home/MalaGraph";
+import { usePublicData } from "@/hooks/use-data";
 
 export default function Page() {       
+    const { data: publicData } = usePublicData()
     const { isAuthenticated } = useAuthGuard()
 
     if (!isAuthenticated) {
@@ -25,7 +28,7 @@ export default function Page() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
               {/* Left Column - Sensor Readings */}
               <div className="space-y-4">
-                  <LocationWidgetWrapper />              
+                  <LocationWidgetWrapper /> 
               </div>
               
               {/* Right Column - Diary Entries */}

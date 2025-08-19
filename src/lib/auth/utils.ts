@@ -1,27 +1,8 @@
 import { randomBytes, pbkdf2Sync, createHash, timingSafeEqual } from 'crypto';
 import { db } from '../../../db/kysely/client';
+import { Session, User, Aina, LoginResponse } from '../types';
 
 import * as base64 from 'hi-base64'
-
-export interface Session {
-  id: string;
-  user_id: string;
-  expiresAt: Date;
-}
-
-export interface User {
-  id: string;
-  username: string;
-  email: string;
-  email_verified: boolean;
-  aina: Aina | null
-}
-
-export interface Aina {
-    id: number | null;
-    name: string;
-    createdAt: Date;
-}
 
 export function generateSessionToken(): string {
     const bytes = new Uint8Array(20);
@@ -71,7 +52,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
         .limit(1)
         .executeTakeFirst();
     // sql`SELECT user_session.id, user_session.user_id, user_session.expires_at, app_user.id FROM user_session INNER JOIN user ON app_user.id = user_session.user_id WHERE id = ${sessionId}`;
-    if (row === null) {
+    if (!row) {
         return { session: null, user: null };
     }
     const session: Session = {
@@ -80,7 +61,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
         expiresAt: new Date(row?.expires_at || ''),
     };
     const aina: Aina = {
-        id: row?.aina_id || null,
+        id: row?.aina_id,
         name: row?.aina_name || '',
         createdAt: new Date(row?.created_at || '')
     }
@@ -127,12 +108,6 @@ export async function invalidateAllSessions(userId: string): Promise<void> {
 export type SessionValidationResult =
     | { session: Session; user: User }
     | { session: null; user: null };
-
-export interface Session {
-    id: string;
-    user_id: string;
-    expiresAt: Date;
-}
 
 export function generateUserId(): string {
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -186,10 +161,6 @@ export async function registerUser(username: string, email: string, password: st
   return { id, username, email, token };
 }
 
-interface LoginResponse {
-  user: User,
-  token: string
-}
 /**
  * Fetches user information from database, generates session token and inserts session to database 
  * @param {string} username
@@ -201,26 +172,38 @@ export async function loginUser(username: string, password: string): Promise<Log
     .selectFrom('user')
     .innerJoin('profile', 'profile.user_id', 'user.id')
     .innerJoin('aina', 'profile.aina_id', 'aina.id')
-    .selectAll()
+    .select([
+      'aina.id as aina_id',
+      'aina.name as aina_name',
+      'aina.created_at',
+      'user.id as user_id',
+      'user.username',
+      'user.email',
+      'user.email_verified',
+      'user.password_hash',
+    ])
     .where('username', '=', username)
     .executeTakeFirst();
 
+  if (!row) {
+    throw new Error('DB Query failed')
+  }
+
   const aina: Aina = {
-    id: row?.aina_id || null,
-    name: row?.name || '',
+    id: row.aina_id,
+    name: row.aina_name || '',
     createdAt: new Date(row?.created_at || '')
   }
-  const user = {
-    id: row?.user_id || '',
+  const user: User = {
+    id: row.user_id,
     username: row?.username || '',
-    password_hash: row?.password_hash || '',
     email: row?.email || '',
     email_verified: row?.email_verified || false,     
     aina: aina  
   };
 
-  if (!user || !user.password_hash) throw new Error('Invalid credentials');
-  if (!verifyPassword(password, user.password_hash)) throw new Error('Invalid credentials');
+  if (!user || !row?.password_hash) throw new Error('Invalid credentials');
+  if (!verifyPassword(password, row?.password_hash)) throw new Error('Invalid credentials');
 
   // Generate session token and store session
   const token = generateSessionToken();

@@ -1,24 +1,13 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { User } from '@/lib/auth/utils';
+import { useQuery } from '@tanstack/react-query';
 import { useQueryUserData } from './use-auth';
+import { Sensor, LocationData, LatestSensorsData } from '@/lib/types';
 
-interface SensorDataPoint {
-  timestamp: string;
-  value: number;
+interface LocationDataResponse {
+  locations: LocationData[]
 }
-
-export interface LocationData {
-  name: string;
-  data: Record<string, SensorDataPoint[]>;
-}
-
-export interface SensorsResponse {
-  locations: LocationData[];
-}
-
 export function useLocationData() {  
   const user = useQueryUserData()
-  return useQuery<SensorsResponse, Error>({
+  return useQuery<LocationDataResponse, Error>({
     queryKey: ['sensors', 'patches'],
     queryFn: async () => {
       const response = await fetch('/api/metrics', {
@@ -49,11 +38,7 @@ export function useLocationData() {
   });
 }
 
-interface LatestSensorsData {
-  count: number,
-  timestamp: Date,
-  timeDiff: number
-}
+
 export function useLatestSensorData() {
     const user = useQueryUserData()
     return useQuery<LatestSensorsData, Error>({
@@ -83,24 +68,19 @@ export function useLatestSensorData() {
   });
 }
 
-interface Sensor {
-    id: number,
-    name: string,
-    typeName: string,
-    unit: string,
-    category: string,
-    locations: string,
+interface SensorResponse {
+  sensors: Sensor[]
 }
 export function useSensorsData() {
   const user = useQueryUserData()
-  return useQuery<Sensor[], Error>({
+  return useQuery<SensorResponse, Error>({
     queryKey: ['sensors'],
     queryFn: async () => {
       const response = await fetch('/api/sensors');
 
       const data = await response.json()
 
-      return data.sensors
+      return data
     },
     enabled: !!user,
     staleTime: 20 * 60 * 1000, // 20 minutes
@@ -111,5 +91,39 @@ export function useSensorsData() {
       return failureCount < 3;
     },
   })
+}
 
+
+export function usePublicData() {
+  return useQuery<LocationDataResponse, Error>({
+    queryKey: ['public', ['usgs']],
+    queryFn: async () => {
+
+      // new every 5 minutes
+      console.log('Fetching USGS public data...', Date.now().toLocaleString())
+      const usgs_res = await fetch('/api/public/usgs');
+      
+      const usgs_data = await usgs_res.json()
+      
+      // new every hour
+      console.log('Fetching EPA public data...', Date.now().toLocaleString())
+      const epa_res = await fetch('/api/public/epa/uv')
+
+      const epa_data = await epa_res.json()
+
+      const data: LocationData[] = [ usgs_data, epa_data ]      
+
+      return {
+        locations: data
+      }
+    },
+    refetchInterval: 5 * 60 * 1000, // refetch every 5 minutes 
+    staleTime: 20 * 60 * 1000, // 20 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes  
+    retry: (failureCount, error) => {
+      // Don't retry on 400 errors (user not registered)
+      if (error.message.includes('not registered')) return false;
+      return failureCount < 3;
+    },
+  })
 }

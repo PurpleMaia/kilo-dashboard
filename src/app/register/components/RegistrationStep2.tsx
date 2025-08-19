@@ -1,11 +1,8 @@
 'use client'
+import { Aina } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-interface Aina {
-  id: number;
-  name: string | null;
-}
 
 interface RegistrationFormProps {
   ainaList: Aina[];
