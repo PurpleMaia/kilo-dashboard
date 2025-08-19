@@ -1,6 +1,7 @@
 'use client'
 import BottomNav from "@/components/dashboard/bottomnav"
 import TopPanel from "@/components/dashboard/top-panel"
+import ChatWidget from "@/components/llm/ChatWidget"
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -11,10 +12,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <TopPanel /> 
         </header>            
 
-        <main className="overflow-y-auto overflow-x-hidden overscroll-contain scrolling-hero">              
+        <main className="overflow-y-auto overflow-x-hidden overscroll-contain scrolling-hero">
           {children}              
         </main>
 
+        <div className="right-2 z-50 bottom-25 fixed flex items-end">
+          <ChatWidget />
+        </div>
+        
         <footer className="bottom-0 z-20">            
           <BottomNav />
         </footer>
