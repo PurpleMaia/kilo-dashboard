@@ -1,5 +1,5 @@
 
-import { db } from '../../../..//db/kysely/client';
+import { db } from '../../../../../db/kysely/client';
 import { getAuthData } from '@/lib/server-utils';
 import { NextResponse } from 'next/server';
 

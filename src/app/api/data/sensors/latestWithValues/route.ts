@@ -1,13 +1,13 @@
-import { authCache } from '@/lib/auth/cache';
-import { db } from '../../../../../db/kysely/client';
+import { db } from '../../../../../../db/kysely/client';
 import { sql } from 'kysely';
 import { NextResponse } from 'next/server';
+import { getAuthData } from '@/lib/server-utils';
 
 export async function GET() {
-    const user = await authCache.getCurrentUser()
+    const user = await getAuthData()
 
-    if (user?.aina) {
-        const ainaID = user.aina.id
+    if (user) {
+        const ainaID = user.ainaID
         try {    
             // subquery to get the latest values and timestamp
             const rankedMetrics = db
