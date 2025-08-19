@@ -3,8 +3,9 @@ import React from "react";
 import { useEffect } from "react";
 
 export default function ChatWidget() {
+
+  // Dynamically inject the Langflow script once on mount
   useEffect(() => {
-    // Dynamically inject the Langflow script once on mount
     const script = document.createElement("script");
     script.src =
       "https://cdn.jsdelivr.net/gh/logspace-ai/langflow-embedded-chat@v1.0.7/dist/build/static/js/bundle.min.js";
@@ -15,6 +16,7 @@ export default function ChatWidget() {
     };
   }, []);
 
+  // Ignoring JSX intrinsic elements by manually rendering the element
   return React.createElement("langflow-chat", {
     window_title: "KILO LLM RAG",
     flow_id: "6a727686-cc9e-4e7f-94a5-2fbd1800fa06",
