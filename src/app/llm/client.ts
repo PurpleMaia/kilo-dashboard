@@ -1,43 +1,38 @@
+import dotenv from 'dotenv'
 import OpenAI from 'openai';
+
+dotenv.config()
 
 // Singleton instance of the LLM connection
 export class LLMClient {
-    private static instance: OpenAI;
+    private instance: OpenAI;
     
-    /**     
-     * Creates a new client or returns the active instance
-     * @returns LLMClient object
-     */
-    static getInstance(): OpenAI {
-        if (!this.instance) {
-            this.instance = new OpenAI({
-                apiKey: process.env.OPENAI_API_KEY,
-                baseURL: process.env.OPENAI_BASE_URL,
-                maxRetries: 3,
-                timeout: 30000,                
-            });
-        }
-        return this.instance;
+    public constructor() {
+        this.instance = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+            baseURL: process.env.OPENAI_BASE_URL,
+            maxRetries: 3,
+            timeout: 30000,                
+        });        
     }
 
-    /**    
-     * Retrieves current instance and starts a message
+    /**        
+     * Requests LLM Service to generate a response based on message history 
      * @param messages message history     
      * @returns LLM response
      */
-    static async makeRequest(
-        messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+    public async makeRequest(
+        messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[],        
         options: {
             temperature?: number;
             maxTokens?: number;
             model?: string;
         } = {}
     ): Promise<string> {
-        const client = this.getInstance();
         
         try {
-            console.log('Thinking...')
-            const response = await client.chat.completions.create({
+            console.log('Thinking with messages: ', messages)
+            const response = await this.instance.chat.completions.create({
                 model: options.model || process.env.MODEL || 'gpt-4o',
                 messages,
                 temperature: options.temperature ?? 0.7,

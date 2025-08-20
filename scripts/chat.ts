@@ -1,3 +1,7 @@
+// Testing script for KiloLLM chatbot on a local service
+// CLI command: 
+//      tsx scripts/chat.ts
+
 import dotenv from 'dotenv'
 import { ChatService } from "../src/app/llm/services";
 import * as readline from 'readline';
@@ -22,10 +26,11 @@ const getUserInput = async (): Promise<string> => {
 // Wrap the main logic in an async function for tsx
 (async () => {
     try {
+        const service = new ChatService()
         while (true) {
-            const input = await getUserInput();
-            const message = await ChatService.generateMessage(input);
-            console.log('LLM: ', message);
+            const prompt = await getUserInput();
+            const answer = await service.generateResponse(prompt);
+            console.log('LLM: ', answer);
         }
     } catch (error) {
         console.error('Error:', error);

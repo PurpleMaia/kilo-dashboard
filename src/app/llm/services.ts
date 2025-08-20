@@ -1,70 +1,60 @@
+import OpenAI from "openai";
 import { LLMClient } from "./client";
 
-const INSIGHTS_SYSTEM_PROMPT = `You are a data analyst expert. Analyze the provided data and generate actionable insights. 
-Focus on trends, anomalies, and business recommendations. Be concise but thorough.`;
+// Handler of message history and packages it for LLMClient
+export class ConversationManager {
+    private messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
 
-export class DataInsightsService {
-    
-    static async generateInsights(data: any): Promise<string> {
-        const formattedData = this.formatDataForInsights(data)
-        const messages = [
-            { role: 'system' as const, content: INSIGHTS_SYSTEM_PROMPT },
-            { 
-                role: 'user' as const, 
-                content: [
-                    'Please analyze the following data and provide key insights:',
-                    '',
-                    formattedData,
-                    '',
-                    'Focus on actionable recommendations and notable patterns.'
-                ].join('\n')
-            }
-        ];
-
-        return LLMClient.makeRequest(messages, {
-            temperature: 0.3,
-            maxTokens: 1000,
-        });
+    public constructor(systemPrompt: string) {
+        this.messages = [{ role: 'system', content: systemPrompt}]
     }
 
-    static async generateSummary(data: any): Promise<string> {
-        const formattedData = this.formatDataForInsights(data);
-        
-        const messages = [
-            { role: 'system' as const, content: 'Create concise summaries of data. Maximum 3 sentences.' },
-            { 
-                role: 'user' as const, 
-                content: `Summarize this data briefly:\n\n${formattedData}`
-            }
-        ];
+    /**
+     * Adds a new message to the current Conversation Manager messages array 
+     */
+    public addMessage(role: 'user' | 'assistant', content: string) {
+        this.messages.push({ role, content })
+    }
 
-        return LLMClient.makeRequest(messages, {
-            temperature: 0.1,
-            maxTokens: 200,
-        });
+    /**
+     * @returns Copy of messages array
+     */
+    public getMessages() {
+        return [...this.messages]
     }
     
-    private static formatDataForInsights(data: any): string {
-        // Your insights-specific formatting logic
-        return JSON.stringify(data);
+    //clear messages
+    public clearMessages() {
+        this.messages
     }
+    //truncate messages
+
 }
 
 const CHAT_SYSPROMPT='You are a helpful agroforestry assistant, rooted in Hawaiian ecological practices. Assist the user with any recommendations based on Hawaiian practices combined with modern approaches.'
-export class ChatService {
+export class ChatService {    
+    private system_prompt: string = CHAT_SYSPROMPT
+    private llmClient: LLMClient
+    private conversation: ConversationManager
 
-    static async generateMessage(input: string): Promise<string> {
-        const messages = [
-            { role: 'system' as const, content: CHAT_SYSPROMPT },
-            { 
-                role: 'user' as const, 
-                content: input
-            }
-        ];
-
-        return LLMClient.makeRequest(messages, {
-            temperature: 0.8,
-            maxTokens: 1000,
-        });
+    // service gets its own manager (with its system prompt) and its own llm client
+    public constructor() {
+        this.conversation = new ConversationManager(this.system_prompt)
+        this.llmClient = new LLMClient()
     }
+
+    public async generateResponse(userMessage: string): Promise<string> {
+
+        this.conversation.addMessage('user', userMessage)        
+
+        const response = await this.llmClient.makeRequest(this.conversation.getMessages())
+
+        this.conversation.addMessage('assistant', response)
+
+        console.log('Result: ', this.conversation.getMessages())
+
+        return response
+    }
+
+    
 }
