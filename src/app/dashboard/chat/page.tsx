@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Message {
     role: 'user' | 'assistant';
@@ -56,6 +56,51 @@ export default function Chat() {
         }
     };
 
+    useEffect(() => {
+        console.log('fetching message history...')
+
+        const getHistory = async() => {
+            setLoading(true)
+            try {
+                const response = await fetch('/api/llm/history', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                })
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                const history = data.history
+
+                console.log('History: ',history, 'length', history.length)
+
+                setMessages(history)
+
+                if (history.length < 1) {
+                    console.log('only system prompt, fresh conversation')
+                    const greetingMessage: Message = {
+                        role: 'assistant',
+                        content: 'Aloha! How can I help you today?',
+                        timestamp: new Date()
+                    }
+
+                    setMessages(prev => [...prev, greetingMessage])
+                }
+
+
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'Something went wrong');
+            } finally {
+                setLoading(false);
+            }     
+        }        
+
+        getHistory()
+    }, [])
+
     return (
         <div className="p-2 h-full">
             <div className="flex flex-col h-full max-w-2xl mx-auto p-4 bg-white rounded-md">
@@ -65,7 +110,7 @@ export default function Chat() {
                             key={index}
                             className={`p-3 rounded-lg ${
                                 message.role === 'user'
-                                    ? 'bg-gray-200 ml-auto max-w-4/5'
+                                    ? 'bg-gray-100 ml-auto max-w-4/5'
                                     : 'bg-lime-100 mr-auto max-w-4/5'
                             }`}
                         >
@@ -76,9 +121,9 @@ export default function Chat() {
                         </div>
                     ))}
                     {loading && (
-                        <div className="bg-gray-100 mr-auto max-w-xs p-3 rounded-lg">
+                        <div className="bg-lime-100 mr-auto max-w-xs p-3 rounded-lg">
                             <p className="text-sm font-medium mb-1">Assistant</p>
-                            <p>Typing...</p>
+                            <p>Thinking...</p>
                         </div>
                     )}
                 </div>

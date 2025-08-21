@@ -3,7 +3,7 @@ import { LLMClient } from "./client";
 import { cache } from "react";
 
 // Handler of message history and packages it for LLMClient
-export class ConversationManager {
+class ConversationManager {
     private messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
 
     public constructor(systemPrompt: string) {
@@ -31,6 +31,7 @@ export class ConversationManager {
 
 const CHAT_SYSPROMPT = 'You are a helpful agroforestry assistant, rooted in Hawaiian ecological practices. Assist the user with any recommendations based on Hawaiian practices combined with modern approaches.'
 export class ChatService {
+    private static instance: ChatService
     private system_prompt: string = CHAT_SYSPROMPT
     private llmClient: LLMClient
     private conversation: ConversationManager
@@ -38,7 +39,14 @@ export class ChatService {
     // service gets its own manager (with its system prompt) and its own llm client
     public constructor() {
         this.conversation = new ConversationManager(this.system_prompt)
-        this.llmClient = new LLMClient()
+        this.llmClient = LLMClient.getInstance()
+    }
+
+    static getInstance(): ChatService {
+        if (!ChatService.instance) {
+            ChatService.instance = new ChatService();
+        }
+        return ChatService.instance
     }
 
     /**
@@ -54,14 +62,11 @@ export class ChatService {
 
         return response
     }
-}
 
-/**
- * @returns new instance of Chat Service (including attached LLMClient & ConversationManager)
- */
-const createChatService = () => {
-    return new ChatService()
+    /**     
+     * @returns current ConversationManager message history (excluding the system prompt)
+     */
+    public getMessageHistory() {        
+        return this.conversation.getMessages().slice(1)
+    }
 }
-
-// singleton instance of the chat service
-export const chatService = createChatService()

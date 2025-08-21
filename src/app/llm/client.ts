@@ -5,15 +5,23 @@ dotenv.config()
 
 // Singleton instance of the LLM connection
 export class LLMClient {
-    private instance: OpenAI;
+    private static instance: LLMClient;
+    private client: OpenAI
     
-    public constructor() {
-        this.instance = new OpenAI({
+    private constructor() {
+        this.client = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
             baseURL: process.env.OPENAI_BASE_URL,
             maxRetries: 3,
             timeout: 30000,                
         });        
+    }
+
+    static getInstance(): LLMClient {
+        if (!LLMClient.instance) {
+            LLMClient.instance = new LLMClient();
+        }
+        return LLMClient.instance
     }
 
     /**        
@@ -32,7 +40,7 @@ export class LLMClient {
         
         try {
             console.log('Thinking with messages: ', messages)
-            const response = await this.instance.chat.completions.create({
+            const response = await this.client.chat.completions.create({
                 model: options.model || process.env.MODEL || 'gpt-4o',
                 messages,
                 temperature: options.temperature ?? 0.7,
