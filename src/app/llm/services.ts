@@ -1,12 +1,13 @@
 import OpenAI from "openai";
 import { LLMClient } from "./client";
+import { cache } from "react";
 
 // Handler of message history and packages it for LLMClient
 export class ConversationManager {
     private messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
 
     public constructor(systemPrompt: string) {
-        this.messages = [{ role: 'system', content: systemPrompt}]
+        this.messages = [{ role: 'system', content: systemPrompt }]
     }
 
     /**
@@ -22,17 +23,14 @@ export class ConversationManager {
     public getMessages() {
         return [...this.messages]
     }
-    
-    //clear messages
-    public clearMessages() {
-        this.messages
-    }
-    //truncate messages
 
+    // TODO make functions:
+    // clear messages
+    // truncate messages
 }
 
-const CHAT_SYSPROMPT='You are a helpful agroforestry assistant, rooted in Hawaiian ecological practices. Assist the user with any recommendations based on Hawaiian practices combined with modern approaches.'
-export class ChatService {    
+const CHAT_SYSPROMPT = 'You are a helpful agroforestry assistant, rooted in Hawaiian ecological practices. Assist the user with any recommendations based on Hawaiian practices combined with modern approaches.'
+export class ChatService {
     private system_prompt: string = CHAT_SYSPROMPT
     private llmClient: LLMClient
     private conversation: ConversationManager
@@ -43,18 +41,27 @@ export class ChatService {
         this.llmClient = new LLMClient()
     }
 
+    /**
+     * Sends request to attached LLM Client and gets a response, also makes the ConversationManager add messages from user & assistant
+     * @returns 
+     */
     public async generateResponse(userMessage: string): Promise<string> {
-
-        this.conversation.addMessage('user', userMessage)        
+        this.conversation.addMessage('user', userMessage)
 
         const response = await this.llmClient.makeRequest(this.conversation.getMessages())
 
         this.conversation.addMessage('assistant', response)
 
-        console.log('Result: ', this.conversation.getMessages())
-
         return response
     }
-
-    
 }
+
+/**
+ * @returns new instance of Chat Service (including attached LLMClient & ConversationManager)
+ */
+const createChatService = () => {
+    return new ChatService()
+}
+
+// singleton instance of the chat service
+export const chatService = createChatService()
