@@ -1,8 +1,7 @@
-import { db } from '../../../..//db/kysely/client';
-import { getAinaID, getAuthData, getUserID } from '@/lib/server-utils';
+import { db } from '../../../../../db/kysely/client';
+import { getAuthData } from '@/lib/server-utils';
 import { NextResponse } from 'next/server';
 import { sql } from 'kysely';
-import { getFromCache, setInCache } from '@/lib/data/cache';
 
 
 export async function GET() {

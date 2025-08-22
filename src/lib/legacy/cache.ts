@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { cache } from 'react';
-import { User, validateSessionToken } from './utils';
+import { User, validateSessionToken } from '../auth/utils';
 
 interface AuthCache {
   user: User | null

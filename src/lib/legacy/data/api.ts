@@ -1,9 +1,9 @@
-import { db } from '../../../db/kysely/client'
+import { db } from '../../../../db/kysely/client'
 import {
     LatestSensorsList
-} from "../types"
+} from "../../types"
 import { getFromCache, setInCache } from './cache';
-import { getUserID, getAinaID } from '../server-utils';
+import { getUserID, getAinaID } from '../../server-utils';
 import { sql } from 'kysely';
 
 interface MalaData {

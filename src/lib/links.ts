@@ -36,5 +36,5 @@ export const pageTitles: Record<string, string> = {
   '/dashboard/ag-testing': 'Test Samples',
   '/dashboard/upload': 'Upload Center',
   '/dashboard/profile': 'Profile Settings',
-  '/dashboard/chat': 'Kilo Chat',
+  '/dashboard/chat': 'Kilo Chat (beta)',
 };
