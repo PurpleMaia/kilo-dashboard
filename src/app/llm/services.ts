@@ -3,12 +3,16 @@ import { LLMClient } from "./client";
 import { cache } from "react";
 
 // Handler of message history and packages it for LLMClient
-class ConversationManager {
+export class ConversationManager {
     private messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
+    private userID: string
 
-    public constructor(systemPrompt: string) {
+    public constructor(systemPrompt: string, userID: string) {
         this.messages = [{ role: 'system', content: systemPrompt }]
+        this.userID = userID
     }
+
+    
 
     /**
      * Adds a new message to the current Conversation Manager messages array 
@@ -34,11 +38,9 @@ export class ChatService {
     private static instance: ChatService
     private system_prompt: string = CHAT_SYSPROMPT
     private llmClient: LLMClient
-    private conversation: ConversationManager
 
     // service gets its own manager (with its system prompt) and its own llm client
     public constructor() {
-        this.conversation = new ConversationManager(this.system_prompt)
         this.llmClient = LLMClient.getInstance()
     }
 
@@ -50,23 +52,78 @@ export class ChatService {
     }
 
     /**
-     * Sends request to attached LLM Client and gets a response, also makes the ConversationManager add messages from user & assistant
-     * @returns 
+     * Sends request to attached LLM Client and gets a response, also makes a ConversationManager instance add messages from user & assistant
+     * @returns llm response
      */
-    public async generateResponse(userMessage: string): Promise<string> {
-        this.conversation.addMessage('user', userMessage)
+    public async generateResponse(conversation: ConversationManager, userMessage: string): Promise<string> {
+        conversation.addMessage('user', userMessage)
 
-        const response = await this.llmClient.makeRequest(this.conversation.getMessages())
+        const response = await this.llmClient.makeRequest(conversation.getMessages())
 
-        this.conversation.addMessage('assistant', response)
+        conversation.addMessage('assistant', response)
 
         return response
     }
 
-    /**     
-     * @returns current ConversationManager message history (excluding the system prompt)
-     */
-    public getMessageHistory() {        
-        return this.conversation.getMessages().slice(1)
+    public createConversation(userID: string): ConversationManager {
+        return new ConversationManager(this.system_prompt, userID)
     }
+}
+
+interface UserSession {
+    userId: string;
+    conversations: Map<string, ConversationManager>;
+    createdAt: Date;
+    lastActivity: Date;
+}
+
+export class SessionManager {
+    private static sessions = new Map<string, UserSession>();
+
+    static createSession(userId: string): UserSession {
+        const session: UserSession = {
+            userId,
+            conversations: new Map(),
+            createdAt: new Date(),
+            lastActivity: new Date()
+        };
+
+        this.sessions.set(userId, session);
+        console.log(`Created conversation session for user ${userId}`);
+        return session;
+    }
+
+    static getSession(userId: string): UserSession | null {
+        const session = this.sessions.get(userId);
+        if (session) {
+            session.lastActivity = new Date();
+        }
+        return session || null;
+    }
+
+    static getOrCreateSession(userId: string): UserSession {
+        return this.getSession(userId) || this.createSession(userId);
+    }
+
+    static addConversationToSession(
+        userId: string,
+        conversation: ConversationManager
+    ): void {
+        const session = this.getOrCreateSession(userId);
+        session.conversations.set(userId, conversation);
+        session.lastActivity = new Date();
+    }
+
+    static getConversationFromSession(
+        userId: string,
+    ): ConversationManager | null {
+        const session = this.getSession(userId);
+        return session?.conversations.get(userId) || null;
+    }
+
+    static getUserConversations(userId: string): ConversationManager[] {
+        const session = this.getSession(userId);
+        return session ? Array.from(session.conversations.values()) : [];
+    }
+
 }

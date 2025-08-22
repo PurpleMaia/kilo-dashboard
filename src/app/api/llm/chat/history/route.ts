@@ -1,12 +1,8 @@
 import { ChatService, SessionManager } from "@/app/llm/services";
 import { getUserID } from "@/lib/server-utils";
 import { NextResponse } from "next/server";
-export async function POST(req: Request) {
-    try {
-        // get prompt from the request body
-        const { prompt } = await req.json() 
-         
-        console.log('User:', prompt)
+export async function GET() {
+    try {        
 
         const userID = await getUserID()
 
@@ -19,12 +15,13 @@ export async function POST(req: Request) {
             conversation = chatService.createConversation(userID)
             SessionManager.addConversationToSession(userID, conversation)
         }
-            
-        const response = await chatService.generateResponse(conversation, prompt)
-        console.log('LLM:', response)
+
+        const history = conversation.getMessages().slice(1)
+
+        console.log('History:', history)
 
         return NextResponse.json({
-            response
+            history
         })
     } catch (error) {
         console.error('Chat API error: ', error)
