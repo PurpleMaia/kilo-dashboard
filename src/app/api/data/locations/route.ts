@@ -23,6 +23,9 @@ export async function GET() {
             for (const row of result) {
                 const typeName = row.type_name || 'unknown';
                 const malaName = row.mala_name || 'unknown';
+
+                // TEMP: Skip Loʻi-1 entries (invalid data)
+                if (malaName === 'Loʻi-1') continue
                 
                 if (!grouped[malaName]) grouped[malaName] = {};
                 if (!grouped[malaName][typeName]) grouped[malaName][typeName] = [];

@@ -120,12 +120,14 @@ export function MalaGraph({ location }: MalaGraphProps) {
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis 
                                 dataKey="timestamp" 
-                                hide={isMobile}
-                                tickFormatter={(value) => new Date(value).toLocaleDateString()}
+                                tickFormatter={(value) => new Date(value).toLocaleDateString().replace('/2025', '')}
+                                angle={45}
+                                tick={{ dy: 10 }}
+                                textAnchor='start'                             
                             />
                             <YAxis
                                 domain={calculateDynamicDomain(chartData)}
-                                tickCount={isMobile ? 4 : 6}
+                                tickCount={10}
                             />
                             {!isMobile && (
                                 <Tooltip 
