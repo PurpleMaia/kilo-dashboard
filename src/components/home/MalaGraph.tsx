@@ -35,6 +35,7 @@ export function MalaGraph({ location }: MalaGraphProps) {
     }, [getMetricColor]);
 
     // Dynamic Y-axis domain calculation
+    // eslint-disable-next-line
     const calculateDynamicDomain = useCallback((data: any[]) => {
         if (!data.length) return ['auto', 'auto'];
         

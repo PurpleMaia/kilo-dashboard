@@ -2,7 +2,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 // import { Activity, Droplets, Thermometer, Zap, Wind, Eye } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useSensorsData } from "@/hooks/use-data";
 
 export function SensorGrid() {

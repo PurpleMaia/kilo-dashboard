@@ -16,11 +16,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {children}              
         </main>
 
-        {/* {process.env.NODE_ENV === 'development' && (
+        {process.env.NODE_ENV === 'development' && (
           <div className="right-2 z-50 bottom-25 fixed flex items-end">
             <ChatWidget />
           </div>
-        )} */}
+        )}
         
         
         <footer className="bottom-0 z-20">            

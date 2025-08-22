@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     }
 }
     
-
+/* eslint-disable */
 function formatPrompt(userMessage: string, dataSummary: any) {
     return `
         USER: 
@@ -49,3 +49,4 @@ function formatPrompt(userMessage: string, dataSummary: any) {
         ${dataSummary}
     `
 }
+/* eslint-enable */

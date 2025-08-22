@@ -41,13 +41,13 @@ export async function GET() {
     
     // parse json for only necessary data to graph
     const data: Record<string, SensorDataPoint[]> = {}
-    for (let metric of raw_metrics) {
+    for (const metric of raw_metrics) {
 
         const metricType: string = metric.variable.variableName.replace(/, \w+.*$/, '')
         const raw_data = metric.values[0].value
 
-        let dataPoints: SensorDataPoint[] = []
-        for (let data_point of raw_data) {
+        const dataPoints: SensorDataPoint[] = []
+        for (const data_point of raw_data) {
             const timestamp: string = data_point.dateTime
             const value = Number(data_point.value)
 

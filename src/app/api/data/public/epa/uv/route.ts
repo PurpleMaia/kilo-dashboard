@@ -19,8 +19,8 @@ export async function GET() {
 
     const data: Record<string, SensorDataPoint[]> = {}
 
-    let dataPoints: SensorDataPoint[] = []
-    for (let data_point of raw_data) {        
+    const dataPoints: SensorDataPoint[] = []
+    for (const data_point of raw_data) {        
         const timestamp: string = data_point.DATE_TIME
         const value = Number(data_point.UV_VALUE)
 

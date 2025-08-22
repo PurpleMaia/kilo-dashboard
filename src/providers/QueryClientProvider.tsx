@@ -15,6 +15,7 @@ export function QueryProvider({ children }: QueryProviderProps) {
       queries: {
         staleTime: 15 * 60 * 1000, // 15 minutes
         gcTime: 30 * 60 * 1000,    // 30 minutes
+        // eslint-disable-next-line
         retry: (failureCount, error: any) => {
           if (error?.status === 401 || error?.status === 403) {
             return false;

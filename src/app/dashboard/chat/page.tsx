@@ -1,7 +1,6 @@
 'use client'
 
 // import { useDataSummary } from "@/hooks/use-data";
-import ReactMarkdown from 'react-markdown'
 import Markdown from '@/components/ui/markdown-renderer';
 import { useEffect, useState } from "react";
 
@@ -18,8 +17,8 @@ export default function Chat() {
 
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [thinking, setThinking] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    // const [thinking, setThinking] = useState(false);
+    const [, setError] = useState<string | null>(null);
 
     const sendMessage = async () => {
         if (!input.trim() || loading) return;
