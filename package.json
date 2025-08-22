@@ -41,6 +41,7 @@
     "react-syntax-highlighter": "^15.6.3",
     "recharts": "^3.0.2",
     "rehype-raw": "^7.0.0",
+    "rehype-sanitize": "^6.0.0",
     "remark-gfm": "^4.0.1",
     "swiper": "^11.2.10",
     "tailwind-merge": "^3.3.1",

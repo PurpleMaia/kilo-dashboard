@@ -2,6 +2,7 @@
 
 // import { useDataSummary } from "@/hooks/use-data";
 import ReactMarkdown from 'react-markdown'
+import Markdown from '@/components/ui/markdown-renderer';
 import { useEffect, useState } from "react";
 
 interface Message {
@@ -128,7 +129,7 @@ export default function Chat() {
                             <p className="text-sm font-medium mb-1 capitalize">
                                 {message.role}
                             </p>
-                            <ReactMarkdown>{message.content}</ReactMarkdown>
+                            <Markdown source={message.content} />
                         </div>
                     ))}
                     {loading && (
