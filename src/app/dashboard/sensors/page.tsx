@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from "react";
+// import { useState } from "react";
 import LatestFetch from "@/components/sensors/latest";
-import { Button } from "@/components/ui/button";
-import { LayoutGrid } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+// import { LayoutGrid } from "lucide-react";
 import { SensorGrid } from "@/components/sensors/SensorGrid";
 
 export default function Sensors() {
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('table')
+  // const [viewMode, setViewMode] = useState<'grid' | 'table'>('table')
   return (
     <div className="min-h-screen p-4">
       

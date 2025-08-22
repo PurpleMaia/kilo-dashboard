@@ -32,9 +32,9 @@ export const links = [
 export const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/dashboard/sensors': 'Sensor Overview',
-  '/dashboard/kilo': 'Kilo Form',
+  '/dashboard/kilo': 'Kilo Journal (beta)',
   '/dashboard/ag-testing': 'Test Samples',
   '/dashboard/upload': 'Upload Center',
   '/dashboard/profile': 'Profile Settings',
-  '/dashboard/chat': 'Kilo Chat (beta)',
+  '/dashboard/chat': 'Chat (beta)',
 };
