@@ -17,9 +17,9 @@ export default function Sensors() {
         
         {/* View Toggle */}
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-900">Sensor Readings</h2>
+          <h2 className="text-xl font-semibold text-slate-900">Sensors</h2>
           <div className="flex items-center gap-2">
-            <Button
+            {/* <Button
               variant={viewMode === "grid" ? "outline" : "default"}
               size="sm"
               onClick={() => setViewMode("grid")}
@@ -27,7 +27,7 @@ export default function Sensors() {
             >
               <LayoutGrid className="h-4 w-4" />
               Cards
-            </Button>
+            </Button> */}
             {/* <Button
               variant={viewMode === "table" ? "outline" : "default"}
               size="sm"
