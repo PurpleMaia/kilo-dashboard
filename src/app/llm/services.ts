@@ -1,18 +1,13 @@
 import OpenAI from "openai";
 import { LLMClient } from "./client";
-import { cache } from "react";
 
 // Handler of message history and packages it for LLMClient
 export class ConversationManager {
     private messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
-    private userID: string
 
-    public constructor(systemPrompt: string, userID: string) {
+    public constructor(systemPrompt: string) {
         this.messages = [{ role: 'system', content: systemPrompt }]
-        this.userID = userID
     }
-
-    
 
     /**
      * Adds a new message to the current Conversation Manager messages array 
@@ -33,7 +28,16 @@ export class ConversationManager {
     // truncate messages
 }
 
-const CHAT_SYSPROMPT = 'You are a helpful agroforestry assistant, rooted in Hawaiian ecological practices. Assist the user with any recommendations based on Hawaiian practices combined with modern approaches.'
+const CHAT_SYSPROMPT = `You are an expert agroforestry consultant specializing in Hawaiian ecological practices and modern precision agriculture. Your role is to analyze sensor data from loʻi (taro fields) and provide actionable, culturally-grounded recommendations.
+
+Analyze the sensor data and provide:
+1. **Status**: 2-3 key findings
+2. **Actions**: 3-4 specific recommendations  
+3. **Cultural Context**: Relevant Hawaiian practices
+
+Format: Use markdown headers. Be concise but actionable. Focus on pH 5.5-7.0, turbidity <50 NTU, temp 75-85°F for optimal kalo growth.
+`
+
 export class ChatService {
     private static instance: ChatService
     private system_prompt: string = CHAT_SYSPROMPT
@@ -65,8 +69,8 @@ export class ChatService {
         return response
     }
 
-    public createConversation(userID: string): ConversationManager {
-        return new ConversationManager(this.system_prompt, userID)
+    public createConversation(): ConversationManager {
+        return new ConversationManager(this.system_prompt)
     }
 }
 
@@ -119,11 +123,6 @@ export class SessionManager {
     ): ConversationManager | null {
         const session = this.getSession(userId);
         return session?.conversations.get(userId) || null;
-    }
-
-    static getUserConversations(userId: string): ConversationManager[] {
-        const session = this.getSession(userId);
-        return session ? Array.from(session.conversations.values()) : [];
     }
 
 }

@@ -31,10 +31,15 @@ export async function GET() {
                     timestamp: row.timestamp?.toISOString() || new Date().toISOString(),
                     value: row.value || 0,
                 });
-            }
+
+                // Show only latest 5 points
+                if (grouped[malaName][typeName].length > 5) {
+                    grouped[malaName][typeName] = grouped[malaName][typeName].slice(-5);
+                }
+            }            
     
             const locations = Object.entries(grouped).map(([siteName, data]) => ({ siteName, data }))
-    
+            console.log(locations)
             return NextResponse.json({ locations })
         } catch (error) {
             console.error('Database Error:', error);

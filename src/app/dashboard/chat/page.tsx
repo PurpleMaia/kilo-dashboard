@@ -1,5 +1,7 @@
 'use client'
 
+// import { useDataSummary } from "@/hooks/use-data";
+import ReactMarkdown from 'react-markdown'
 import { useEffect, useState } from "react";
 
 interface Message {
@@ -9,9 +11,13 @@ interface Message {
 }
 
 export default function Chat() {
+    // const dataSummary = useDataSummary()
+
     const [messages, setMessages] = useState<Message[]>([])
+
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
+    const [thinking, setThinking] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const sendMessage = async () => {
@@ -30,10 +36,15 @@ export default function Chat() {
         setError(null);
 
         try {
+            // send user message and data context from dashboard to LLM
             const response = await fetch('/api/llm/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: userMessage }),
+                body: JSON.stringify(
+                    { userMessage,
+                    //   dataSummary
+                    }
+                ),
             });
 
             if (!response.ok) {
@@ -117,7 +128,7 @@ export default function Chat() {
                             <p className="text-sm font-medium mb-1 capitalize">
                                 {message.role}
                             </p>
-                            <p>{message.content}</p>
+                            <ReactMarkdown>{message.content}</ReactMarkdown>
                         </div>
                     ))}
                     {loading && (

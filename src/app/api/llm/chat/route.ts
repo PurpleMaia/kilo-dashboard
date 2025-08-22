@@ -1,12 +1,14 @@
 import { ChatService, SessionManager } from "@/app/llm/services";
 import { getUserID } from "@/lib/server-utils";
 import { NextResponse } from "next/server";
+
 export async function POST(req: Request) {
     try {
-        // get prompt from the request body
-        const { prompt } = await req.json() 
+        // get message & dataSummary from the request body
+        // const { userMessage, dataSummary } = await req.json() 
+        const { userMessage } = await req.json() 
          
-        console.log('User:', prompt)
+        console.log('User:', userMessage)
 
         const userID = await getUserID()
 
@@ -16,11 +18,13 @@ export async function POST(req: Request) {
 
         if (!conversation) {
             // make new conversation and add it to userID session
-            conversation = chatService.createConversation(userID)
+            conversation = chatService.createConversation()
             SessionManager.addConversationToSession(userID, conversation)
         }
-            
-        const response = await chatService.generateResponse(conversation, prompt)
+
+        // const prompt = formatPrompt(userMessage, dataSummary)
+
+        const response = await chatService.generateResponse(conversation, userMessage)
         console.log('LLM:', response)
 
         return NextResponse.json({
@@ -33,4 +37,15 @@ export async function POST(req: Request) {
             { status: 500 }
         )
     }
+}
+    
+
+function formatPrompt(userMessage: string, dataSummary: any) {
+    return `
+        USER: 
+        ${userMessage}
+
+        DATA: 
+        ${dataSummary}
+    `
 }
