@@ -2,7 +2,7 @@ import { db } from '../../../../db/kysely/client'
 import {
     LatestSensorsList
 } from "../../types"
-import { getFromCache, setInCache } from '../cache';
+import { getFromCache, setInCache } from './cache';
 import { getUserID, getAinaID } from '../../server-utils';
 import { sql } from 'kysely';
 

@@ -1,4 +1,4 @@
-import { fetchAinaIDByName, fetchSensorDataByAinaName } from '@/lib/data/legacy/api';
+import { fetchAinaIDByName, fetchSensorDataByAinaName } from '@/lib/legacy/data/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 const corsHeaders = {
