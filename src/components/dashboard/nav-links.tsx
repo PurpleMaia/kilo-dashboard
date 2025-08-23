@@ -4,7 +4,9 @@ import Link from 'next/link' // no page refresh, optimizes and prefetches code o
 import { usePathname } from 'next/navigation'; // React web hook (client) to get the current path (need to declare a Client Component)
 import clsx from 'clsx';
 import { useMobile } from '@/providers/MobileProvider';
-import { DrawerTrigger } from './drawer-trigger';
+
+import { Ellipsis } from 'lucide-react';
+import { MoreLinksDrawer } from './more-links';
 
 
 // Map of links to display in the side navigation.
@@ -50,8 +52,9 @@ export default function NavLinks() {
               )}>{link.name}</p>
             </Link>          
           );
-        })}        
-        <DrawerTrigger />
-    </>
+        })}     
+
+        <MoreLinksDrawer />
+     </> 
   );
 }
