@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { links } from "@/lib/links";
+import { mainLinks as links } from "@/lib/links";
 import Link from 'next/link'
 import clsx from 'clsx';
 import { BellAlertIcon,  } from "@heroicons/react/24/outline";

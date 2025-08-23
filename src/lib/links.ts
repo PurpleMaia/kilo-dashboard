@@ -1,7 +1,7 @@
 // import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
-import { Activity, BotMessageSquare, Eye, FileText, LayoutDashboard } from 'lucide-react';
+import { Activity, BotMessageSquare, Eye, FileText, LayoutDashboard, UploadIcon } from 'lucide-react';
 
-export const links = [
+export const mainLinks = [
   {
     name: 'Dashboard',
     href: '/dashboard',
@@ -18,17 +18,19 @@ export const links = [
     href: '/dashboard/chat',
     icon: BotMessageSquare,
   },
+  
+];
+
+export const moreLinks = [
   {
     name: 'Samples',
     href: '/dashboard/ag-testing',
     icon: FileText,
   },
-  // {
-  //   name: 'Upload', href: '/dashboard/upload', icon: ArrowUpTrayIcon,
-  // },  
-  // { name: 'Sensors', href: '/dashboard/sensors', icon: EyeIcon },
-];
-
+  {
+    name: 'Upload', href: '/dashboard/upload', icon: UploadIcon,
+  },  
+]
 export const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/dashboard/sensors': 'Sensor Overview',
@@ -38,3 +40,4 @@ export const pageTitles: Record<string, string> = {
   '/dashboard/profile': 'Profile Settings',
   '/dashboard/chat': 'Chat (beta)',
 };
+
