@@ -23,12 +23,12 @@ export const mainLinks = [
 
 export const moreLinks = [
   {
-    name: 'Samples',
+    name: 'View/Upload Samples',
     href: '/dashboard/ag-testing',
     icon: FileText,
   },
   {
-    name: 'Upload', href: '/dashboard/upload', icon: UploadIcon,
+    name: 'Upload New Data', href: '/dashboard/upload', icon: UploadIcon,
   },  
 ]
 export const pageTitles: Record<string, string> = {

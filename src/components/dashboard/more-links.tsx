@@ -38,7 +38,7 @@ export function MoreLinksDrawer() {
           <DrawerTitle>More Tools</DrawerTitle>          
         </DrawerHeader>
         
-        <div className="p-4 grid mx-auto grid-cols-2 gap-4 max-w-md">
+        <div className="px-4 grid mx-auto grid-cols-2 gap-4 max-w-md">
           {links.map((link) => {
             const LinkIcon = link.icon;
             const isActive = pathname === link.href;
@@ -53,12 +53,12 @@ export function MoreLinksDrawer() {
                   "focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2",
                   {
                     'text-lime-600 border-lime-200 bg-lime-50': isActive,
-                    'text-gray-700 hover:text-lime-600': !isActive,
+                    'text-gray-700': !isActive,
                   }
                 )}
               >
-                <LinkIcon className="w-6 h-6" />
-                <span className="text-sm text-center">{link.name}</span>
+                  <LinkIcon className="w-6 h-6" />
+                  <p className="text-sm whitespace-nowrap">{link.name}</p>
 
               </Link>
             );
