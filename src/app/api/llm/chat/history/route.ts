@@ -12,7 +12,7 @@ export async function GET() {
 
         if (!conversation) {
             // make new conversation and add it to userID session
-            conversation = chatService.createConversation(userID)
+            conversation = chatService.createConversation()
             SessionManager.addConversationToSession(userID, conversation)
         }
 

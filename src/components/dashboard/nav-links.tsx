@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'; // React web hook (client) to get
 import clsx from 'clsx';
 import { useMobile } from '@/providers/MobileProvider';
 
-import { Ellipsis } from 'lucide-react';
 import { MoreLinksDrawer } from './more-links';
 
 

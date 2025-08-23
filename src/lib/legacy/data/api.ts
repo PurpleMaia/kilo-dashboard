@@ -1,7 +1,4 @@
 import { db } from '../../../../db/kysely/client'
-import {
-    LatestSensorsList
-} from "../../types"
 import { getFromCache, setInCache } from './cache';
 import { getUserID, getAinaID } from '../../server-utils';
 import { sql } from 'kysely';
@@ -12,7 +9,7 @@ interface MalaData {
 }
 
 // grab the latest data from each sensor type
-export async function fetchLatestSensorsData(): Promise<LatestSensorsList[]> {
+export async function fetchLatestSensorsData() {
     try {
         const data = await db
             .selectFrom('sensor as s')
@@ -22,7 +19,7 @@ export async function fetchLatestSensorsData(): Promise<LatestSensorsList[]> {
             .orderBy(['s.name', 'm.timestamp desc'])
             .execute();
         
-        return data as LatestSensorsList[];
+        return data;
     } catch (error) {
         console.error('API Error:', error);
         throw new Error('Failed to fetch the latest sensor data.');

@@ -3,7 +3,7 @@
 //      tsx scripts/chat.ts
 
 import dotenv from 'dotenv'
-import { ChatService } from "../src/app/llm/services";
+import { ChatService, SessionManager } from "@/app/llm/services";
 import * as readline from 'readline';
 
 dotenv.config()
@@ -26,10 +26,13 @@ const getUserInput = async (): Promise<string> => {
 // Wrap the main logic in an async function for tsx
 (async () => {
     try {
-        const service = new ChatService()
+        const chatService = ChatService.getInstance()
+        
+        const conversation = chatService.createConversation()
+
         while (true) {
             const prompt = await getUserInput();
-            const answer = await service.generateResponse(prompt);
+            const answer = await chatService.generateResponse(conversation, prompt);
             console.log('LLM: ', answer);
         }
     } catch (error) {

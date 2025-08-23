@@ -16,8 +16,8 @@ export interface User {
 
 export interface Aina {
     id: number;
-    name: string;
-    createdAt: Date;
+    name: string | null;
+    createdAt: Date | null;
 }
 
 export interface LoginResponse {
