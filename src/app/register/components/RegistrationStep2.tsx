@@ -98,13 +98,13 @@ export default function RegistrationStep2({ ainaList }: RegistrationFormProps) {
           <input type="hidden" name="finalAina" value={isOtherAina ? formData.customAina : formData.selectedAina} />
 
           <div className="flex gap-2">
-            <button
+            {/* <button
               type="button"
               onClick={handleSkip}
               className="rounded-lg bg-gray-300 px-6 py-3 text-sm font-medium text-gray-700 hover:bg-gray-400 md:text-base"
             >
               Skip
-            </button>
+            </button> */}
             <button
               type="submit"
               disabled={isSubmitting}

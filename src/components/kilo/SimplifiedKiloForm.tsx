@@ -29,6 +29,7 @@ export default function SimplifiedKiloForm() {
 
     return (
         <div className="h-full bg-white mx-auto p-4">        
+        --------------- UNDER CONSTRUCTION -----------------
             <h1 className="text-gray-600 text-md font-semibold mb-2">
                 Please write down your kilo observations.
             </h1>
@@ -48,6 +49,7 @@ export default function SimplifiedKiloForm() {
                 <textarea
                     {...register('description')}
                     placeholder="What do you observe?"
+                    disabled={true}
                     className="overflow-y-auto touch-none border-2 border-gray-300 shadow-sm rounded p-2 h-96 resize-y focus:outline-none focus:border-lime-600 transition-colors"
                 />
                 {errors.description && <span className="text-red-500 text-xs">{errors.description.message as string}</span>}
