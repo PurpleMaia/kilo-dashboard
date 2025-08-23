@@ -28,7 +28,7 @@ export default function SimplifiedKiloForm() {
     }
 
     return (
-        <div className="border rounded-lg shadow-lg h-full border-gray-300 bg-white mx-auto p-4">        
+        <div className="h-full bg-white mx-auto p-4">        
             <h1 className="text-gray-600 text-md font-semibold mb-2">
                 Please write down your kilo observations.
             </h1>
@@ -37,7 +37,7 @@ export default function SimplifiedKiloForm() {
                 Some guiding questions:
             </h1>
 
-            <div className="font-light text-gray-600 mx-4 mb-2">               
+            <div className="font-light text-gray-600 mx-4 mb-4">               
                     <li> What is the water like? (flow, temp) </li>
                     <li> What is the climate like? (rain, wind, clouds) </li>
                     <li> Any new findings in the plants or animals? </li>
@@ -48,7 +48,7 @@ export default function SimplifiedKiloForm() {
                 <textarea
                     {...register('description')}
                     placeholder="What do you observe?"
-                    className="overflow-y-auto touch-none border-2 border-gray-400 shadow-sm rounded p-2 h-96 resize-y focus:outline-none focus:border-lime-600 transition-colors"
+                    className="overflow-y-auto touch-none border-2 border-gray-300 shadow-sm rounded p-2 h-96 resize-y focus:outline-none focus:border-lime-600 transition-colors"
                 />
                 {errors.description && <span className="text-red-500 text-xs">{errors.description.message as string}</span>}
                 {/* <div className="flex flex-col md:flex-row gap-2 mt-4">
