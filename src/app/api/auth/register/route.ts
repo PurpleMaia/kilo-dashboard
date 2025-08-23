@@ -22,11 +22,11 @@ export async function POST(request: Request) {
     }
 
     // Register the user and get the session token
-    const { token } = await registerUser(username, email, password);
+    const { user, token } = await registerUser(username, email, password);
 
     // Create response
     const response = NextResponse.json(
-      { success: true, message: 'User registered successfully' },
+      { success: true, user: user },
       { status: 201 }
     );
 

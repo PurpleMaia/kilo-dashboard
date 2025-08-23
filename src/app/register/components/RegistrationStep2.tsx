@@ -1,5 +1,6 @@
 'use client'
 import { Aina } from "@/lib/types";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -9,6 +10,7 @@ interface RegistrationFormProps {
 }
 
 export default function RegistrationStep2({ ainaList }: RegistrationFormProps) {  
+    const queryClient = useQueryClient()
     const [formData, setFormData] = useState({selectedAina: '', customAina: ''})
     const [isSubmitting, setIsSubmitting] = useState(false)
     const router = useRouter()
@@ -36,7 +38,7 @@ export default function RegistrationStep2({ ainaList }: RegistrationFormProps) {
         formDataToSend.append('customAina', formData.customAina);
         formDataToSend.append('finalAina', isOtherAina ? formData.customAina : formData.selectedAina);
         
-        const response = await fetch('/api/register/aina', {
+        const response = await fetch('/api/auth/register/aina', {
           method: 'POST',
           body: formDataToSend,
         });
@@ -44,6 +46,7 @@ export default function RegistrationStep2({ ainaList }: RegistrationFormProps) {
         const result = await response.json();
         
         if (result.success) {
+          queryClient.setQueryData(['user'], result.user)
           router.push('/dashboard');
         } else {
           console.error('Registration failed:', result.error);
@@ -63,7 +66,7 @@ export default function RegistrationStep2({ ainaList }: RegistrationFormProps) {
     return (
         <>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <label htmlFor="aina" className="text-sm font-medium text-gray-700">Select ʻĀina</label>
+          <label htmlFor="aina" className="text-sm font-medium text-gray-700">Select the ʻāina you steward from the list or click Other to make a new entry </label>
           <select
             name="selectedAina"
             id="aina"
@@ -72,7 +75,7 @@ export default function RegistrationStep2({ ainaList }: RegistrationFormProps) {
             onChange={handleChange}
             required
           >
-            <option value="">Choose an ʻāina?</option>
+            <option value="">Select an ʻāina </option>
             {ainaList.map((a) => (
               <option key={a.id} value={a.id}>{a.name}</option>
             ))}
