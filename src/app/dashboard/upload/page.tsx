@@ -227,7 +227,7 @@ export default function Upload() {
 
     return (
         <>
-        <div className="p-4 space-y-6 mt-4">
+        <div className="p-4 space-y-6 mt-4 bg-white ">
 
             {/* Upload Area */}
             <div className={`border-2 border-dashed rounded-lg p-6 transition-colors`}>

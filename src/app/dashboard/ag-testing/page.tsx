@@ -30,7 +30,7 @@ export default function AgTesting() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className=" bg-slate-50">
       <div className="p-6 space-y-6">
         {recentTests.map((test) => (
           <div key={test.id}>

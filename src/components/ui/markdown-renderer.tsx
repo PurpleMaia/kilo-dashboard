@@ -10,7 +10,11 @@ import rehypeSanitize from "rehype-sanitize";
  * - allows safe HTML (rehype-raw + rehype-sanitize)
  * - customizes table/th/td for accessibility & styling
  */
-export default function Markdown({ source }) {
+/* eslint-disable */
+interface MarkdownProps {
+  source: string
+}
+export default function Markdown({ source }: MarkdownProps) {
   return (
     <div className="md-wrapper" style={{ overflowX: "auto" }}>
       <ReactMarkdown
@@ -34,3 +38,4 @@ export default function Markdown({ source }) {
     </div>
   );
 }
+/* eslint-enable */

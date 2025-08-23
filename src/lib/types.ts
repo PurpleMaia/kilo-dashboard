@@ -9,15 +9,15 @@ export interface Session {
 export interface User {
   id: string;
   username: string;
-  email: string;
-  email_verified: boolean;
+  email: string | null;
+  email_verified: boolean | null;
   aina: Aina | null
 }
 
 export interface Aina {
     id: number;
-    name: string;
-    createdAt: Date;
+    name: string | null;
+    createdAt: Date | null;
 }
 
 export interface LoginResponse {

@@ -1,10 +1,10 @@
 'use client'
 import BottomNav from "@/components/dashboard/bottomnav"
 import TopPanel from "@/components/dashboard/top-panel"
-import ChatWidget from "@/components/llm/ChatWidget"
-
+// import ChatWidget from "@/components/llm/ChatWidget"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+
     return (
       <div className="grid grid-rows-[auto_1fr_auto] h-screen overflow-hidden">
 
@@ -21,12 +21,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <ChatWidget />
           </div>
         )} */}
-        
-        
+
+              
         <footer className="bottom-0 z-20">            
           <BottomNav />
-        </footer>
-
+        </footer>        
+        
       </div>        
     )
 }

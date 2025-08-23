@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   
     // Create response with success status
     const response = NextResponse.json(
-      { success: true, message: 'Login successful', user: user },
+      { success: true, user: user },
       { status: 200 }
     );
     

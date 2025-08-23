@@ -5,7 +5,7 @@ export default function Page() {
     return (
         <>
         {/* <GoogleForm></GoogleForm> */}
-            <div className="min-h-screen overflow-hidden">
+            <div className="h-full overflow-hidden">
                 <SimplifiedKiloForm />                                    
             </div>
         </>

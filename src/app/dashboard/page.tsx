@@ -1,16 +1,13 @@
 'use client'
-import WeatherWidget from "@/components/home/WeatherWidget";
-import MahinaWidget from "@/components/home/MahinaWidget";
-import RecentUploadWidget from "@/components/home/RecentUploadWidget";
-import SolsticeWidget from "@/components/home/SolsticeWidget";
+// import WeatherWidget from "@/components/home/WeatherWidget";
+// import MahinaWidget from "@/components/home/MahinaWidget";
+// import RecentUploadWidget from "@/components/home/RecentUploadWidget";
+// import SolsticeWidget from "@/components/home/SolsticeWidget";
 import KiloNotes from "@/components/home/KiloNotesWidget";
 import LocationWidgetWrapper from "@/components/home/LocationWidgetWrapper";
 import { useAuthGuard } from "@/hooks/use-auth";
-import { MalaGraph } from "@/components/home/MalaGraph";
-import { usePublicData } from "@/hooks/use-data";
 
 export default function Page() {       
-    const { data: publicData } = usePublicData()
     const { isAuthenticated } = useAuthGuard()
 
     if (!isAuthenticated) {
@@ -32,25 +29,22 @@ export default function Page() {
               </div>
               
               {/* Right Column - Diary Entries */}
-              <div className="space-y-4">
-                <h2 className="text-lg md:text-xl font-semibold text-gray-900">Kilo Notes</h2>
-                <div className="h-96">
+              <div className="space-y-4 p-4">
                   <KiloNotes />
-                </div>
               </div>
             </div>
             
             {/* Top Widgets Row */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            {/* <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               <WeatherWidget />
               <SolsticeWidget />
               <MahinaWidget />
               <RecentUploadWidget />              
-            </div>
+            </div> */}
             
 
             {/* Placeholder for future component */}
-            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4">
               <p className="text-gray-500">Data Insights w/ KILO LLM will go here</p>
             </div>            
 

@@ -1,7 +1,7 @@
 // import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
-import { Activity, BotMessageSquare, Eye, FileText, LayoutDashboard } from 'lucide-react';
+import { Activity, BotMessageSquare, Eye, FileText, LayoutDashboard, UploadIcon } from 'lucide-react';
 
-export const links = [
+export const mainLinks = [
   {
     name: 'Dashboard',
     href: '/dashboard',
@@ -18,23 +18,26 @@ export const links = [
     href: '/dashboard/chat',
     icon: BotMessageSquare,
   },
+  
+];
+
+export const moreLinks = [
   {
-    name: 'Samples',
+    name: 'View/Upload Samples',
     href: '/dashboard/ag-testing',
     icon: FileText,
   },
-  // {
-  //   name: 'Upload', href: '/dashboard/upload', icon: ArrowUpTrayIcon,
-  // },  
-  // { name: 'Sensors', href: '/dashboard/sensors', icon: EyeIcon },
-];
-
+  {
+    name: 'Upload New Data', href: '/dashboard/upload', icon: UploadIcon,
+  },  
+]
 export const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/dashboard/sensors': 'Sensor Overview',
-  '/dashboard/kilo': 'Kilo Form',
+  '/dashboard/kilo': 'Kilo Journal (beta)',
   '/dashboard/ag-testing': 'Test Samples',
   '/dashboard/upload': 'Upload Center',
   '/dashboard/profile': 'Profile Settings',
-  '/dashboard/chat': 'Kilo Chat (beta)',
+  '/dashboard/chat': 'Chat (beta)',
 };
+

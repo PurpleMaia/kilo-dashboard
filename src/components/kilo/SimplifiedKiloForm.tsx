@@ -28,19 +28,32 @@ export default function SimplifiedKiloForm() {
     }
 
     return (
-        <div className="border rounded-lg shadow-md border-gray-300 bg-white mx-auto">        
-            <p className="mb-4 text-gray-600 text-md">
-                Please write down your kilo observations and where you are.
-            </p>
+        <div className="h-full bg-white mx-auto p-4">        
+        --------------- UNDER CONSTRUCTION -----------------
+            <h1 className="text-gray-600 text-md font-semibold mb-2">
+                Please write down your kilo observations.
+            </h1>
+
+            <h1 className="text-gray-600 text-md">
+                Some guiding questions:
+            </h1>
+
+            <div className="font-light text-gray-600 mx-4 mb-4">               
+                    <li> What is the water like? (flow, temp) </li>
+                    <li> What is the climate like? (rain, wind, clouds) </li>
+                    <li> Any new findings in the plants or animals? </li>
+                    <li> Any new findings within yourself? </li>                
+                </div>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
 
                 <textarea
                     {...register('description')}
-                    placeholder="Describe your kilo..."
-                    className="overflow-y-auto touch-none border border-gray-400 shadow-sm rounded p-2 min-h-28 resize-y focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder="What do you observe?"
+                    disabled={true}
+                    className="overflow-y-auto touch-none border-2 border-gray-300 shadow-sm rounded p-2 h-96 resize-y focus:outline-none focus:border-lime-600 transition-colors"
                 />
                 {errors.description && <span className="text-red-500 text-xs">{errors.description.message as string}</span>}
-                <div className="flex flex-col md:flex-row gap-2 mt-4">
+                {/* <div className="flex flex-col md:flex-row gap-2 mt-4">
                     <label className="flex-1 flex flex-col items-start">
                         <span className="text-xs text-gray-500 mb-1">Attach a video (optional)</span>
                         <input
@@ -59,8 +72,8 @@ export default function SimplifiedKiloForm() {
                             className="file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-green-50 file:text-green-700 file:font-semibold file:cursor-pointer"
                         />
                     </label>
-                </div>
-                <Button type="submit" className="mt-2 w-full bg-lime-800 text-white" >Submit</Button>
+                </div> */}
+                <Button type="submit" className="mt-2 w-full bg-lime-800 text-white" >Submit</Button>                
             </form>
         </div>
     )

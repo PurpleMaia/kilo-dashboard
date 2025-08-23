@@ -1,8 +1,10 @@
 'use client';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 export default function RegistrationStep1() {  
+  const queryClient = useQueryClient()
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -36,14 +38,17 @@ export default function RegistrationStep1() {
     
     setLoading(true);
     // submit to table
-    const res = await fetch('api/register', {
+    const res = await fetch('api/auth/register', {
       method: 'POST',
       body: JSON.stringify(formData),
       headers: { 'Content-Type': 'application/json' }
     });
 
+    const data = await res.json()
+
     if (res.ok) {
-      console.log('Insert to user table successful... redirecting to aina selection')
+      console.log('Insert to user table successful, adding to queryClient & redirecting to aina selection')
+      queryClient.setQueryData(['user'], data.user)
       router.push(`/register/aina`);
     } else {
       const result = await res.json();

@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from "react";
+// import { useState } from "react";
 import LatestFetch from "@/components/sensors/latest";
-import { Button } from "@/components/ui/button";
-import { LayoutGrid } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+// import { LayoutGrid } from "lucide-react";
 import { SensorGrid } from "@/components/sensors/SensorGrid";
 
 export default function Sensors() {
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('table')
+  // const [viewMode, setViewMode] = useState<'grid' | 'table'>('table')
   return (
     <div className="min-h-screen p-4">
       
@@ -17,9 +17,9 @@ export default function Sensors() {
         
         {/* View Toggle */}
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-900">Sensor Readings</h2>
+          <h2 className="text-xl font-semibold text-slate-900">Sensors</h2>
           <div className="flex items-center gap-2">
-            <Button
+            {/* <Button
               variant={viewMode === "grid" ? "outline" : "default"}
               size="sm"
               onClick={() => setViewMode("grid")}
@@ -27,7 +27,7 @@ export default function Sensors() {
             >
               <LayoutGrid className="h-4 w-4" />
               Cards
-            </Button>
+            </Button> */}
             {/* <Button
               variant={viewMode === "table" ? "outline" : "default"}
               size="sm"

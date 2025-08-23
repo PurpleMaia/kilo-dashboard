@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '../../../../../../db/kysely/client';
-import { getUserID } from '@/lib/server-utils';
+import { getUserData, getUserID } from '@/lib/server-utils';
 
 export async function POST(request: Request) {
     try {
@@ -28,11 +28,13 @@ export async function POST(request: Request) {
                 aina_id: ainaID
             })
             .execute();
+
+        const user = await getUserData()
         
-        return NextResponse.json({ 
-            success: true, 
-            aina: selectedAinaValue,            
-        });
+        return NextResponse.json(
+            { success: true, user: user },
+            { status: 200 }     
+        );
 
     } catch (error) {
         console.error('Registration Error:', error);

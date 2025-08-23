@@ -147,18 +147,31 @@ export async function registerUser(username: string, email: string, password: st
 
   const password_hash = hashPassword(password);
   const id = randomBytes(12).toString('hex');
-  await db.insertInto('user').values({
+
+  const result = await db.insertInto('user').values({
     id,
     username,
     email,
     password_hash,
     email_verified: false,
-  }).execute();
+  }).returning(['id', 'username', 'email', 'email_verified']).executeTakeFirst() 
+
+  if (!result) {
+    throw new Error('DB Insert failed')
+  }
 
   const token = generateSessionToken();
-  await createSession(token, id);
+  await createSession(token, result?.id);
 
-  return { id, username, email, token };
+  const user: User = {
+    id: result.id,
+    username: result.username,
+    email: result.email,
+    email_verified: result.email_verified,
+    aina: null
+  }
+
+  return { user, token };
 }
 
 /**
