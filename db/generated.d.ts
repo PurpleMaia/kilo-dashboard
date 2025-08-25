@@ -33,6 +33,13 @@ export interface Aina {
   name: string | null;
 }
 
+export interface Kilo {
+  id: Generated<number>;
+  observation: string;
+  timestamp: Generated<Timestamp>;
+  user_id: string;
+}
+
 export interface Mala {
   aina_id: number | null;
   created_at: Timestamp | null;
@@ -114,6 +121,7 @@ export interface Usersession {
 export interface DB {
   ag_test_files: AgTestFiles;
   aina: Aina;
+  kilo: Kilo;
   mala: Mala;
   metric: Metric;
   metric_type: MetricType;
