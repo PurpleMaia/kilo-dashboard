@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-// import { useState } from "react"
+import { useState } from "react"
+import { toast } from "sonner"
+
 
 // Define a simple kilo schema
 const kiloSchema = z.object({
-    description: z.string().min(1, 'Description is required'),
-    video: z.any().optional(),
-    image: z.any().optional(),
+    observation: z.string().min(1, 'Description is required'),
+    // video: z.any().optional(),
+    // image: z.any().optional(),
 })
 type KiloFormType = z.infer<typeof kiloSchema>
 
@@ -20,16 +22,59 @@ export default function SimplifiedKiloForm() {
     })
     // const [file, setFile] = useState<File | null>(null)
     // const [image, setImage] = useState<File | null>(null)
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const onSubmit = async (data: KiloFormType) => {
         // Handle form data, file, and image upload logic here
-        console.log(data)
-        reset()
+        try {
+            const response = await fetch('/api/kilo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    observation: data.observation,
+                    timestamp: new Date().toISOString()
+                })
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}))
+                throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`)
+            }
+
+            const result = await response.json()
+            
+            if (result.success) {
+                toast("Observation submitted successfully!")
+                reset() // Only reset on success
+            } else {
+                throw new Error(result.message || 'Submission failed')
+            }
+
+
+        } catch (error) {
+            console.error('Submission error:', error)
+            toast.error("Failed to submit observation", {
+                description: error instanceof Error 
+                    ? error.message 
+                    : 'Please check your connection and try again',
+                duration: 6000,
+                action: {
+                    label: "Retry",
+                    onClick: () => {
+                        // Retry the submission
+                        onSubmit(data)
+                    }
+                }
+            })
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
         <div className="h-full bg-white mx-auto p-4">        
-        --------------- UNDER CONSTRUCTION -----------------
             <h1 className="text-gray-600 text-md font-semibold mb-2">
                 Please write down your kilo observations.
             </h1>
@@ -38,21 +83,21 @@ export default function SimplifiedKiloForm() {
                 Some guiding questions:
             </h1>
 
-            <div className="font-light text-gray-600 mx-4 mb-4">               
+            <ul className="font-light text-gray-600 mx-4 mb-4">               
                     <li> What is the water like? (flow, temp) </li>
                     <li> What is the climate like? (rain, wind, clouds) </li>
                     <li> Any new findings in the plants or animals? </li>
                     <li> Any new findings within yourself? </li>                
-                </div>
+            </ul>
+
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
 
                 <textarea
-                    {...register('description')}
+                    {...register('observation')}
                     placeholder="What do you observe?"
-                    disabled={true}
                     className="overflow-y-auto touch-none border-2 border-gray-300 shadow-sm rounded p-2 h-96 resize-y focus:outline-none focus:border-lime-600 transition-colors"
                 />
-                {errors.description && <span className="text-red-500 text-xs">{errors.description.message as string}</span>}
+                {errors.observation && <span className="text-red-500 text-xs">{errors.observation.message as string}</span>}
                 {/* <div className="flex flex-col md:flex-row gap-2 mt-4">
                     <label className="flex-1 flex flex-col items-start">
                         <span className="text-xs text-gray-500 mb-1">Attach a video (optional)</span>
@@ -73,7 +118,7 @@ export default function SimplifiedKiloForm() {
                         />
                     </label>
                 </div> */}
-                <Button type="submit" className="mt-2 w-full bg-lime-800 text-white" >Submit</Button>                
+                <Button type="submit" className="mt-2 w-full bg-lime-800 text-white" >{isSubmitting ? 'Submitting...' : 'Submit'}</Button>                
             </form>
         </div>
     )
