@@ -9,7 +9,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "heroku-prebuild": "npm rebuild lightningcss --verbose",
+    "heroku-postbuild": "npm run build"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
