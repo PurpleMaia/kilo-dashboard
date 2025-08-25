@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "heroku-prebuild": "npm rebuild lightningcss --verbose",
+    "heroku-prebuild": "npm install --save-optional lightningcss-linux-x64-gnu",
     "heroku-postbuild": "npm run build"
   },
   "dependencies": {
@@ -67,5 +67,8 @@
     "kysely-codegen": "^0.18.5",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "optionalDependencies": {
+    "lightningcss-linux-x64-gnu": "^1.27.0"
   }
 }
