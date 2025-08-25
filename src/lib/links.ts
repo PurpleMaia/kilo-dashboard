@@ -1,5 +1,6 @@
 // import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
-import { Activity, BotMessageSquare, Eye, FileText, LayoutDashboard, UploadIcon } from 'lucide-react';
+import { Activity, Eye, FileText, LayoutDashboard, UploadIcon } from 'lucide-react';
+//BotMessageSquare
 
 export const mainLinks = [
   {
