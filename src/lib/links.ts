@@ -13,11 +13,11 @@ export const mainLinks = [
     href: '/dashboard/kilo',
     icon: Eye,
   },
-  {
-    name: 'Chat',
-    href: '/dashboard/chat',
-    icon: BotMessageSquare,
-  },
+  // {
+  //   name: 'Chat',
+  //   href: '/dashboard/chat',
+  //   icon: BotMessageSquare,
+  // },
   
 ];
 
