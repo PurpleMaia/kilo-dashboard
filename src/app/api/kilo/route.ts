@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
             ...observation
         }
 
-        const result = await db.insertInto('kilo')
+        await db.insertInto('kilo')
             .values(data)
             .executeTakeFirstOrThrow()
 
@@ -65,9 +65,9 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     try {
-        const { userID, ainaID } = await getAuthData()
+        const { ainaID } = await getAuthData()
 
         const recentObservations = await db.selectFrom('kilo')
             .innerJoin('user', 'user.id', 'kilo.user_id')

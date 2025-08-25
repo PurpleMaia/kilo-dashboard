@@ -28,7 +28,7 @@ export default function KiloNotes() {
         
         setObservations(data.data)
       } catch (e) {
-        console.error('something went wrong')
+        console.error('something went wrong', e)
       }
       setLoading(false)
     }
