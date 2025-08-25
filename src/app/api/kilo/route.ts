@@ -14,9 +14,9 @@ export async function POST(request: NextRequest) {
         const body = await request.json()
         const observation = kiloSchema.parse(body)
 
-        const userID = await getUserID()
+        const user_id = await getUserID()
 
-        if (!userID) {
+        if (!user_id) {
             return NextResponse.json(
                 { success: false, message: 'Unauthorized' },
                 { status: 401 }
@@ -24,17 +24,13 @@ export async function POST(request: NextRequest) {
         }
 
         const data = {
-            userID,
+            user_id,
             ...observation
         }
 
-        // const observation = await db.insertInto('kilo')
-        //     .values({
-        //         userID,
-        //         observation: data.observation
-        //         timestamp: data.timestamp || new Date().toISOString()
-        //     })
-        //     .executeTakeFirstOrThrow()
+        const result = await db.insertInto('kilo')
+            .values(data)
+            .executeTakeFirstOrThrow()
 
         console.log('Saving observation:', data)
 
@@ -69,28 +65,31 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// export async function GET(request: NextRequest) {
-//     try {
-//         const { userID, ainaID } = await getAuthData()
+export async function GET(request: NextRequest) {
+    try {
+        const { userID, ainaID } = await getAuthData()
 
-//         const recentObservations = await db.selectFrom('kilo')
-//             .innerJoin('user', 'user.id', 'kilo.user_id')
-//             .innerJoin('profile', 'profile.user_id', 'kilo.user_id')
-//             .innerJoin('aina', 'aina.id', 'profile.aina_id')
-//             .select(['user.username', 'kilo.observation', 'kilo.timestamp'])
-//             .where('aina.id', '=', ainaID)
-//             .execute()
+        const recentObservations = await db.selectFrom('kilo')
+            .innerJoin('user', 'user.id', 'kilo.user_id')
+            .innerJoin('profile', 'profile.user_id', 'kilo.user_id')
+            .innerJoin('aina', 'aina.id', 'profile.aina_id')
+            .select(['kilo.id', 'user.username', 'kilo.observation', 'kilo.timestamp'])
+            .where('aina.id', '=', ainaID)
+            .limit(3)
+            .execute()
 
-//         return NextResponse.json({
-//             success: true,
-//             data: recentObservations
-//         })
-//     } catch (error) {
-//       console.error('GET API Error:', error)
-//         return NextResponse.json(
-//             { success: false, message: 'Failed to fetch observations' },
-//             { status: 500 }
-//         )
-//     }
+        console.log('fetched:', recentObservations)
+
+        return NextResponse.json({
+            success: true,
+            data: recentObservations
+        })
+    } catch (error) {
+      console.error('GET API Error:', error)
+        return NextResponse.json(
+            { success: false, message: 'Failed to fetch observations' },
+            { status: 500 }
+        )
+    }
     
-// }
+}

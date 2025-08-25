@@ -47,7 +47,20 @@ export default async function RootLayout({
         <Providers>
           {children}              
         </Providers>   
-        <Toaster />          
+        <Toaster 
+          position="top-center"
+          expand={true}
+          richColors={true}
+          toastOptions={{
+            style: {
+              background: 'white',
+              border: '1px solid #e5e7eb',
+              color: '#374151'
+            },
+            className: 'class',
+            descriptionClassName: 'description-class',
+          }}
+        />          
       </body>
     </html>
   );

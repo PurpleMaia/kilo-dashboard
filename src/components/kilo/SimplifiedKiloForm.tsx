@@ -34,7 +34,6 @@ export default function SimplifiedKiloForm() {
                 },
                 body: JSON.stringify({
                     observation: data.observation,
-                    timestamp: new Date().toISOString()
                 })
             })
 
