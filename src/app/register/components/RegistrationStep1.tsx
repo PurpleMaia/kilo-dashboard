@@ -51,8 +51,8 @@ export default function RegistrationStep1() {
       queryClient.setQueryData(['user'], data.user)
       router.push(`/register/aina`);
     } else {
-      const result = await res.json();
-      setError(result.error || 'Registration failed');
+      console.log('something went wrong')      
+      setError(data.error || 'Registration failed');
     }      
 
     setLoading(false)
