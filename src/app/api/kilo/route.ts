@@ -5,7 +5,7 @@ import { db } from '../../../../db/kysely/client'
 
 // Server-side validation schema
 const kiloSchema = z.object({
-    observation: z.string().min(10).max(2000),
+    observation: z.string().max(2000),
     timestamp: z.string().datetime().optional(),
 })
 
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
         const body = await request.json()
         const observation = kiloSchema.parse(body)
 
-        const userID = getUserID()
+        const userID = await getUserID()
 
         if (!userID) {
             return NextResponse.json(
@@ -37,6 +37,11 @@ export async function POST(request: NextRequest) {
         //     .executeTakeFirstOrThrow()
 
         console.log('Saving observation:', data)
+
+        return NextResponse.json({
+            success: true,
+            message: "Successfully inserted kilo into database"
+        })
     } catch (error) {
         console.error('API Error:', error)
 
