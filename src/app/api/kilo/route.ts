@@ -74,8 +74,7 @@ export async function GET() {
             .innerJoin('profile', 'profile.user_id', 'kilo.user_id')
             .innerJoin('aina', 'aina.id', 'profile.aina_id')
             .select(['kilo.id', 'user.username', 'kilo.observation', 'kilo.timestamp'])
-            .where('aina.id', '=', ainaID)
-            .limit(3)
+            .where('aina.id', '=', ainaID)            
             .execute()
 
         console.log('fetched:', recentObservations)
