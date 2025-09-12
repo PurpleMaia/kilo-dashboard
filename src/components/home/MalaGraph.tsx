@@ -114,7 +114,7 @@ export function MalaGraph({ location }: MalaGraphProps) {
 
             {/* Chart Container */}
             {selectedMetricType && chartData.length > 0 && (
-                <div className="w-full h-full">
+                <div className="w-full h-full mb-4">
                     <ResponsiveContainer width="100%" height={300}>
                         <AreaChart data={chartData} margin={margins}>
                             <CartesianGrid strokeDasharray="3 3" />

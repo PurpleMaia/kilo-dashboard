@@ -154,7 +154,7 @@ export default function Upload() {
                 headers: file.headers,
                 sensorInfo: file.sensorInfo
             }));
-            const response = await fetch('/api/upload', {
+            const response = await fetch('/api/files/upload', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
