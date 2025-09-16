@@ -98,7 +98,7 @@ export async function POST(request: Request) {
               mala_id: malaID
             })
 
-            await db
+            const inserted = await db
             .insertInto('metric')
             .values({
               value: metricValue,
@@ -109,8 +109,17 @@ export async function POST(request: Request) {
               sensor_id: sensorID,
               mala_id: malaID
             })
-            .execute();
-              processedRows++;
+            .onConflict((oc) => oc.columns(['sensor_id', 'metric_type', 'mala_id', 'timestamp']).doNothing()) // avoid duplicate entries                
+            .returning('id')
+            .executeTakeFirst();
+
+            if (!inserted?.id) {
+              console.error('[upload] Failed to insert metric, possible duplicate or error')
+            } else {
+              console.log('[upload] Successfully inserted metric with ID:', inserted.id)
+            }
+
+            processedRows++;
             }
         }
 
