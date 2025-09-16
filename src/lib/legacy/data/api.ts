@@ -42,8 +42,7 @@ export async function fetchSensorsData(): Promise<MalaData[]> {
 
         const result = await db
             .selectFrom('metric as m')
-            .innerJoin('sensor_mala as sm', 'sm.sensor_id', 'm.sensor_id')
-            .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
+            .innerJoin('mala as ma', 'ma.id', 'm.mala_id')
             .innerJoin('aina as a', 'a.id', 'ma.aina_id')
             .innerJoin('metric_type as mt', 'mt.id', 'm.metric_type')
             .select(['m.value', 'm.timestamp', 'mt.type_name', 'ma.name as mala_name'])
@@ -91,8 +90,8 @@ export async function fetchSensorDataByAinaName(ainaID: number) {
     .selectFrom(rankedMetrics)
     .innerJoin('sensor as s', 's.id', 'm.sensor_id')
     .innerJoin('metric_type', 'metric_type.id', 'm.metric_type')
-    .innerJoin('sensor_mala as sm', 'sm.sensor_id', 's.id')
-    .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
+    .innerJoin('metric as m_full', 'm_full.id', 'm.id')
+    .innerJoin('mala as ma', 'ma.id', 'm_full.mala_id')
     .innerJoin('aina as a', 'a.id', 'ma.aina_id')
     .select([
         's.name as name',
