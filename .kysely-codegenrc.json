@@ -1,0 +1,5 @@
+{
+  "dialect": "postgres",
+  "connectionString": "${DATABASE_URL}",
+  "outFile": "./db/generated.d.ts"
+}

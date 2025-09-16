@@ -1,27 +1,51 @@
 
 import { db } from '../../../../../db/kysely/client';
 import { getAuthData } from '@/lib/server-utils';
+import { sql } from 'kysely';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-    const { userID, ainaID }= await getAuthData()
+    const { userID }= await getAuthData()
     if (userID) {
         try {
-            const result = await db
-                .selectFrom('metric as m')
-                .innerJoin('sensor_mala as sm', 'sm.sensor_id', 'm.sensor_id')
-                .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
-                .innerJoin('aina as a', 'a.id', 'ma.aina_id')
-                .innerJoin('metric_type as mt', 'mt.id', 'm.metric_type')
-                .select(['m.value', 'm.timestamp', 'mt.type_name', 'ma.name as mala_name'])
-                .where('a.id', '=', ainaID)
-                .orderBy('m.timestamp', 'asc')
+            const recentReadingsByMetricType = await db
+                .with('ranked_metrics', (db) =>
+                db
+                    .selectFrom('metric as m')
+                    .innerJoin('metric_type as mt', 'mt.id', 'm.metric_type')
+                    .innerJoin('mala as ma', 'ma.id', 'm.mala_id')
+                    .innerJoin('aina as a', 'a.id', 'ma.aina_id')
+                    .innerJoin('sensor as s', 's.id', 'm.sensor_id')
+                    .select([
+                    'm.value',
+                    'm.timestamp',
+                    'ma.name as mala_name',
+                    'mt.type_name as metric_type',
+                    's.name as sensor_name',
+                    sql<number>`ROW_NUMBER() OVER (
+                        PARTITION BY m.metric_type, m.mala_id 
+                        ORDER BY m.timestamp ASC
+                    )`.as('rn')
+                    ])
+                    .where('a.id', '=', 2)
+                )
+                .selectFrom('ranked_metrics')
+                .selectAll()
+                .where('rn', '<=', 5)      
+                .where((eb) => 
+                    eb.or([
+                        eb('mala_name', '=', 'Top Loʻi Patch')
+                        , eb('mala_name', '=', 'Mid Patch (Awa)')
+                        , eb('mala_name', '=', 'Bottom Patch')                        
+                    ])                                        
+                )
+                .orderBy(['metric_type', 'rn'])
                 .execute();
     
             // Group by metric type, then by mala name
             const grouped: Record<string, Record<string, Array<{ timestamp: string; value: number }>>> = {};
-            for (const row of result) {
-                const typeName = row.type_name || 'unknown';
+            for (const row of recentReadingsByMetricType) {
+                const typeName = row.metric_type || 'unknown';
                 const malaName = row.mala_name || 'unknown';
 
                 // TEMP: Skip Loʻi-1 entries (invalid data)

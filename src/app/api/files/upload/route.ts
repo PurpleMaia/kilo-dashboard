@@ -38,17 +38,19 @@ export async function POST(request: Request) {
     if (!files || files.length === 0) {
       return NextResponse.json({ error: 'No files provided' }, { status: 400 });
     }
-    console.log(`files.length = ${files.length}`)
+    console.log(`[upload] files.length = ${files.length}`)
     
     const results = [];
 
+    // Process each row and insert into database
     for (const file of files) {      
-        // Process each row and insert into database
         let processedRows = 0;
         let errors = 0;
 
-        // Prepare and assign mappings to metric types, units, categories in each header
-        console.log('headers:', file.headers)    
+        // Prepare and assign mappings to metric types, units, categories by looking at header naming convention
+        console.log('[upload] headers:', file.headers)    
+
+        //build mapping table of headers to metric_type_id
         const mappings = await getMetricMapping(file.headers.slice(1))
 
         const timeHeader = file.headers.find(h => h.toLowerCase().includes('time'))
@@ -60,60 +62,43 @@ export async function POST(request: Request) {
           throw new Error('No location column found in headers')
         }       
 
-        console.log(file.sensorInfo)
+        console.log('[upload]', 'file.sensorInfo:', file.sensorInfo)
         const sensorID = await getSensorID(file, file.sensorInfo || {})     
         const latestTimestamp = await getLatestTimestamp(file.data[0][timeHeader], file.data[1][timeHeader].valueOf(), sensorID)   
         const time_unit = file.data[0][timeHeader].toString().split('_')[2]
-        console.log('latestTimestamp', latestTimestamp)
+        console.log('[upload] latestTimestamp:', latestTimestamp) 
 
-        // Create a mapping for junction table insertion based on unique locations
-        const uniqueLocations = [...new Set(file.data.slice(1).map(row => String(row[locationHeader])))]
-
-        // Create lookup map 
-        const locationToMalaMap = new Map<string, number>()
-        for (const location of uniqueLocations) {
-            const malaId = await getOrCreateMalaId(location)
-            locationToMalaMap.set(location, malaId)
-        }
-
-        // Create all sensor-mala relationships upfront (one batch operation)
-        const sensorMalaValues = uniqueLocations.map(location => ({
-            sensor_id: sensorID,
-            mala_id: locationToMalaMap.get(location)!
-        }))
-
-        // Insert all relationships in one batch
-        if (sensorMalaValues.length > 0) {
-          await db.insertInto('sensor_mala')
-              .values(sensorMalaValues)
-              .onConflict((oc) => oc.doNothing()) // Prevent duplicates
-              .execute();
-          
-          console.log(`Created ${sensorMalaValues.length} sensor-mala relationships for sensor ${sensorID}`)
-        } 
-        
         for (const row of file.data.slice(1)) {          // adding slice to get rid of redundant header declaration
+          console.log('[upload] processing row:', row)
           // Convert timestamp            
           const rawTS = row[timeHeader]
           const location = row[locationHeader]
           const timestamp = formatTime(latestTimestamp || null, String(rawTS), time_unit);   
-          
-          console.log('This row\'s location:  ', location)
-          console.log('This row\'s timestamp: ', timestamp)
+          const malaID = await getOrCreateMalaId(location as string)        
 
           const metricColumns = Object.entries(row).filter(([column]) => 
             column !== timeHeader && column !== locationHeader
           );
-          // Process each metric column (excluding _row & timestamp)
+          // Process each metric column incase of numerous readings from one sensor (excluding _row & timestamp)
           for (const [column, value] of metricColumns) {
             const metricValue = parseFloat(value as string)
-            console.log(column, value)
             if (isNaN(metricValue)) {
               errors++
               continue
             }
-            console.log(`mappings found for ${column}: ${mappings[column].metrictype_id}`)
-            await db
+            console.log(`[upload] ${column} -> metric_type ${mappings[column].metrictype_id}`)
+
+            console.log('[upload] inserting metric:', {
+              value: metricValue,
+              timestamp: timestamp,
+              // unit: unit,
+              metric_type: mappings[column].metrictype_id,
+              // category: mappings.category_id,    
+              sensor_id: sensorID,
+              mala_id: malaID
+            })
+
+            const inserted = await db
             .insertInto('metric')
             .values({
               value: metricValue,
@@ -121,10 +106,20 @@ export async function POST(request: Request) {
               // unit: unit,
               metric_type: mappings[column].metrictype_id,
               // category: mappings.category_id,    
-              sensor_id: sensorID
+              sensor_id: sensorID,
+              mala_id: malaID
             })
-            .execute();
-              processedRows++;
+            .onConflict((oc) => oc.columns(['sensor_id', 'metric_type', 'mala_id', 'timestamp']).doNothing()) // avoid duplicate entries                
+            .returning('id')
+            .executeTakeFirst();
+
+            if (!inserted?.id) {
+              console.error('[upload] Failed to insert metric, possible duplicate or error')
+            } else {
+              console.log('[upload] Successfully inserted metric with ID:', inserted.id)
+            }
+
+            processedRows++;
             }
         }
 
@@ -166,7 +161,7 @@ async function getMetricMapping(headers: string[]): Promise<Mappings> {
     for (const header of headers) {
       const [categoryHeader, metric, unit] = header.split('_');
 
-      console.log(categoryHeader, metric, unit)
+      console.log('[upload][getMetricMapping]', header, '->', categoryHeader, metric, unit)
       const existingMetricType = await db
       .selectFrom('metric_type')
       .select(['id', 'type_name'])
@@ -176,12 +171,12 @@ async function getMetricMapping(headers: string[]): Promise<Mappings> {
       const category: Category = categoryHeader as Category
 
         if (existingMetricType) {
-            console.log('found existing metric type', existingMetricType.type_name)
+            console.log('[upload][getMetricMapping] found existing metric type:', `(${existingMetricType.id}) ${existingMetricType.type_name}`)
             mappings[header] = {
                 metrictype_id: existingMetricType.id,
             };
         } else {
-            console.log('could not find existing metric type, inserting into db...')
+            console.log('[upload][getMetricMapping] could not find existing metric type, inserting into db...')
             const inserted = await db.insertInto('metric_type')
                 .values({
                     type_name: metric,
@@ -206,16 +201,16 @@ async function getSensorID(file: UploadFile, sensorInfo: { sensorID?: string, re
   // Try to find existing sensor by serial
   const existingSensor = await db
     .selectFrom('sensor')
-    .select('id')
+    .select(['id', 'name'])
     .where('name', '=', sensorInfo.sensorID)
     .executeTakeFirst();
 
   if (existingSensor) {
-    console.log(`found existing sensor: ${existingSensor.id}`)
+    console.log(`[upload][getSensorID] found existing sensor: (${existingSensor.id}) ${existingSensor.name}`)
     return existingSensor.id;
   }
 
-  console.log('could not find existing sensor, inserting into db...')
+  console.log('[upload][getSensorID] could not find existing sensor, inserting into db...')
   // Insert new sensor
   const inserted = await db.insertInto('sensor')
     .values({
@@ -235,17 +230,17 @@ async function getOrCreateMalaId(location: string): Promise<number> {
   // Try to find existing mala
   const existingMala = await db
     .selectFrom('mala')
-    .select('id')
+    .select(['id', 'name'])
     .where('name', '=', location)
     .executeTakeFirst();
 
   if (existingMala) {
-    console.log(`Found existing mala: ${existingMala.id} for location: ${location}`)
+    console.log(`[upload][getOrCreateMalaId] found existing mala: (${existingMala.id}) ${existingMala.name}`)
     return existingMala.id;
   }
 
   // Insert new mala
-  console.log(`Creating new mala for location: ${location}`)
+  console.log(`[upload][getOrCreateMalaId] creating new mala for location: ${location}`)
   const userID = await getUserID()
   const ainaID = await getAinaID(userID) 
   const insertedMala = await db.insertInto('mala')
@@ -292,11 +287,10 @@ function formatTime(latestTimestamp: Date | null, elapsedTimeStr: string, time_u
 
 async function getLatestTimestamp(header: string | number, topRowTimestamp: string | number, sensorID: number) {
 
-  console.log('header in getlatestTimestamp():', header)
-  console.log('top row time in getlatestTimestamp():', topRowTimestamp)
+  console.log('[upload][getLatestTimestamp] header:', header)
 
   const time_unit = String(header).split('_')[2]
-  console.log('unit of time:', time_unit)
+  console.log('[upload][getLatestTimestamp] unit of time:', time_unit)
 
   const latest = await db
     .selectFrom('metric')
@@ -306,7 +300,7 @@ async function getLatestTimestamp(header: string | number, topRowTimestamp: stri
     .limit(1)
     .executeTakeFirst()
 
-  console.log('latest timestamp db result:', latest)
+  console.log('[upload][getLatestTimestamp] db result:', latest)
 
   const latestTimestamp: Date | undefined = latest?.timestamp ? new Date(latest.timestamp) : undefined
 
@@ -314,6 +308,9 @@ async function getLatestTimestamp(header: string | number, topRowTimestamp: stri
     return latestTimestamp
   } else {
     // use the topRowTimestamp as the latestTimestamp
+    console.log('[upload][getLatestTimestamp] using top row timestamp as latestTimestamp')
+    console.log('[upload][getLatestTimestamp] top row time in getlatestTimestamp():', topRowTimestamp)
+
     if (time_unit === "date") // convert the string from the csv to a Date object
     { 
       const [month, day] = String(topRowTimestamp).split('/').map(Number)

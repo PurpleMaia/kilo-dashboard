@@ -1,63 +1,59 @@
 import { NextResponse } from 'next/server';
 import { db } from '../../../../../db/kysely/client';
-import { getAinaID, getUserID } from '@/lib/server-utils';
 import { sql } from 'kysely';
 import { recentTests } from '../../../../../data/sample_data';
 
 
 export async function GET() {
     try {        
-        const userID = await getUserID();
-        const ainaID = await getAinaID(userID);
+        // const userID = await getUserID();
+        // const ainaID = await getAinaID(userID);
 
         // subquery to get the latest values and timestamp
-        const rankedMetrics = db
-        .selectFrom('metric')
-        .select([
-            'metric.id', 'metric.sensor_id', 'metric.metric_type', 'metric.timestamp', 'metric.value',
-            sql<number>`ROW_NUMBER() OVER (PARTITION BY metric.sensor_id, metric.metric_type ORDER BY metric.timestamp DESC)`.as('rn'),
-        ])
-        .as('m')
-
-        // query on the latest values
-        const sensors = await db
-        .selectFrom(rankedMetrics)
-        .innerJoin('sensor as s', 's.id', 'm.sensor_id')
-        .innerJoin('metric_type', 'metric_type.id', 'm.metric_type')
-        .innerJoin('sensor_mala as sm', 'sm.sensor_id', 's.id')
-        .innerJoin('mala as ma', 'ma.id', 'sm.mala_id')
-        .innerJoin('aina as a', 'a.id', 'ma.aina_id')
-        .select([
-            's.name as name',
-            'ma.name as location',
-            'm.value as latestValue',
-            'metric_type.type_name as metricType',
-            'metric_type.unit',
-            'metric_type.category',
-            'm.timestamp',
-        ])        
-        .where((eb) =>
-            eb('m.rn', '>=', 1).and('m.rn', '<=', 5).and('a.id', '=', ainaID) // collecting latest 5 batches from each sensor (can edit from a couple days)
-        )     
-        .orderBy('s.name')
-        .execute()    
-
-        // Filter out null values
-        const filteredSensors = sensors
-            .filter(sensor => 
-                sensor.name && sensor.location && sensor.metricType && sensor.timestamp
+        const recentReadingsByMetricType = await db
+            .with('ranked_metrics', (db) =>
+            db
+                .selectFrom('metric as m')
+                .innerJoin('metric_type as mt', 'mt.id', 'm.metric_type')
+                .innerJoin('mala as ma', 'ma.id', 'm.mala_id')
+                .innerJoin('aina as a', 'a.id', 'ma.aina_id')
+                .innerJoin('sensor as s', 's.id', 'm.sensor_id')
+                .select([
+                'm.value',
+                'm.timestamp',
+                'ma.name as mala_name',
+                'mt.type_name as metric_type',
+                's.name as sensor_name',
+                sql<number>`ROW_NUMBER() OVER (
+                    PARTITION BY m.metric_type, m.mala_id 
+                    ORDER BY m.timestamp ASC
+                )`.as('rn')
+                ])
+                .where('a.id', '=', 2)
             )
-            .map(sensor => ({
-                name: sensor.name!,
-                location: sensor.location!,
-                latestValue: sensor.latestValue!,
-                metricType: sensor.metricType!,
-                unit: sensor.unit || '',
-                category: sensor.category || '',
-                timestamp: sensor.timestamp!.toISOString()
-            }));
-        
-        const csvContent = convertDataToCSV(filteredSensors);
+            .selectFrom('ranked_metrics')
+            .selectAll()
+            .where('rn', '<=', 5)      
+            .where((eb) => 
+                eb.or([
+                    eb('mala_name', '=', 'Top Loʻi Patch')
+                    , eb('mala_name', '=', 'Mid Patch (Awa)')
+                    , eb('mala_name', '=', 'Bottom Patch')                        
+                ])                                        
+            )
+            .orderBy(['metric_type', 'rn'])
+            .execute();
+
+        const sensorData: SensorData[] = recentReadingsByMetricType.map((item) => ({
+            name: item.sensor_name ?? '',
+            location: item.mala_name ?? '',
+            latestValue: item.value ?? '',
+            metricType: item.metric_type ?? '',
+            unit: '', // Add logic to fetch unit if available
+            category: '', // Add logic to fetch category if available
+            timestamp: item.timestamp ? item.timestamp.toISOString() : '',
+        }));
+        const csvContent = convertDataToCSV(sensorData);
         const jsonContent = convertDataToJSON(recentTests);
         // const pdfContent = convertSamplesToPDF(recentTests);
                 

@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "next lint",
     "heroku-prebuild": "npm install --save-optional lightningcss-linux-x64-gnu",
-    "heroku-postbuild": "npm run build"
+    "heroku-postbuild": "npm run build",
+    "kysely:generate": "kysely-codegen"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

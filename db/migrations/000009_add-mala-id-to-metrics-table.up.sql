@@ -1,0 +1,4 @@
+ALTER TABLE metric
+ADD COLUMN mala_id INT REFERENCES mala(id);
+
+DROP TABLE IF EXISTS sensor_mala;
