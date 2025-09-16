@@ -5,7 +5,7 @@ import { sql } from 'kysely';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-    const { userID, ainaID }= await getAuthData()
+    const { userID }= await getAuthData()
     if (userID) {
         try {
             const recentReadingsByMetricType = await db
