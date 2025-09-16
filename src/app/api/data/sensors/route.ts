@@ -13,16 +13,15 @@ export async function GET() {
             .selectFrom('sensor as s')
             .innerJoin('metric as m', 'm.sensor_id', 's.id')
             .innerJoin('metric_type as mt', 'mt.id', 'm.metric_type')
-            .innerJoin('sensor_mala as sm', 'sm.sensor_id', 's.id')
-            .innerJoin('mala', 'mala.id', 'sm.mala_id')
-            .innerJoin('aina', 'aina.id', 'mala.aina_id')
+            .innerJoin('mala as ma', 'ma.id', 'm.mala_id')
+            .innerJoin('aina as a', 'a.id', 'ma.aina_id')
             .select([
                 's.id as id',
                 's.name as name',
                 'mt.type_name as typeName',
                 'mt.unit as unit',
                 'mt.category as category',
-                sql<string>`string_agg(distinct mala.name, ', ' ORDER BY mala.name)`.as('locations'),            
+                sql<string>`string_agg(distinct ma.name, ', ' ORDER BY ma.name)`.as('locations'),
             ])
             .groupBy([
                 's.id',
@@ -32,8 +31,8 @@ export async function GET() {
                 'mt.category',
             ])
             .orderBy('s.name')
-            .where('aina.id', '=', ainaID)
-            .execute()
+            .where('a.id', '=', ainaID)
+            .execute();
 
             return NextResponse.json({ sensors });
         } catch {
