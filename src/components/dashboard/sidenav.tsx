@@ -1,7 +1,5 @@
-// import Link from 'next/link';
 import { useState } from 'react';
-import { mainLinks as links } from '@/lib/links'
-
+import { allLinks as links } from '@/lib/links'
 import { ChevronLeft, ChevronRight, Hamburger, Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';

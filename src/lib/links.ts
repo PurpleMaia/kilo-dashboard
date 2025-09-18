@@ -42,3 +42,4 @@ export const pageTitles: Record<string, string> = {
   '/dashboard/chat': 'Chat (beta)',
 };
 
+export const allLinks = [...mainLinks, ...moreLinks];
