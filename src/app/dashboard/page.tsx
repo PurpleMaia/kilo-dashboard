@@ -24,12 +24,12 @@ export default function Page() {
             {/* Main Content - Side by Side Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
               {/* Left Column - Sensor Readings */}
-              <div className="space-y-4">
+              <div className="space-y-4 md:shadow-lg">
                   <LocationWidgetWrapper /> 
               </div>
               
               {/* Right Column - Diary Entries */}
-              <div className="space-y-4 p-4">
+              <div className="space-y-4 md:p-0 p-4">
                   <KiloNotes />
               </div>
             </div>
