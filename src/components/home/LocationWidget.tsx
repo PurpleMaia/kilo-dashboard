@@ -29,7 +29,7 @@ export default function LocationWidget({ locations }: LocationWidgetProps) {
                     ['--swiper-pagination-bullet-inactive-opacity' as any]: '1',
                     ['--swiper-navigation-color' as any]: '#65a30d',                // navigation arrows color
                     ['--swiper-navigation-size' as any]: '44px',                    // navigation button size
-                    ['--swiper-navigation-top-offset' as any]: '90%',               // vertical position
+                    ['--swiper-navigation-top-offset' as any]: '89%',               // vertical position
                     ['--swiper-navigation-sides-offset' as any]: '20px', 
                     /* eslint-enable @typescript-eslint/no-explicit-any */
                 }}                    
