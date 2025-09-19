@@ -1,4 +1,4 @@
-import RegistrationForm from "./components/RegistrationStep1";
+import RegistrationForm from "../../components/auth/RegistrationStep1";
 import Link from "next/link";
 
 export default async function RegisterPage() {

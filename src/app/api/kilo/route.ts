@@ -75,8 +75,7 @@ export async function GET() {
             .innerJoin('aina', 'aina.id', 'profile.aina_id')
             .select(['kilo.id', 'user.username', 'kilo.observation', 'kilo.timestamp'])
             .where('aina.id', '=', ainaID)            
-            .orderBy('timestamp desc')
-            .limit(3)
+            .orderBy('timestamp desc')            
             .execute()
 
         console.log('fetched:', recentObservations)

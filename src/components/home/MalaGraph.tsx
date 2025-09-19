@@ -89,32 +89,37 @@ export function MalaGraph({ location }: MalaGraphProps) {
     }, []);
 
     return (
-        <div className='bg-white rounded-md border border-gray-300 shadow-lg mb-10'>
-            {/* Location Header */}
-            <h3 className="p-4 text-xl font-semibold text-gray-900">
-                {location.siteName}
-            </h3>
-            
-            {/* Navigation Bar */}
-            <div className="flex flex-wrap gap-2 mb-8 ml-4">
-                {metricTypes.map((metricType) => (
-                    <button
-                        key={metricType}
-                        onClick={() => handleMetricChange(metricType)}
-                        className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                            selectedMetricType === metricType
-                                ? 'bg-lime-800 text-white'
-                                : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
-                        }`}
-                    >
-                        {metricType}
-                    </button>
-                ))}
+        <div className='bg-white rounded-md border border-gray-300 shadow-lg md:mb-0 mb-10'>
+
+            {/* Header and Navigation */}
+            <div className='items-center align-middle space-y-2 justify-between mx-10 mt-8 mb-4'>
+                {/* Location Header */}
+                <h3 className="text-xl font-semibold text-gray-900">
+                    {location.siteName}
+                </h3>
+                
+                {isMobile && (                    
+                    <div className="flex flex-wrap gap-2 md:ml-20">
+                        {metricTypes.map((metricType) => (
+                            <button
+                                key={metricType}
+                                onClick={() => handleMetricChange(metricType)}
+                                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                                    selectedMetricType === metricType
+                                        ? 'bg-lime-800 text-white'
+                                        : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                                }`}
+                            >
+                                {metricType}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Chart Container */}
             {selectedMetricType && chartData.length > 0 && (
-                <div className="w-full h-full mb-4">
+                <div className="w-full h-full mb-4 md:mb-2">
                     <ResponsiveContainer width="100%" height={300}>
                         <AreaChart data={chartData} margin={margins}>
                             <CartesianGrid strokeDasharray="3 3" />
@@ -149,6 +154,23 @@ export function MalaGraph({ location }: MalaGraphProps) {
                             />
                         </AreaChart>
                     </ResponsiveContainer>
+                </div>
+            )}
+            {!isMobile && (
+                <div className="flex flex-wrap gap-4 mb-8 justify-center">
+                    {metricTypes.map((metricType) => (
+                        <button
+                            key={metricType}
+                            onClick={() => handleMetricChange(metricType)}
+                            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                                selectedMetricType === metricType
+                                    ? 'bg-lime-800 text-white'
+                                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                            }`}
+                        >
+                            {metricType}
+                        </button>
+                    ))}
                 </div>
             )}
         </div>

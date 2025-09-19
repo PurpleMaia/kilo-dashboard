@@ -2,6 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from 'react'
 import { MessageCircle, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { useMobile } from "@/providers/MobileProvider";
 
 interface Observation {
   id: number;
@@ -14,6 +15,8 @@ export default function KiloNotes() {
   const [expandedObservations, setExpandedObservations] = useState<Set<number>>(new Set());
   const [observations, setObservations] = useState<Observation[]>([])
   const [loading, setLoading] = useState<boolean>()
+  const { isMobile } = useMobile();
+  const maxDisplay = isMobile ? 3 : 4;
 
   useEffect(() => {
 
@@ -60,7 +63,7 @@ export default function KiloNotes() {
         <div className="space-y-4 h-full overflow-y-auto touch-pan-y">
           {observations.length > 1 ? (
               <>
-              {observations?.map((obs) => (
+              {observations.slice(0, maxDisplay)?.map((obs) => (
                     <div key={obs.id} className="border-l-4 border-lime-600 pl-4 py-2">
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">

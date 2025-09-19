@@ -227,20 +227,20 @@ export default function Upload() {
 
     return (
         <>
-        <div className="p-4 space-y-6 mt-4 bg-white ">
+        <div className="p-4 space-y-6 mt-4 bg-white md:shadow-lg md:rounded-lg">
 
             {/* Upload Area */}
-            <div className={`border-2 border-dashed rounded-lg p-6 transition-colors`}>
+            <div className={`border-2 border-dashed rounded-lg transition-all duration-200 hover:bg-gray-50 hover:border-gray-600 border-gray-400 relative cursor-pointer`}>
                 <input
                     ref={fileInputRef}
                     type="file"
                     accept=".csv"
-                    multiple
+                    multiple                
                     onChange={handleFileInput}
-                    className="absolute inset-0 w-full h-1/3 cursor-pointer"
-                />
+                    className="opacity-0 cursor-pointer w-full h-full absolute"
+                    />
 
-                <div className="text-center">                
+                <div className="my-6 text-center pointer-events-none">                
                     <div className="space-y-2">
                     <ArrowUpTrayIcon className="mx-auto h-12 w-12 text-gray-400" />
                     <div className="text-sm text-gray-600">
