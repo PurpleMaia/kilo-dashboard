@@ -32,7 +32,7 @@ export default function TopPanel() {
 
   return (
     <div className={clsx("w-full py-3",
-      isMobile ? "bg-gradient-to-r from-lime-800 to-lime-700" : "bg-white border-b border-gray-200"
+      isMobile ? "bg-gradient-to-r from-lime-800 to-lime-700 px-6" : "bg-white border-b border-gray-200"
     )}
     >     
         {isMobile ? (
