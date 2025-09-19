@@ -1,13 +1,11 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { mainLinks as links } from "@/lib/links";
 import Link from 'next/link'
 import clsx from 'clsx';
 import { BellAlertIcon,  } from "@heroicons/react/24/outline";
 import { User } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { pageTitles } from "@/lib/links";
 import useScreenSize from "@/hooks/use-screensize";
 import { useMobile } from '../../providers/MobileProvider';
@@ -19,7 +17,6 @@ export default function TopPanel() {
   const screenSize = useScreenSize()
   const { isMobile } = useMobile();
 
-  const [isOpen, setIsOpen] = useState(false);
   // const [isMobile, setIsMobile] = useState(false); // This line is removed as per the new_code
 
   useEffect(() => {

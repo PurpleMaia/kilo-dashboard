@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { allLinks as links } from '@/lib/links'
-import { ChevronLeft, ChevronRight, Hamburger, Menu } from 'lucide-react';
+import { ChevronLeft, Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import clsx from 'clsx';
