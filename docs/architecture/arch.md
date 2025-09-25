@@ -1,0 +1,5 @@
+## Version 1 (current workflow)
+Currently, Keoni DeFranco is physically goes to the Nation of  Hawai‘i site, and uses handheld sensors to collect environmental or operational readings. These sensors are not yet connected to a network, so each measurement is manually recorded by Keoni into a Google Spreadsheet. Once all the readings for a session are collected, the spreadsheet is exported as a CSV file. Keoni then uploads this CSV file to the Kilo Dashboard, where the data can be stored, processed, and visualized for analysis.
+
+## Version 2 (planned workflow)
+In the next phase, we plan to establish a networked data pipeline. This will involve deploying a master controller on site to serve as a hub, automatically aggregating data from multiple on-site sensors. Once the battery life and power reliability of these sensors are verified and stable, the sensors will be able to transmit readings directly to the master controller over the network. The controller will then push the data into the Kilo system, eliminating the need for manual spreadsheet entry and CSV uploads.

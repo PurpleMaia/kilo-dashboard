@@ -15,4 +15,4 @@
 `migrate -database "${DATABASE_URL}" -path db/migrations up `
 
 ### UPDATE KYSELY-CODEGEN
-`pnpm kysely-codegen --out-file ./db/generated.d.ts`
+`npm run kysely:generate`
