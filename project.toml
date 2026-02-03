@@ -1,0 +1,8 @@
+[_]
+schema-version = "0.2"
+
+[io.buildpacks]
+builder = "paketobuildpacks/builder-jammy-arm64-base:latest"
+
+[[io.buildpacks.group]]
+uri = "gcr.io/paketo-buildpacks/nodejs"
