@@ -1,4 +1,4 @@
 {
   "dialect": "postgres",
-  "outFile": "./src/lib/db/types.ts"
+  "outFile": "./src/db/types.ts"
 }
