@@ -1,4 +1,4 @@
-import { db } from '../../../../../../db/kysely/client';
+import { db } from '../../../../../db/kysely/client';
 import { sql } from 'kysely';
 import { NextResponse } from 'next/server';
 import { getAuthData } from '@/lib/server-utils';

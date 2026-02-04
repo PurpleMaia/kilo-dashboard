@@ -1,4 +1,4 @@
-import { pool } from '../../db/kysely/client';
+import { pool } from '../db/kysely/client';
 
 // Monitor database connections
 export function getConnectionStats() {

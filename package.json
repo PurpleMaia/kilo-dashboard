@@ -10,9 +10,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "heroku-prebuild": "npm install --save-optional lightningcss-linux-x64-gnu",
-    "heroku-postbuild": "npm run build",
-    "kysely:generate": "kysely-codegen"
+    "codegen": "kysely-codegen",
+    "migrate:create": "./scripts/migrate/create.sh",
+    "migrate:up": "./scripts/migrate/up.sh",
+    "migrate:down": "./scripts/migrate/down.sh",
+    "migrate:version": "./scripts/migrate/version.sh",
+    "migrate:force": "./scripts/migrate/force.sh"    
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

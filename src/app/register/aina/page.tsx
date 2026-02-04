@@ -1,5 +1,5 @@
 import { Aina } from "@/lib/types";
-import { db } from "../../../../db/kysely/client";
+import { db } from "../../../db/kysely/client";
 import RegistrationStep2 from "../../../components/auth/RegistrationStep2";
 
 export default async function AinaRegistration() {

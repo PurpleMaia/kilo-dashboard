@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '../../../../../db/kysely/client';
+import { db } from '../../../../db/kysely/client';
 import { sql } from 'kysely';
 import { recentTests } from '../../../../../data/sample_data';
 

@@ -1,7 +1,7 @@
 import { getAuthData, getUserID } from '@/lib/server-utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { db } from '../../../../db/kysely/client'
+import { db } from '../../../db/kysely/client'
 
 // Server-side validation schema
 const kiloSchema = z.object({
