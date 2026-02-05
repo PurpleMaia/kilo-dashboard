@@ -1,0 +1,21 @@
+[project]
+id = "kilo"
+name = "Kilo Dashboard"
+
+[[build.buildpacks]]
+uri = "heroku/nodejs"
+
+[[build.env]]
+name = "NODE_ENV"
+value = "production"
+
+[[build.env]]
+name = "NPM_CONFIG_PRODUCTION"
+value = "false"
+
+[build]
+exclude = [
+  ".next/",
+  "node_modules/",
+  ".git/"
+]
