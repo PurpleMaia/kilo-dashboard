@@ -1,32 +1,13 @@
-/**
- * Map of all USGS Survey Stations:
- * https://waterdata.usgs.gov/state/Hawaii/
- * 
- * Discharge: 00060
- * Gage Height: 00065
- * Water Temperature: 00010
- * 
- * Each public monitoring site varies on what metrics they survey
- * 
- * Waimanalo Str Survery Station retrieves (16249000):
- * - Gage height, feet
- * - Discharge, cubic feet per second
- * - 0 nu Count of samples collected by autosampler, number
- * - 6.0 FNU Turbidity, water, unfiltered, monochrome near ...
- * 
- * Example: Get most recent value for Gage Height at Waimanalo Str
- * https://waterservices.usgs.gov/nwis/iv/?sites=16249000&agencyCd=USGS&parameterCd=00065&format=json
- * - within a span of a day append:
- *    &period=P1D
- * 
- * For now, this GET function retrieves only Discharge (Streamflow) & Gage Height
- */
-
 import { LocationData, SensorDataPoint } from "@/lib/types";
 import { NextResponse } from "next/server";
 export async function GET() {
 
-    const response = await fetch('https://waterservices.usgs.gov/nwis/iv/?sites=16249000&agencyCd=USGS&parameterCd=00060,00065&format=json&period=P1D', {
+    // const siteID = '16249000' // Waimanalo Stream
+    const siteID = '16701800' // Wailuku River in Hilo
+    const parameterCodes = ['00060', '00065'] // Discharge, Gage Height
+    const period = 'P1D' // past day
+
+    const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?sites=${siteID}&agencyCd=USGS&parameterCd=${parameterCodes.join(",")}&format=json&period=${period}`, {
         headers: { "Accept": "application/json" }
     })  
 
@@ -36,7 +17,8 @@ export async function GET() {
     const raw_metrics = json.value.timeSeries    
 
     // store site name for indexing
-    const site_name = 'USGS Waimanalo Str'
+    // const site_name = 'USGS Waimanalo Str'
+    const site_name = 'USGS Wailuku River'
     // raw_metrics[0].sourceInfo.siteName
     
     // parse json for only necessary data to graph
