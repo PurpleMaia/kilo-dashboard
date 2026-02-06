@@ -61,7 +61,7 @@ export default function KiloNotes() {
           <p>Fetching observations...</p>
         ) : (
         <div className="space-y-4 h-full overflow-y-auto touch-pan-y">
-          {observations.length > 1 ? (
+          {observations.length > 0 ? (
               <>
               {observations.slice(0, maxDisplay)?.map((obs) => (
                     <div key={obs.id} className="border-l-4 border-lime-600 pl-4 py-2">

@@ -44,9 +44,9 @@ export default function Page() {
             
 
             {/* Placeholder for future component */}
-            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4">
+            {/* <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4">
               <p className="text-gray-500">Data Insights w/ KILO LLM will go here</p>
-            </div>            
+            </div>             */}
 
           </div>
         </div>
