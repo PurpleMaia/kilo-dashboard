@@ -67,15 +67,12 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
     try {
-        const { ainaID } = await getAuthData()
 
         const recentObservations = await db.selectFrom('kilo')
             .innerJoin('user', 'user.id', 'kilo.user_id')
             .innerJoin('profile', 'profile.user_id', 'kilo.user_id')
-            .innerJoin('aina', 'aina.id', 'profile.aina_id')
             .select(['kilo.id', 'user.username', 'kilo.observation', 'kilo.timestamp'])
-            .where('aina.id', '=', ainaID)            
-            .orderBy('timestamp desc')            
+            .orderBy('kilo.timestamp', 'desc')
             .execute()
 
         console.log('fetched:', recentObservations)

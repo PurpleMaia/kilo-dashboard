@@ -106,12 +106,12 @@ export function usePublicData() {
       const usgs_data = await usgs_res.json()
       
       // new every hour
-      console.log('Fetching EPA public data...', Date.now().toLocaleString())
-      const epa_res = await fetch('/api/data/public/epa/uv')
+      // console.log('Fetching EPA public data...', Date.now().toLocaleString())
+      // const epa_res = await fetch('/api/data/public/epa/uv')
 
-      const epa_data = await epa_res.json()
+      // const epa_data = await epa_res.json()
 
-      const data: LocationData[] = [ usgs_data, epa_data ]      
+      const data: LocationData[] = [ usgs_data, /* epa_data */ ]      
 
       return {
         locations: data

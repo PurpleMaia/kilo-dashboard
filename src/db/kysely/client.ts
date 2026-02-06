@@ -30,7 +30,7 @@ class KyselySingleton {
       connectionString: CONNECTION_STRING,
       max: 5,
       min: 1,
-      connectionTimeoutMillis: 10000,
+      connectionTimeoutMillis: 10000 * 3, // extended to 30 seconds for initial connection attempts
       idleTimeoutMillis: 30000,
       maxUses: 7500,
       statement_timeout: 10000,
