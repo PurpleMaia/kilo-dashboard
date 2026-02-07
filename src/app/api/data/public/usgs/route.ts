@@ -5,7 +5,7 @@ export async function GET() {
     // const siteID = '16249000' // Waimanalo Stream
     const siteID = '16701800' // Wailuku River in Hilo
     const parameterCodes = ['00060', '00065'] // Discharge, Gage Height
-    const period = 'P1D' // past day
+    const period = 'PT12H' // past 12 hours
 
     const response = await fetch(`https://waterservices.usgs.gov/nwis/iv/?sites=${siteID}&agencyCd=USGS&parameterCd=${parameterCodes.join(",")}&format=json&period=${period}`, {
         headers: { "Accept": "application/json" }

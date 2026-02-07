@@ -120,19 +120,27 @@ export function MalaGraph({ location }: MalaGraphProps) {
             {/* Chart Container */}
             {selectedMetricType && chartData.length > 0 && (
                 <div className="w-full h-full mb-4 md:mb-2">
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="90%" height={300}>
                         <AreaChart data={chartData} margin={margins}>
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis 
-                                dataKey="timestamp" 
-                                tickFormatter={(value) => new Date(value).toLocaleDateString().replace('/2025', '')}
+                            <XAxis
+                                dataKey="timestamp"
+                                tickFormatter={(value) => {
+                                    const date = new Date(value);
+                                    const hour = date.getHours();
+                                    const ampm = hour >= 12 ? 'pm' : 'am';
+                                    const hour12 = hour % 12 || 12;
+                                    return `${hour12}${ampm} ${date.getMonth() + 1}/${date.getDate()}`;
+                                }}
                                 angle={45}
-                                tick={{ dy: 10 }}
-                                textAnchor='start'                             
+                                tick={{ dy: 10 }}                                
+                                textAnchor='start'
+                                className='text-xs text-gray-600'
                             />
                             <YAxis
                                 domain={calculateDynamicDomain(chartData)}
                                 tickCount={10}
+                                className='text-xs text-gray-600'
                             />
                             {!isMobile && (
                                 <Tooltip 
