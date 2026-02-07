@@ -118,7 +118,11 @@ export function MalaGraph({ location }: MalaGraphProps) {
             </div>
 
             {/* Chart Container */}
-            {selectedMetricType && chartData.length > 0 && (
+            {(chartData.length === 0) ? (
+                <div className="w-full h-[300px] flex items-center justify-center animate-pulse">
+                    <div className="w-[90%] h-full bg-gray-100 rounded"></div>
+                </div>
+            ) : selectedMetricType && chartData.length > 0 ? (
                 <div className="w-full h-full mb-4 md:mb-2">
                     <ResponsiveContainer width="90%" height={300}>
                         <AreaChart data={chartData} margin={margins}>
@@ -163,7 +167,7 @@ export function MalaGraph({ location }: MalaGraphProps) {
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
-            )}
+            ) : null}
             {!isMobile && (
                 <div className="flex flex-wrap gap-4 mb-8 justify-center">
                     {metricTypes.map((metricType) => (

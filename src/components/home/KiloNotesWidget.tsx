@@ -58,7 +58,17 @@ export default function KiloNotes() {
     <Card className="h-full border-gray-300 bg-white shadow-lg">
       <CardContent className="h-full py-4">
         {loading ? (
-          <p>Fetching observations...</p>
+          <div className="space-y-4 animate-pulse">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="border-l-4 border-gray-200 pl-4 py-2">
+                <div className="h-4 bg-gray-200 rounded w-full mb-3"></div>
+                <div className="flex items-center gap-2 text-xs text-gray-300">
+                  <MessageCircle className="h-3 w-3" />
+                  <span>Loading...</span>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
         <div className="space-y-4 h-full overflow-y-auto touch-pan-y">
           {observations.length > 0 ? (

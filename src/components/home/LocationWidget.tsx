@@ -12,8 +12,35 @@ interface LocationWidgetProps {
     locations: LocationData[];
 }
 
+function GraphSkeleton() {
+    return (
+        <div className="bg-white rounded-md border border-gray-300 shadow-lg md:mb-0 mb-10 animate-pulse">
+            <div className="items-center justify-between mx-10 mt-8 mb-4">
+                <div className="h-7 bg-gray-200 rounded w-1/3"></div>
+            </div>
+            <div className="w-full h-[300px] flex items-center justify-center">
+                <div className="w-[90%] h-full bg-gray-100 rounded"></div>
+            </div>
+            <div className="flex flex-wrap gap-4 mb-8 justify-center mt-4">
+                {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-7 w-16 bg-gray-200 rounded"></div>
+                ))}
+            </div>
+        </div>
+    )
+}
+
 export default function LocationWidget({ locations }: LocationWidgetProps) {
     const { isMobile } = useMobile();
+
+    if (!locations || locations.length === 0) {
+        return (
+            <div className="w-full h-[400px] flex items-center justify-center bg-white rounded-md border border-gray-300 shadow-lg">
+                <GraphSkeleton />
+            </div>
+        )
+    }
+
     return (
         <div className="w-full h-full">
             <Swiper
