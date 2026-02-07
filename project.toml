@@ -1,3 +1,6 @@
+[_]
+schema-version = "0.2"
+
 [project]
 id = "kilo"
 name = "Kilo Dashboard"
@@ -14,6 +17,7 @@ name = "NPM_CONFIG_PRODUCTION"
 value = "false"
 
 [build]
+builder = "heroku/builder@sha256:f646a0d5597726c8c4b32b1e97af38684ee862278707129ec1e5846a7a95b252"
 exclude = [
   ".next/",
   "node_modules/",
