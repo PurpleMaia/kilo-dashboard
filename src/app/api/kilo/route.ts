@@ -1,4 +1,4 @@
-import { getAuthData, getUserID } from '@/lib/server-utils'
+import { getUserID } from '@/lib/server-utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { db } from '../../../db/kysely/client'
